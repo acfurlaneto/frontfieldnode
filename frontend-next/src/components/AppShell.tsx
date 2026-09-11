@@ -1,45 +1,61 @@
 import type { ReactNode } from 'react';
 import { BackButton } from '@/components/BackButton';
 import { Sidebar } from '@/components/Sidebar';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { ApiStatusIndicator } from '@/components/ApiStatusIndicator';
 
 export function AppShell({
   active,
   title,
   eyebrow,
+  description,
   actions,
+  contentClassName = '',
   children,
 }: {
   active: string;
   title: string;
   eyebrow?: string;
+  description?: string;
   actions?: ReactNode;
+  contentClassName?: string;
   children: ReactNode;
 }) {
   const showBackButton = active !== '/dashboard';
 
   return (
-    <main className="min-h-screen bg-[image:var(--surface-page)] text-field-text">
+    <main className="app-background min-h-screen text-[var(--foreground)]">
       <Sidebar />
       {showBackButton ? <BackButton /> : null}
 
-      <section className="pb-24 lg:ml-28 lg:pb-0">
-        <header className="sticky top-0 z-20 border-b border-field-border bg-[color:var(--surface-header)] px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-            <div className={showBackButton ? 'pl-14 lg:pl-0' : ''}>
+      <section className="relative z-10 lg:pl-[5.5rem]">
+        <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[color:var(--surface-header)]/80 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
+            <div className={showBackButton ? 'pl-12 lg:pl-0' : ''}>
               {eyebrow ? (
-                <p className="text-[11px] font-semibold uppercase tracking-label text-accent/80">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ui-accent)]">
                   {eyebrow}
                 </p>
               ) : null}
-              <h1 className="mt-1 text-xl font-semibold tracking-title text-field-text1 sm:text-2xl">
+              <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-[var(--text-1)] sm:text-xl">
                 {title}
               </h1>
+              {description ? (
+                <p className="mt-0.5 hidden text-xs text-[var(--text-3)] sm:block">{description}</p>
+              ) : null}
             </div>
-            {actions}
+
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="hidden sm:block">
+                <ApiStatusIndicator />
+              </div>
+              {actions}
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className={`mx-auto w-full max-w-7xl min-h-0 px-4 py-5 sm:px-6 lg:px-8 ${contentClassName}`}>
           {children}
         </div>
       </section>

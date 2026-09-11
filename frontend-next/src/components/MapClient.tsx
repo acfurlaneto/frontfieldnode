@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
+import { Activity, Search, Tractor, X } from "lucide-react";
 import { resolveApiUrl } from "@/services/telemetryService";
 import { ListaPosicoesMaquinasSchema } from "@/schemas";
 import type { MachinePosition } from "@/types/telemetry";
@@ -11,6 +12,7 @@ import { LoadingState, EmptyState, ErrorState } from "@/components/ui/FeedbackSt
 type LeafletModule = typeof import("leaflet");
 type LeafletMap = import("leaflet").Map;
 type LeafletFeatureGroup = import("leaflet").FeatureGroup;
+type LeafletMarker = import("leaflet").Marker;
 
 const DEFAULT_CENTER: [number, number] = [-15.793889, -47.882778];
 
@@ -68,13 +70,28 @@ function getPopupHtml(machine: MachinePosition) {
         ? "Parada"
         : "Offline";
 
+  const statusColor =
+    machine.status === "operando"
+      ? "var(--status-normal)"
+      : machine.status === "parada"
+        ? "var(--status-atencao)"
+        : "var(--status-critico)";
+
   return `
-    <div style="font-size:0.9rem; line-height:1.35;">
-      <strong>Máquina:</strong> ${escapeHtml(machine.maquina_id ?? machine.modelo)}<br />
-      <strong>Status:</strong> ${statusLabel}<br />
-      <strong>Temperatura:</strong> ${escapeHtml(String(machine.telemetria.temperatura))}°C<br />
-      <strong>RPM:</strong> ${escapeHtml(String(machine.telemetria.rpm))}<br />
-      <strong>Última atualização:</strong> ${escapeHtml(new Date(machine.telemetria.timestamp).toLocaleString())}
+    <div style="font-size:13px;line-height:1.5;color:var(--text-1);background:linear-gradient(180deg,var(--panel-glass-strong),var(--panel-glass-mid));backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid transparent;border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-glass);min-width:220px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <strong style="font-size:13px;color:var(--text-1);">${escapeHtml(machine.maquina_id ?? machine.modelo)}</strong>
+        <span style="display:inline-flex;align-items:center;gap:6px;border-radius:9999px;border:1px solid color-mix(in srgb, ${statusColor} 20%, transparent);background:color-mix(in srgb, ${statusColor} 12%, transparent);padding:2px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${statusColor};">
+          <span style="width:6px;height:6px;border-radius:50%;background:${statusColor};box-shadow:0 0 6px color-mix(in srgb, ${statusColor} 55%, transparent);"></span>
+          ${statusLabel}
+        </span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12px;color:var(--text-2);">
+        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Ao vivo agora</span><div style="margin-top:2px;font-weight:700;color:${statusColor};">${escapeHtml(String(machine.telemetria.rpm))} RPM</div></div>
+        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Temperatura</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.temperatura))}°C</div></div>
+        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">RPM</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.rpm))}</div></div>
+        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Última atualização</span><div style="margin-top:2px;font-weight:600;color:var(--text-1);">${escapeHtml(new Date(machine.telemetria.timestamp).toLocaleString())}</div></div>
+      </div>
     </div>
   `;
 }
@@ -91,24 +108,34 @@ function escapeHtml(value: string) {
 
 function getMarkerStatus(status: MachinePosition["status"]) {
   if (status === "operando") {
-    return { label: "Operando", className: "bg-status-normal", indicator: "●" };
+    return { label: "Operando", color: "var(--status-normal)", glow: "var(--glow-normal-strong)" };
   }
   if (status === "parada") {
-    return { label: "Atenção", className: "bg-status-atencao", indicator: "●" };
+    return { label: "Atenção", color: "var(--status-atencao)", glow: "var(--glow-amber)" };
   }
-  return { label: "Offline", className: "bg-status-critico", indicator: "●" };
+  return { label: "Offline", color: "var(--status-critico)", glow: "var(--glow-red)" };
 }
 
-function createMarkerIcon(L: LeafletModule, machine: MachinePosition) {
+function getLabelOffset(machine: MachinePosition, index: number, positions: MachinePosition[]) {
+  const nearby = positions.some((other, otherIndex) => {
+    if (otherIndex === index) return false;
+    return Math.abs(other.lat - machine.lat) < 0.02 && Math.abs(other.lng - machine.lng) < 0.02;
+  });
+  if (!nearby) return [0, -22] as [number, number];
+  const offsets: [number, number][] = [[0, -30], [34, -18], [-34, -18], [30, 12], [-30, 12]];
+  return offsets[index % offsets.length];
+}
+
+function createMarkerIcon(L: LeafletModule, machine: MachinePosition, selected = false) {
   const status = getMarkerStatus(machine.status);
   const machineId = escapeHtml(machine.maquina_id ?? machine.modelo);
 
   return L.divIcon({
-    className: "leaflet-machine-pill-icon",
-    html: `<div class="flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-slate-950/90 px-3 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md"><span aria-hidden="true">🚜</span><span>${machineId}</span><span class="h-1 w-1 rounded-full bg-white/30"></span><span class="flex items-center gap-1 text-slate-200"><span class="text-[10px] ${status.className}">${status.indicator}</span>${status.label}</span></div>`,
-    iconSize: [190, 36],
-    iconAnchor: [95, 18],
-    popupAnchor: [0, -20],
+    className: `leaflet-machine-marker${selected ? " is-selected" : ""}`,
+    html: `<div aria-label="${machineId} — ${status.label}" title="${machineId}" style="display:flex;align-items:center;justify-content:center;width:${selected ? 42 : 34}px;height:${selected ? 42 : 34}px;border-radius:50%;border:2px solid ${status.color};background:rgba(8,12,18,0.82);color:${status.color};box-shadow:0 0 ${selected ? 22 : 12}px ${status.glow}, inset 0 0 0 4px rgba(255,255,255,0.04);transition:transform 180ms ease, box-shadow 180ms ease;"><span style="font-size:${selected ? 16 : 13}px;line-height:1;">🚜</span></div>`,
+    iconSize: [selected ? 42 : 34, selected ? 42 : 34],
+    iconAnchor: [selected ? 21 : 17, selected ? 21 : 17],
+    popupAnchor: [0, selected ? -24 : -20],
   });
 }
 
@@ -146,10 +173,14 @@ export default function MapClient({
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [mapReady, setMapReady] = useState(false);
+  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('dark');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletFeatureGroup | null>(null);
+  const markerRefs = useRef(new Map<string, LeafletMarker>());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
 
   const positions = useMemo(() => estado.tipo === "sucesso" ? estado.dados : [], [estado]);
   const visiblePositionCount = positions.filter(isValidPosition).length;
@@ -167,6 +198,15 @@ export default function MapClient({
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const syncTheme = () => setMapTheme(root.classList.contains('light') ? 'light' : 'dark');
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -191,8 +231,15 @@ export default function MapClient({
         zoom: 4,
       });
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      const tileUrl = mapTheme === "dark"
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+      L.tileLayer(tileUrl, {
+        attribution: mapTheme === "dark"
+          ? '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          : "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+        subdomains: mapTheme === "dark" ? undefined : ["a", "b", "c"],
       }).addTo(map);
 
       const layerGroup = L.featureGroup().addTo(map);
@@ -226,7 +273,7 @@ export default function MapClient({
         setMapReady(false);
       }
     };
-  }, [shouldRenderMap]);
+  }, [mapTheme, shouldRenderMap]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -250,13 +297,29 @@ export default function MapClient({
     const validPositions = positions.filter(isValidPosition);
 
     markers.clearLayers();
+    markerRefs.current.clear();
 
-    validPositions.forEach((machine) => {
-      L.marker([machine.lat, machine.lng], {
-        icon: createMarkerIcon(L, machine),
+    validPositions.forEach((machine, index) => {
+      const machineId = machine.maquina_id ?? String(machine.id);
+      const markerStatus = getMarkerStatus(machine.status);
+      const marker = L.marker([machine.lat, machine.lng], {
+        icon: createMarkerIcon(L, machine, machineId === selectedMachineId),
       })
-        .bindPopup(getPopupHtml(machine))
+        .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
+        .bindTooltip(
+          `<span class="map-machine-label__text">${escapeHtml(machine.maquina_id ?? machine.modelo)} · ${markerStatus.label}</span>`,
+          {
+            permanent: true,
+            direction: "top",
+            offset: getLabelOffset(machine, index, validPositions),
+            opacity: 1,
+            className: "map-machine-label",
+            sticky: true,
+          },
+        )
+        .on("click", () => setSelectedMachineId(machineId))
         .addTo(markers);
+      markerRefs.current.set(machineId, marker);
     });
 
     if (validPositions.length === 1) {
@@ -271,7 +334,34 @@ export default function MapClient({
     }
 
     setTimeout(() => map.invalidateSize(), 100);
-  }, [mapReady, positions]);
+  }, [mapReady, positions, selectedMachineId]);
+
+  useEffect(() => {
+    if (!selectedMachineId || !mapRef.current) return;
+    const marker = markerRefs.current.get(selectedMachineId);
+    if (!marker) return;
+    marker.openPopup();
+  }, [selectedMachineId, positions]);
+
+  const validPositions = positions.filter(isValidPosition);
+  const filteredPositions = validPositions.filter((machine) => {
+    const query = searchTerm.trim().toLocaleLowerCase();
+    if (!query) return true;
+    return [machine.maquina_id, machine.modelo, machine.status]
+      .filter(Boolean)
+      .some((value) => String(value).toLocaleLowerCase().includes(query));
+  });
+
+  function selectMachine(machine: MachinePosition) {
+    const machineId = machine.maquina_id ?? String(machine.id);
+    setSelectedMachineId(machineId);
+    const map = mapRef.current;
+    const marker = markerRefs.current.get(machineId);
+    if (map && marker) {
+      map.flyTo([machine.lat, machine.lng], Math.max(map.getZoom(), 13), { duration: 0.6 });
+      marker.openPopup();
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -323,7 +413,7 @@ export default function MapClient({
 
   if (estado.tipo === "carregando") {
     return (
-      <div className={`${fullBleed ? "h-full" : "min-h-[50vh] h-[calc(100vh-5.5rem)] sm:h-[calc(100vh-5rem)]"} flex w-full items-center justify-center`}>
+      <div className={`${fullBleed ? "h-full min-h-0" : "min-h-[50vh] h-[calc(100vh-5.5rem)] sm:h-[calc(100vh-5rem)]"} flex w-full items-center justify-center`}>
         <LoadingState mensagem="Carregando posições..." />
       </div>
     );
@@ -331,7 +421,7 @@ export default function MapClient({
 
   if (estado.tipo === "erro") {
     return (
-      <div className={`${fullBleed ? "h-full" : "min-h-[50vh] h-[calc(100vh-5.5rem)] sm:h-[calc(100vh-5rem)]"} flex w-full items-center justify-center`}>
+      <div className={`${fullBleed ? "h-full min-h-0" : "min-h-[50vh] h-[calc(100vh-5.5rem)] sm:h-[calc(100vh-5rem)]"} flex w-full items-center justify-center`}>
         <ErrorState mensagem={estado.mensagem} onRetry={() => setRetryCount((c) => c + 1)} />
       </div>
     );
@@ -346,7 +436,10 @@ export default function MapClient({
   }
 
   return (
-    <div className={`${fullBleed ? "h-full min-h-0" : "h-[calc(100vh-5.5rem)] min-h-[28rem] sm:h-[calc(100vh-5rem)]"} relative w-full`}>
+    <div
+      className={`map-surface map-surface--${mapTheme} ${fullBleed ? "h-full min-h-0" : "h-[calc(100vh-5.5rem)] min-h-[28rem] sm:h-[calc(100vh-5rem)]"} relative w-full`}
+      data-map-theme={mapTheme}
+    >
       {process.env.NODE_ENV !== "production" && (
         <div
           id="map-client-debug"
@@ -367,6 +460,51 @@ export default function MapClient({
       )}
 
       <div ref={containerRef} className={`relative z-0 h-full w-full ${fullBleed ? "min-h-0" : "min-h-[28rem]"}`} />
+
+      {fullBleed ? (
+        <div className="pointer-events-none absolute inset-0 z-10 p-4 pt-24 sm:p-6 sm:pt-28">
+          <div className="pointer-events-auto flex max-w-[min(22rem,calc(100vw-2rem))] flex-col gap-3">
+            <section className="liquid-glass--subtle p-4" aria-label="Resumo da frota">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="section-heading">Central de campo</p>
+                  <h2 className="mt-1 text-lg font-bold text-[var(--text-1)]">Frota em movimento</h2>
+                </div>
+                <span className="flex items-center gap-1.5 rounded-full bg-[color:var(--status-normal)]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[color:var(--status-normal)]">
+                  <Activity size={11} aria-hidden="true" /> ao vivo
+                </span>
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <div><p className="text-2xl font-bold text-[var(--text-1)]">{validPositions.length}</p><p className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-3)]">Total</p></div>
+                <div><p className="text-2xl font-bold text-[color:var(--status-normal)]">{validPositions.filter((m) => m.status === "operando").length}</p><p className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-3)]">Ativas</p></div>
+                <div><p className="text-2xl font-bold text-[color:var(--status-atencao)]">{validPositions.filter((m) => m.status !== "operando").length}</p><p className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-3)]">Atenção</p></div>
+              </div>
+            </section>
+
+            <section className="liquid-glass--subtle p-3" aria-label="Buscar máquina">
+              <label className="relative block">
+                <span className="sr-only">Buscar máquina no mapa</span>
+                <Search size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
+                <input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Buscar ID ou modelo" className="h-10 w-full rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] pl-9 pr-9 text-sm text-[var(--text-1)] outline-none placeholder:text-[var(--text-3)] focus:border-[color:var(--ui-accent)]/60" />
+                {searchTerm ? <button type="button" onClick={() => setSearchTerm("")} aria-label="Limpar busca" className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--text-3)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]"><X size={13} aria-hidden="true" /></button> : null}
+              </label>
+              {searchTerm && filteredPositions.length > 0 ? (
+                <div className="mt-2 max-h-36 space-y-1 overflow-y-auto">
+                  {filteredPositions.map((machine) => {
+                    const machineId = machine.maquina_id ?? String(machine.id);
+                    return <button key={machineId} type="button" onClick={() => selectMachine(machine)} className="flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs text-[var(--text-2)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]"><span className="flex items-center gap-2"><Tractor size={13} aria-hidden="true" />{machineId}</span><span className="text-[10px] text-[var(--text-3)]">{machine.modelo}</span></button>;
+                  })}
+                </div>
+              ) : null}
+            </section>
+
+            <section className="liquid-glass--subtle hidden p-3 sm:block" aria-label="Atividade recente">
+              <p className="section-heading">Atividade recente</p>
+              <p className="mt-2 text-xs leading-relaxed text-[var(--text-2)]">Selecione um marcador para ver RPM, temperatura e o último horário recebido.</p>
+            </section>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

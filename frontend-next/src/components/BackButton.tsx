@@ -12,9 +12,9 @@ export function BackButton() {
       onClick={() => router.back()}
       aria-label="Voltar para a tela anterior"
       title="Voltar"
-      className="fixed left-4 top-4 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/20 text-field-text2 shadow-lg backdrop-blur-xl transition hover:border-white/20 hover:bg-white/10 hover:text-field-text1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.97] lg:left-28"
+      className="fixed left-4 top-4 z-40 flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel)]/90 text-[var(--text-3)] shadow-[var(--shadow-card)] backdrop-blur-xl transition hover:border-[rgba(255,255,255,0.18)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95 lg:left-[5.75rem]"
     >
-      <ArrowLeft aria-hidden="true" size={18} strokeWidth={1.8} />
+      <ArrowLeft aria-hidden="true" size={17} strokeWidth={1.8} />
     </button>
   );
 }

@@ -9,45 +9,38 @@ export function ApiStatusIndicator() {
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
-    let isActive = true;
+    let active = true;
 
-    async function verificarAPI() {
+    async function check() {
       try {
         const res = await fetch(`${API_URL}/health/`, {
           signal: AbortSignal.timeout(3000),
           cache: 'no-store',
         });
-
-        if (!res.ok) throw new Error('API Degradada');
-
+        if (!res.ok) throw new Error();
         const data = await res.json();
-        if (isActive) setIsOnline(data.status === 'ok');
+        if (active) setIsOnline(data.status === 'ok');
       } catch {
-        if (isActive) setIsOnline(false);
+        if (active) setIsOnline(false);
       }
     }
 
-    verificarAPI();
-
-    const intervalId = setInterval(verificarAPI, 15000);
-
-    return () => {
-      isActive = false;
-      clearInterval(intervalId);
-    };
+    check();
+    const id = setInterval(check, 15000);
+    return () => { active = false; clearInterval(id); };
   }, []);
 
   return (
-    <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 backdrop-blur-md">
+    <div className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--panel-glass-mid)] px-2.5 py-1.5">
       <span
-        className={`h-2 w-2 rounded-full ${
+        className={`h-1.5 w-1.5 rounded-full ${
           isOnline
-            ? 'bg-status-normal shadow-[0_0_8px_rgba(204,255,0,0.5)]'
-            : 'animate-pulse bg-status-critico shadow-[0_0_8px_rgba(255,94,0,0.5)]'
+            ? 'bg-[color:var(--status-normal)] shadow-[0_0_6px_var(--glow-normal-strong)]'
+            : 'animate-pulse bg-[color:var(--status-critico)]'
         }`}
       />
-      <span className="text-xs uppercase tracking-label text-slate-400">
-        API {isOnline ? 'Online' : 'Offline'}
+      <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">
+        API {isOnline ? 'online' : 'offline'}
       </span>
     </div>
   );

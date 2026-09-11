@@ -15,18 +15,18 @@ import type { EstadoRequisicao } from '@/types/api';
 import type { Telemetry } from '@/types/telemetry';
 
 export default function DetailsPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
-  const [machineId, setMachineId] = useState<string | null>(null);
-  const [estado, setEstado] = useState<EstadoRequisicao<Telemetry[]>>({ tipo: 'carregando' });
+  const [machineId, setMachineId]       = useState<string | null>(null);
+  const [estado, setEstado]             = useState<EstadoRequisicao<Telemetry[]>>({ tipo: 'carregando' });
   const [showPrescricao, setShowPrescricao] = useState(false);
 
   const carregar = useCallback((id: string) => {
     setEstado({ tipo: 'carregando' });
     telemetryService.getMachineReadings(id)
       .then((data) =>
-        setEstado(data.length === 0 ? { tipo: 'vazio' } : { tipo: 'sucesso', dados: data })
+        setEstado(data.length === 0 ? { tipo: 'vazio' } : { tipo: 'sucesso', dados: data }),
       )
       .catch((err: unknown) =>
-        setEstado({ tipo: 'erro', mensagem: err instanceof Error ? err.message : 'API de telemetria nao respondeu' })
+        setEstado({ tipo: 'erro', mensagem: err instanceof Error ? err.message : 'API de telemetria não respondeu' }),
       );
   }, []);
 
@@ -42,58 +42,62 @@ export default function DetailsPage({ searchParams }: { searchParams: Promise<{ 
   if (estado.tipo === 'carregando') {
     return (
       <AppShell active="/colheitadeiras" eyebrow="Detalhes" title="Carregando...">
-        <LoadingState mensagem="Carregando historico da maquina..." />
+        <LoadingState mensagem="Carregando histórico da máquina..." />
       </AppShell>
     );
   }
 
   if (!machineId) {
     return (
-      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title="Maquina nao selecionada">
-        <EmptyState title="Nenhuma maquina selecionada." message="Volte para maquinas e escolha uma leitura. Sem ID, ate o dashboard fica olhando para o nada." />
+      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title="Máquina não selecionada">
+        <EmptyState title="Nenhuma máquina selecionada." message="Volte para máquinas e escolha uma leitura." />
       </AppShell>
     );
   }
 
   if (estado.tipo === 'erro') {
     return (
-      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title={`Maquina ${machineId}`}>
-        <ErrorState title="Nao consegui carregar o historico." message={estado.mensagem} />
+      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title={`Máquina ${machineId}`}>
+        <ErrorState title="Não consegui carregar o histórico." message={estado.mensagem} />
       </AppShell>
     );
   }
 
   if (estado.tipo === 'vazio') {
     return (
-      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title={`Maquina ${machineId}`}>
-        <EmptyState title="Nenhuma leitura encontrada." message="Esta maquina existe no link, mas ainda nao tem telemetria registrada." />
+      <AppShell active="/colheitadeiras" eyebrow="Detalhes" title={`Máquina ${machineId}`}>
+        <EmptyState title="Nenhuma leitura encontrada." message="Esta máquina ainda não tem telemetria registrada." />
       </AppShell>
     );
   }
 
   const readings = estado.dados;
-  const latest = readings[0];
-  const risk = latest.status_risco?.rotuloRisco;
+  const latest   = readings[0];
+  const risk     = latest.status_risco?.rotuloRisco;
   const tempTone = latest.temperatura > 85 ? 'red' : latest.temperatura > 75 ? 'amber' : 'emerald';
-  const vibTone = latest.vibracao > 0.8 ? 'red' : latest.vibracao > 0.5 ? 'amber' : 'emerald';
-  const rpmTone = latest.rpm < 1300 ? 'amber' : 'emerald';
+  const vibTone  = latest.vibracao > 0.8 ? 'red' : latest.vibracao > 0.5 ? 'amber' : 'emerald';
+  const rpmTone  = latest.rpm < 1300 ? 'amber' : 'emerald';
 
   return (
     <>
       <AppShell
         active="/colheitadeiras"
         eyebrow="Detalhes"
-        title={`Maquina ${machineId}`}
+        title={`Máquina ${machineId}`}
         actions={
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <ReportButton machineId={machineId} />
             <button
+              type="button"
               onClick={() => setShowPrescricao(true)}
-              className="rounded-md border border-blue-500/30 bg-blue-900/20 px-3 py-2 text-sm font-semibold text-blue-200 transition hover:bg-blue-900/40"
+              className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
             >
               Ver Decisão
             </button>
-            <Link href="/colheitadeiras" className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.08]">
+            <Link
+              href="/colheitadeiras"
+              className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]"
+            >
               Voltar
             </Link>
           </div>
@@ -101,22 +105,22 @@ export default function DetailsPage({ searchParams }: { searchParams: Promise<{ 
       >
         <div className="space-y-5">
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Temperatura" value={`${latest.temperatura}C`} tone={tempTone} helper="ultima leitura" />
-            <MetricCard label="Vibracao" value={`${latest.vibracao}g`} tone={vibTone} helper="ultima leitura" />
-            <MetricCard label="RPM" value={latest.rpm} tone={rpmTone} helper="rotacao atual" />
-            <article className="glass-panel rounded-lg p-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Status</p>
-              <div className="mt-4">
-                <StatusBadge tone={riskTone(risk)}>{risk ?? 'Indisponivel'}</StatusBadge>
+            <MetricCard label="Temperatura" value={`${latest.temperatura}°C`} tone={tempTone} helper="última leitura" />
+            <MetricCard label="Vibração"    value={`${latest.vibracao}g`}     tone={vibTone}  helper="última leitura" />
+            <MetricCard label="RPM"         value={latest.rpm}                tone={rpmTone}  helper="rotação atual" />
+            <article className="metric-card transition-all duration-200">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Status</p>
+              <div className="mt-3">
+                <StatusBadge tone={riskTone(risk)}>{risk ?? 'Indisponível'}</StatusBadge>
               </div>
-              <p className="mt-4 text-sm text-slate-400">informado pela API</p>
+              <p className="mt-3 text-xs text-[var(--text-3)]">informado pela API</p>
             </article>
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <HistoryChart title="Historico de temperatura" readings={readings} field="temperatura" suffix="C" tone="red" />
-            <HistoryChart title="Historico de vibracao" readings={readings} field="vibracao" suffix="g" tone="amber" />
-            <HistoryChart title="Historico de RPM" readings={readings} field="rpm" tone="emerald" />
+            <HistoryChart title="Histórico de temperatura" readings={readings} field="temperatura" suffix="°C" tone="red" />
+            <HistoryChart title="Histórico de vibração"    readings={readings} field="vibracao"    suffix="g"  tone="amber" />
+            <HistoryChart title="Histórico de RPM"         readings={readings} field="rpm"                     tone="emerald" />
           </section>
         </div>
       </AppShell>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
+import { X } from 'lucide-react';
+import useSWR from 'swr';
 import { telemetryService } from '@/services/telemetryService';
 import { ErrorState } from '@/components/ui/FeedbackStates';
 import type { AnalisePrescricao } from '@/types/telemetry';
@@ -12,11 +12,14 @@ interface PrescricaoModalProps {
   onClose: () => void;
 }
 
-function statusTone(status: AnalisePrescricao['status']) {
+function statusStyle(status: AnalisePrescricao['status']) {
   switch (status) {
-    case 'CRITICO': return 'bg-red-900/50 text-red-200 border-red-700';
-    case 'ATENCAO': return 'bg-amber-900/50 text-amber-200 border-amber-700';
-    default: return 'bg-green-900/50 text-green-200 border-green-700';
+    case 'CRITICO':
+      return 'border-[color:var(--status-critico)]/25 bg-[color:var(--status-critico)]/8 text-[color:var(--status-critico)]';
+    case 'ATENCAO':
+      return 'border-[color:var(--status-atencao)]/25 bg-[color:var(--status-atencao)]/8 text-[color:var(--status-atencao)]';
+    default:
+      return 'border-[color:var(--status-normal)]/25 bg-[color:var(--status-normal)]/8 text-[color:var(--status-normal)]';
   }
 }
 
@@ -27,21 +30,10 @@ function fonteLabel(fonte: AnalisePrescricao['fonte_explicacao']) {
 }
 
 export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalProps) {
-  const { mutate } = useSWRConfig();
-  const shouldFetch = isOpen && Boolean(machineId);
+  const swrKey = isOpen && machineId ? ['analise-prescricao', machineId] as const : null;
 
-  useEffect(() => {
-    if (!isOpen) {
-      mutate(
-        (key) => Array.isArray(key) && key[0] === 'analise-prescricao',
-        undefined,
-        { revalidate: false },
-      );
-    }
-  }, [isOpen, mutate]);
-
-  const { data: analise, error, isLoading: loading } = useSWR<AnalisePrescricao>(
-    shouldFetch && machineId ? ['analise-prescricao', machineId] : null,
+  const { data: analise, error } = useSWR<AnalisePrescricao>(
+    swrKey,
     ([, id]: readonly ['analise-prescricao', string]) =>
       telemetryService.getAnalisePrescricao(id),
     {
@@ -53,66 +45,94 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
 
   if (!isOpen) return null;
 
+  const currentAnalise = machineId && analise?.maquina_id === machineId ? analise : undefined;
+  const visibleAnalise = currentAnalise && !error ? currentAnalise : undefined;
+  const showData = Boolean(visibleAnalise);
+  const showLoading = Boolean(machineId) && !visibleAnalise && !error;
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="glass-panel w-full max-w-lg rounded-lg p-6 max-h-[85vh] flex flex-col"
-        onClick={(event) => event.stopPropagation()}
+        className="liquid-glass--elevated flex max-h-[85vh] w-full max-w-lg flex-col p-5"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4 shrink-0">
+        {/* Header */}
+        <div className="mb-4 flex shrink-0 items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-50">Prescrição Operacional</h2>
-            {machineId && <p className="text-xs text-slate-500 mt-0.5">{machineId}</p>}
+            <h2 className="text-base font-bold text-[var(--text-1)]">Prescrição Operacional</h2>
+            {machineId && (
+              <p className="mt-0.5 font-mono text-xs text-[var(--text-3)]">{machineId}</p>
+            )}
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 text-lg leading-none" aria-label="Fechar">
-            ×
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
+          >
+            <X size={15} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 space-y-3 pr-1">
+        {/* Conteúdo */}
+        <div className="flex-1 space-y-3 overflow-y-auto pr-1">
           {!machineId && (
-            <p className="text-center py-8 text-slate-400 text-sm">
+            <p className="py-8 text-center text-sm text-[var(--text-3)]">
               Selecione uma máquina para ver a prescrição.
             </p>
           )}
 
-          {loading && (
-            <div className="flex items-center justify-center py-10 gap-2 text-slate-400 text-sm">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-300 border-t-transparent" />
-              Analisando telemetria...
+          {showLoading && (
+            <div className="flex items-center justify-center gap-2.5 py-10 text-[var(--text-3)]">
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-[color:var(--ui-accent)] border-t-transparent" />
+              <span className="text-xs font-semibold uppercase tracking-[0.1em]">
+                Analisando telemetria...
+              </span>
             </div>
           )}
 
           {error && (
-            <ErrorState mensagem={error instanceof Error ? error.message : "Falha ao carregar prescrição."} />
+            <ErrorState
+              mensagem={error instanceof Error ? error.message : 'Falha ao carregar prescrição.'}
+            />
           )}
 
-          {analise && !loading && (
-            <div className={`rounded-lg border p-4 ${statusTone(analise.status)}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider opacity-70">Recomendação atual</span>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${statusTone(analise.status)}`}>
-                  {analise.status}
+          {showData && visibleAnalise && (
+            <div className={`rounded-xl border p-4 ${statusStyle(visibleAnalise.status)}`}>
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] opacity-70">
+                  Recomendação atual
+                </span>
+                <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${statusStyle(visibleAnalise.status)}`}>
+                  {visibleAnalise.status}
                 </span>
               </div>
               <p className="text-sm font-semibold leading-relaxed">
-                {analise.explicacao_operador || analise.recomendacao_tecnica || 'Nenhuma ação necessária.'}
+                {visibleAnalise.explicacao_operador || visibleAnalise.recomendacao_tecnica || 'Nenhuma ação necessária.'}
               </p>
-              {analise.recomendacao_tecnica && (
-                <p className="text-xs opacity-75 mt-3">Conduta técnica: {analise.recomendacao_tecnica}</p>
+              {visibleAnalise.recomendacao_tecnica && (
+                <p className="mt-3 text-xs opacity-75">
+                  Conduta técnica: {visibleAnalise.recomendacao_tecnica}
+                </p>
               )}
-              <p className="text-xs opacity-60 mt-3">
-                {fonteLabel(analise.fonte_explicacao)} · {new Date(analise.gerado_em).toLocaleString('pt-BR')}
+              <p className="mt-3 text-[10px] opacity-60">
+                {fonteLabel(visibleAnalise.fonte_explicacao)} ·{' '}
+                {new Date(visibleAnalise.gerado_em).toLocaleString('pt-BR')}
               </p>
             </div>
           )}
         </div>
 
-        <div className="mt-4 flex justify-end shrink-0">
-          <button onClick={onClose} className="rounded-md bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-600">
+        {/* Footer */}
+        <div className="mt-4 flex shrink-0 justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-4 py-2 text-sm font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
+          >
             Fechar
           </button>
         </div>

@@ -1,16 +1,79 @@
 'use client';
 
-import { Line, LineChart, ResponsiveContainer } from 'recharts';
-import { glassCard, kpiLabel, kpiNumber, sparklineColor } from '@/lib/design-tokens';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  YAxis,
+} from 'recharts';
 
 type SparklineStatus = 'normal' | 'atencao' | 'critico';
+
+const strokeHex: Record<SparklineStatus, string> = {
+  normal:  '#0FD492',
+  atencao: '#FBAD14',
+  critico: '#F04F4F',
+};
+
+const fillStop0: Record<SparklineStatus, string> = {
+  normal:  'rgba(15,212,146,0.62)',
+  atencao: 'rgba(251,173,20,0.58)',
+  critico: 'rgba(240,79,79,0.60)',
+};
 
 interface SparklineCardProps {
   titulo: string;
   valor: string | number;
   unidade?: string;
-  dados: { valor: number }[];
+  dados: { valor: number; label?: string }[];
   status: SparklineStatus;
+  tendencia?: string;
+  isDemoData?: boolean;
+}
+
+function ChartTooltip({
+  active,
+  payload,
+  label,
+  unidade,
+}: {
+  active?: boolean;
+  payload?: Array<{ value?: number }>;
+  label?: string;
+  unidade?: string;
+}) {
+  if (!active || !payload?.length) return null;
+  const value = Number(payload[0]?.value);
+  return (
+    <div className="liquid-glass--subtle min-w-28 rounded-xl px-3 py-2 shadow-xl">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">{label || 'Ponto'}</p>
+      <p className="mt-1 text-sm font-bold text-[var(--text-1)]">{value.toLocaleString('pt-BR')}{unidade ? ` ${unidade}` : ''}</p>
+    </div>
+  );
+}
+
+// Dot customizado: só renderiza no último ponto
+function LastDot(props: {
+  cx?: number;
+  cy?: number;
+  index?: number;
+  dataLength: number;
+  stroke: string;
+}) {
+  const { cx, cy, index, dataLength, stroke } = props;
+  if (index !== dataLength - 1) return null;
+  if (cx == null || cy == null) return null;
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={5.5}
+      fill={stroke}
+      stroke="var(--background)"
+      strokeWidth={2}
+    />
+  );
 }
 
 export function SparklineCard({
@@ -19,35 +82,96 @@ export function SparklineCard({
   unidade,
   dados,
   status,
+  tendencia,
+  isDemoData,
 }: SparklineCardProps) {
-  const critico = status === 'critico';
+  const stroke = strokeHex[status];
+  const uid = `${status}-${titulo.replace(/\W/g, '')}`;
+  const gradId = `area-${uid}`;
+  const glowId = `glow-${uid}`;
+
+  // Domínio dinâmico com margem de 12%
+  const values = dados.map((d) => d.valor).filter(Number.isFinite);
+  const minVal = values.length ? Math.min(...values) : 0;
+  const maxVal = values.length ? Math.max(...values) : 1;
+  const range = maxVal - minVal;
+  const margin = range * 0.12 || Math.max(Math.abs(maxVal) * 0.1, 1);
+  const domain: [number, number] = [minVal - margin, maxVal + margin];
 
   return (
     <article
       aria-label={titulo}
-      className={`${glassCard} relative overflow-hidden p-6 transition-all duration-300 hover:border-white/20 ${
-        critico
-          ? 'border-orange-500/30 bg-gradient-to-br from-orange-950/40 via-slate-900/40 to-slate-900/40 shadow-[0_0_30px_rgba(255,94,0,0.15)]'
-          : ''
-      }`}
+      className={`metric-card metric-card--${status} transition-all duration-200`}
     >
-      <p className={kpiLabel}>{titulo}</p>
-      <p className={kpiNumber}>
-        {valor}
-        {unidade ? <span className="ml-1 text-lg font-normal text-slate-400">{unidade}</span> : null}
+      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+        {titulo}
       </p>
-      <div className="mt-4 h-12 opacity-80" aria-hidden="true">
+
+      <div className="mt-3 flex items-end justify-between gap-2">
+        <p className="text-3xl font-bold tracking-tighter text-[var(--text-1)] sm:text-4xl">
+          {valor}
+          {unidade ? (
+            <span className="ml-1 text-base font-normal text-[var(--text-3)]">
+              {unidade}
+            </span>
+          ) : null}
+        </p>
+        <div className="mb-1 flex flex-col items-end gap-0.5">
+          {tendencia ? (
+            <p className="text-xs text-[var(--text-3)]">{tendencia}</p>
+          ) : null}
+          {isDemoData && (
+            <p className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)] opacity-50">
+              demonstrativo
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 h-12" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={dados}>
-            <Line
+          <AreaChart data={dados} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={fillStop0[status]} />
+                <stop offset="55%" stopColor={stroke} stopOpacity="0.18" />
+                <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+              </linearGradient>
+              <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <YAxis domain={domain} hide />
+            <Tooltip
+              cursor={{ stroke: stroke, strokeDasharray: '3 3', opacity: 0.35 }}
+              content={<ChartTooltip unidade={unidade} />}
+            />
+
+            <Area
               type="monotone"
               dataKey="valor"
-              stroke={sparklineColor[status]}
-              strokeWidth={2.5}
-              dot={false}
-              isAnimationActive={false}
+              stroke={stroke}
+              strokeWidth={2.8}
+              fill={`url(#${gradId})`}
+              filter={`url(#${glowId})`}
+              isAnimationActive
+              animationDuration={700}
+              animationEasing="ease-out"
+              dot={(dotProps) => (
+                <LastDot
+                  {...dotProps}
+                  dataLength={dados.length}
+                  stroke={stroke}
+                />
+              )}
+              activeDot={{ r: 5, fill: stroke, stroke: 'var(--background)', strokeWidth: 2 }}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </article>

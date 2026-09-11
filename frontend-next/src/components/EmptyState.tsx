@@ -1,37 +1,38 @@
+import { AlertTriangle, Inbox } from 'lucide-react';
+
 export function EmptyState({ title, message }: { title: string; message: string }) {
   return (
-    <section className="glass-panel rounded-lg border-dashed p-8 text-center">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Sem dados</p>
-      <h2 className="mt-2 text-lg font-semibold text-slate-100">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-400">{message}</p>
+    <section className="metric-card border border-dashed border-[var(--line)] py-12 text-center">
+      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--panel-glass-strong)] text-[var(--text-3)]">
+        <Inbox size={20} aria-hidden="true" />
+      </div>
+      <h2 className="mt-4 text-sm font-bold text-[var(--text-1)]">{title}</h2>
+      <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-[var(--text-3)]">{message}</p>
     </section>
   );
 }
 
 const ERROR_VARIANT = {
   api: {
-    label: 'API indisponivel',
-    icon: '✗',
-    border: 'border-red-300/20',
-    bg: 'bg-red-300/10',
-    labelColor: 'text-red-200',
-    messageColor: 'text-red-100/75',
+    label: 'API indisponível',
+    border: 'border-[color:var(--status-critico)]/20',
+    bg:     'bg-[color:var(--status-critico)]/5',
+    text:   'text-[color:var(--status-critico)]',
+    sub:    'text-[color:var(--status-critico)]/70',
   },
   gps: {
     label: 'GPS ausente',
-    icon: '⊘',
-    border: 'border-amber-300/20',
-    bg: 'bg-amber-300/10',
-    labelColor: 'text-amber-200',
-    messageColor: 'text-amber-100/75',
+    border: 'border-[color:var(--status-atencao)]/20',
+    bg:     'bg-[color:var(--status-atencao)]/5',
+    text:   'text-[color:var(--status-atencao)]',
+    sub:    'text-[color:var(--status-atencao)]/70',
   },
   insufficient: {
     label: 'Dados insuficientes',
-    icon: '~',
-    border: 'border-slate-300/20',
-    bg: 'bg-slate-300/10',
-    labelColor: 'text-slate-400',
-    messageColor: 'text-slate-400/75',
+    border: 'border-[var(--line)]',
+    bg:     'bg-[var(--panel-glass-mid)]',
+    text:   'text-[var(--text-3)]',
+    sub:    'text-[var(--text-3)]/70',
   },
 } as const;
 
@@ -48,12 +49,17 @@ export function ErrorState({
 }) {
   const v = ERROR_VARIANT[variant];
   return (
-    <section className={`rounded-lg border ${v.border} ${v.bg} p-6`}>
-      <p className={`text-[11px] font-semibold uppercase tracking-[0.2em] ${v.labelColor}`}>
-        {v.icon} {v.label}
-      </p>
-      <h2 className="mt-2 text-lg font-semibold text-slate-100">{title}</h2>
-      <p className={`mt-3 max-w-2xl text-sm leading-6 ${v.messageColor}`}>{message}</p>
+    <section className={`metric-card border ${v.border} ${v.bg}`}>
+      <div className="flex items-start gap-3">
+        <AlertTriangle size={18} className={`mt-0.5 shrink-0 ${v.text}`} aria-hidden="true" />
+        <div>
+          <p className={`text-[10px] font-semibold uppercase tracking-[0.1em] ${v.text}`}>
+            {v.label}
+          </p>
+          <h2 className="mt-1.5 text-sm font-bold text-[var(--text-1)]">{title}</h2>
+          <p className={`mt-1.5 text-xs leading-relaxed ${v.sub}`}>{message}</p>
+        </div>
+      </div>
     </section>
   );
 }

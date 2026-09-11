@@ -2,14 +2,14 @@ import type { Telemetry } from '@/types/telemetry';
 import { chartColors } from '@/lib/theme';
 
 const toneStyles = {
-  red: { ...chartColors.critico, label: 'Crítico' },
-  amber: { ...chartColors.atencao, label: 'Atenção' },
+  red:     { ...chartColors.critico, label: 'Crítico' },
+  amber:   { ...chartColors.atencao, label: 'Atenção' },
   emerald: chartColors.normal,
 };
 
 const thresholdRanges: Record<string, { alert: number; critical: number; unit: string; higherIsWorse: boolean; min: number; max: number }> = {
-  temperatura: { alert: 95, critical: 110, unit: '°C', higherIsWorse: true, min: 0, max: 150 },
-  vibracao:    { alert: 0.5, critical: 0.8, unit: 'g', higherIsWorse: true, min: 0, max: 10 },
+  temperatura: { alert: 95, critical: 110, unit: '°C', higherIsWorse: true,  min: 0, max: 150  },
+  vibracao:    { alert: 0.5, critical: 0.8, unit: 'g', higherIsWorse: true,  min: 0, max: 10   },
   rpm:         { alert: 1400, critical: 1200, unit: 'rpm', higherIsWorse: false, min: 0, max: 3000 },
 };
 
@@ -29,32 +29,33 @@ export function HistoryChart({
   tone: keyof typeof toneStyles;
 }) {
   const points = readings.map((r) => Number(r[field])).reverse();
+
   if (!points.length) {
     return (
-      <article className="glass-panel rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-field-text2">{title}</h2>
-        <p className="mt-4 text-xs text-field-text3">Sem leituras no período.</p>
+      <article className="metric-card border border-[var(--line)]">
+        <h2 className="text-sm font-semibold text-[var(--text-2)]">{title}</h2>
+        <p className="mt-4 text-xs text-[var(--text-3)]">Sem leituras no período.</p>
       </article>
     );
   }
 
-  const width = 640;
+  const width  = 640;
   const height = 220;
-  const pad = { top: 24, right: 24, bottom: 32, left: 48 };
-  const innerW = width - pad.left - pad.right;
-  const innerH = height - pad.top - pad.bottom;
-  const max = Math.max(...points, 1);
-  const min = Math.min(...points, 0);
+  const pad    = { top: 24, right: 24, bottom: 32, left: 48 };
+  const innerW = width  - pad.left - pad.right;
+  const innerH = height - pad.top  - pad.bottom;
+  const max    = Math.max(...points, 1);
+  const min    = Math.min(...points, 0);
 
   const rangeConfig = thresholdRanges[field];
 
-  let effectiveMin = min;
-  let effectiveMax = max;
+  let effectiveMin   = min;
+  let effectiveMax   = max;
   let effectiveRange = max - min || 1;
 
   if (rangeConfig) {
-    effectiveMin = Math.min(min, rangeConfig.min);
-    effectiveMax = Math.max(max, rangeConfig.max);
+    effectiveMin   = Math.min(min, rangeConfig.min);
+    effectiveMax   = Math.max(max, rangeConfig.max);
     effectiveRange = effectiveMax - effectiveMin || 1;
   }
 
@@ -64,9 +65,11 @@ export function HistoryChart({
   const line = points.map((v, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
   const area = `${line} L ${x(points.length - 1)} ${pad.top + innerH} L ${x(0)} ${pad.top + innerH} Z`;
 
-  const ticks = 5;
+  const ticks  = 5;
   const yTicks = Array.from({ length: ticks }, (_, i) => effectiveMin + (effectiveRange * i) / (ticks - 1));
-  const xTicks = points.filter((_, i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0).map((_, i) => i);
+  const xTicks = points
+    .filter((_, i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0)
+    .map((_, i) => i);
 
   const colors = toneStyles[tone] || toneStyles.emerald;
 
@@ -74,15 +77,15 @@ export function HistoryChart({
     return Math.max(pad.top, Math.min(pad.top + innerH, value));
   }
 
-  const alertY = rangeConfig ? clampY(pad.top + innerH - ((rangeConfig.alert - effectiveMin) / effectiveRange) * innerH) : null;
+  const alertY    = rangeConfig ? clampY(pad.top + innerH - ((rangeConfig.alert    - effectiveMin) / effectiveRange) * innerH) : null;
   const criticalY = rangeConfig ? clampY(pad.top + innerH - ((rangeConfig.critical - effectiveMin) / effectiveRange) * innerH) : null;
 
   return (
-    <article className="glass-panel rounded-lg p-6">
+    <article className={`metric-card ambient-glow-card ambient-glow-card--${tone} transition-all duration-200`}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-field-text2">{title}</h2>
-          <p className="text-[11px] text-field-text3">
+          <h2 className="text-sm font-semibold text-[var(--text-2)]">{title}</h2>
+          <p className="text-[11px] text-[var(--text-3)]">
             {points.length} leitura{points.length !== 1 ? 's' : ''} • máx {fmt.format(max)}{suffix}
           </p>
         </div>
@@ -90,18 +93,22 @@ export function HistoryChart({
           {rangeConfig && (
             <>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-status-atencao" />
-                <span className="text-[10px] font-medium text-field-text3">Alerta {fmt.format(rangeConfig.alert)}{rangeConfig.unit}</span>
+                <span className="h-2 w-2 rounded-full bg-[color:var(--status-atencao)]" />
+                <span className="text-[10px] font-medium text-[var(--text-3)]">
+                  Alerta {fmt.format(rangeConfig.alert)}{rangeConfig.unit}
+                </span>
               </span>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-status-critico" />
-                <span className="text-[10px] font-medium text-field-text3">Crítico {fmt.format(rangeConfig.critical)}{rangeConfig.unit}</span>
+                <span className="h-2 w-2 rounded-full bg-[color:var(--status-critico)]" />
+                <span className="text-[10px] font-medium text-[var(--text-3)]">
+                  Crítico {fmt.format(rangeConfig.critical)}{rangeConfig.unit}
+                </span>
               </span>
             </>
           )}
           <span className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full" style={{ background: colors.stroke }} />
-            <span className="text-[11px] font-medium text-field-text3">{field}</span>
+            <span className="text-[11px] font-medium text-[var(--text-3)]">{field}</span>
           </span>
         </div>
       </div>
@@ -115,9 +122,16 @@ export function HistoryChart({
       >
         <defs>
           <linearGradient id={`grad-${field}`} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor={colors.fill} />
+            <stop offset="0%"   stopColor={colors.fill} />
             <stop offset="100%" stopColor={chartColors.transparent} />
           </linearGradient>
+          <filter id={`glow-${field}`} x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
         <rect x={pad.left} y={pad.top} width={innerW} height={innerH} fill={chartColors.surface} rx="4" />
@@ -127,7 +141,7 @@ export function HistoryChart({
           return (
             <g key={v}>
               <line x1={pad.left} x2={pad.left + innerW} y1={cy} y2={cy} stroke={chartColors.grid} strokeDasharray="4 4" />
-              <text x={pad.left - 8} y={cy + 3} textAnchor="end" className="text-[10px] fill-field-text3">
+              <text x={pad.left - 8} y={cy + 3} textAnchor="end" fill="var(--text-3)" fontSize="10">
                 {fmt.format(v)}{suffix}
               </text>
             </g>
@@ -135,42 +149,32 @@ export function HistoryChart({
         })}
 
         {criticalY !== null && (
-          <line
-            x1={pad.left}
-            x2={pad.left + innerW}
-            y1={criticalY}
-            y2={criticalY}
-            stroke={chartColors.critico.stroke}
-            strokeDasharray="6 4"
-            opacity="0.9"
-          />
+          <line x1={pad.left} x2={pad.left + innerW} y1={criticalY} y2={criticalY}
+            stroke={chartColors.critico.stroke} strokeDasharray="6 4" opacity="0.9" />
         )}
         {alertY !== null && (
-          <line
-            x1={pad.left}
-            x2={pad.left + innerW}
-            y1={alertY}
-            y2={alertY}
-            stroke={chartColors.atencao.stroke}
-            strokeDasharray="6 4"
-            opacity="0.9"
-          />
+          <line x1={pad.left} x2={pad.left + innerW} y1={alertY} y2={alertY}
+            stroke={chartColors.atencao.stroke} strokeDasharray="6 4" opacity="0.9" />
         )}
 
         {xTicks.map((i) => {
           const cx = x(i);
           return (
-            <text key={i} x={cx} y={pad.top + innerH + 18} textAnchor="middle" className="text-[10px] fill-field-text3">
+            <text key={i} x={cx} y={pad.top + innerH + 18} textAnchor="middle" fill="var(--text-3)" fontSize="10">
               {i + 1}
             </text>
           );
         })}
 
-        <path d={area} fill={`url(#grad-${field})`} opacity="0.7" />
-        <path d={line} fill="none" stroke={colors.stroke} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={area} fill={`url(#grad-${field})`} opacity="0.65" />
+        <path d={line} fill="none" stroke={colors.stroke} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${field})`} />
 
         {points.map((v, i) => (
-          <circle key={i} cx={x(i)} cy={y(v)} r="3" fill={colors.stroke} stroke={chartColors.pointStroke} strokeWidth="1.5">
+          <circle key={i} cx={x(i)} cy={y(v)} r={i === points.length - 1 ? 6 : 3}
+            fill={i === points.length - 1 ? colors.stroke : colors.stroke}
+            stroke={i === points.length - 1 ? 'var(--background)' : chartColors.pointStroke}
+            strokeWidth={i === points.length - 1 ? 2 : 1.5}
+            opacity={i === points.length - 1 ? 1 : 0.7}>
             <title>{`${fmt.format(v)}${suffix}`}</title>
           </circle>
         ))}

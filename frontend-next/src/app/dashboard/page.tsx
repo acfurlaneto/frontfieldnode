@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { telemetryService } from '@/services/telemetryService';
 import { AppShell } from '@/components/AppShell';
 import { ChatFAB } from '@/components/ChatFAB';
@@ -6,90 +5,75 @@ import { ErrorState } from '@/components/EmptyState';
 import { FleetGrid } from '@/components/FleetGrid';
 import { FleetMap } from '@/components/FleetMap';
 import { ReportButton } from '@/components/ReportButton';
-import { SkeletonGrid } from '@/components/SkeletonGrid';
-import { SparklineCard } from '@/components/SparklineCard';
+import { DashboardMachineData } from '@/components/DashboardMachineData';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 type FleetStatus = Awaited<ReturnType<typeof telemetryService.getFleetStatus>>;
+type TelemetryReadings = Awaited<ReturnType<typeof telemetryService.getLatestReadings>>;
 
-const dadosRpm = [
-  { valor: 1750 },
-  { valor: 1800 },
-  { valor: 1820 },
-  { valor: 1790 },
-  { valor: 1850 },
-  { valor: 1820 },
-];
-
-const dadosTemperatura = [
-  { valor: 72 },
-  { valor: 74 },
-  { valor: 76 },
-  { valor: 79 },
-  { valor: 82 },
-  { valor: 78 },
-];
-
-const dadosVibracao = [
-  { valor: 1.8 },
-  { valor: 2.0 },
-  { valor: 1.9 },
-  { valor: 2.2 },
-  { valor: 2.1 },
-  { valor: 2.1 },
-];
-
-async function FleetData() {
-  let machines;
-
-  try {
-    machines = await telemetryService.getFleetStatus();
-  } catch {
-    return <ErrorState title="Nao consegui falar com a API agora." message="Confira se o backend Django esta rodando em 127.0.0.1:8000. O dashboard continua de pe, so esta sem dados frescos para mostrar." />;
-  }
-
+function FleetData({ machines, readings }: { machines: FleetStatus; readings: TelemetryReadings }) {
   return (
     <div className="space-y-6">
-      <section aria-label="Indicadores operacionais" className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-12">
-        <div className="md:col-span-4">
-          <SparklineCard titulo="RPM Médio" valor={1820} dados={dadosRpm} status="normal" />
-        </div>
-        <div className="md:col-span-4">
-          <SparklineCard
-            titulo="Temperatura do Motor"
-            valor={78}
-            unidade="°C"
-            dados={dadosTemperatura}
-            status="atencao"
-          />
-        </div>
-        <div className="md:col-span-4">
-          <SparklineCard titulo="Vibração do Rotor" valor={2.1} dados={dadosVibracao} status="normal" />
+      <DashboardMachineData machines={machines} initialReadings={readings} />
+
+      <section aria-label="Resumo da frota">
+        <p className="section-heading mb-3">Resumo da frota</p>
+        <div className="grid grid-cols-3 gap-3 rounded-2xl p-4 liquid-glass">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-[var(--text-1)]">{machines.length}</p>
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Total</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-[color:var(--status-normal)]">{machines.filter((machine) => machine.status_de_operacao.em_operacao).length}</p>
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Ativos</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-[color:var(--status-atencao)]">{machines.filter((machine) => !machine.status_de_operacao.em_operacao).length}</p>
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Inativos</p>
+          </div>
         </div>
       </section>
-      <FleetGrid machines={machines} />
-      <FleetMap />
-      <ChatFAB machines={machines} />
+
+      <section aria-label="Máquinas da frota">
+        <p className="section-heading mb-3">Máquinas</p>
+        <FleetGrid machines={machines} />
+      </section>
+
+      <section aria-label="Posição em campo">
+        <p className="section-heading mb-3">Posição em campo</p>
+        <FleetMap />
+      </section>
+
     </div>
   );
 }
 
 export default async function DashboardPage() {
-  let reportMachines: FleetStatus = [];
+  let machines: FleetStatus = [];
+  let readings: TelemetryReadings = [];
   let reportError: string | null = null;
 
   try {
-    reportMachines = await telemetryService.getFleetStatus();
+    machines = await telemetryService.getFleetStatus();
   } catch (err) {
-    reportError = err instanceof Error ? err.message : "Falha ao carregar dados do dashboard.";
+    reportError = err instanceof Error ? err.message : 'Falha ao carregar dados do dashboard.';
+  }
+
+  if (!reportError) {
+    try {
+      readings = await telemetryService.getLatestReadings();
+    } catch {
+      readings = [];
+    }
   }
 
   if (reportError) {
     return (
       <AppShell active="/dashboard" eyebrow="FieldNode" title="Central de Operações">
-        <ErrorState title="Dashboard indisponivel" message={reportError} />
+        <ErrorState title="Dashboard indisponível" message={reportError} />
+        <ChatFAB machines={machines} />
       </AppShell>
     );
   }
@@ -99,20 +83,21 @@ export default async function DashboardPage() {
       active="/dashboard"
       eyebrow="FieldNode"
       title="Central de Operações"
+      description="Monitoramento da frota em tempo real"
       actions={
-        <div className="inline-flex items-center gap-2">
-          <ReportButton machines={reportMachines} />
-          <div className="inline-flex items-center gap-2 border border-status-normal/20 bg-status-normal/15 px-3 py-1.5 text-xs font-semibold text-status-normal shadow-[0_0_18px_var(--glow-normal)] animate-pulse">
-            <span className="h-2.5 w-2.5 bg-status-normal shadow-[0_0_6px_var(--glow-normal-strong)]" />
-            Sync offline ativo
+        <div className="flex items-center gap-2">
+          <ReportButton machines={machines} />
+          <div className="hidden items-center gap-1.5 rounded-lg border border-[color:var(--status-normal)]/20 bg-[color:var(--status-normal)]/8 px-2.5 py-1.5 sm:flex">
+            <span className="status-dot pulse" aria-hidden="true" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[color:var(--status-normal)]">
+              Sync ativo
+            </span>
           </div>
         </div>
       }
     >
-      <p className="mb-8 text-sm text-field-text3">Monitoramento multivariado da frota em tempo real.</p>
-      <Suspense fallback={<SkeletonGrid />}>
-        <FleetData />
-      </Suspense>
+      <FleetData machines={machines} readings={readings} />
+      <ChatFAB machines={machines} />
     </AppShell>
   );
 }
