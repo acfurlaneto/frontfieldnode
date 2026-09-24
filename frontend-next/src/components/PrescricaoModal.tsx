@@ -30,9 +30,9 @@ function fonteLabel(fonte: AnalisePrescricao['fonte_explicacao']) {
 }
 
 export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalProps) {
-  const swrKey = isOpen && machineId ? ['analise-prescricao', machineId] as const : null;
+  const swrKey = isOpen && machineId ? (['analise-prescricao', machineId] as const) : null;
 
-  const { data: analise, error } = useSWR<AnalisePrescricao>(
+  const { data: analise, error, isLoading } = useSWR<AnalisePrescricao>(
     swrKey,
     ([, id]: readonly ['analise-prescricao', string]) =>
       telemetryService.getAnalisePrescricao(id),
@@ -40,45 +40,51 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
       revalidateOnFocus: false,
       revalidateIfStale: false,
       keepPreviousData: false,
+      shouldRetryOnError: false,
     },
   );
 
   if (!isOpen) return null;
 
-  const currentAnalise = machineId && analise?.maquina_id === machineId ? analise : undefined;
-  const visibleAnalise = currentAnalise && !error ? currentAnalise : undefined;
+  const belongsToMachine = Boolean(
+    machineId && analise && String(analise.maquina_id) === String(machineId),
+  );
+  const visibleAnalise = belongsToMachine && !error ? analise : undefined;
   const showData = Boolean(visibleAnalise);
-  const showLoading = Boolean(machineId) && !visibleAnalise && !error;
+  const showLoading = Boolean(machineId) && (isLoading || (!visibleAnalise && !error));
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="prescricao-title"
     >
       <div
-        className="liquid-glass--elevated flex max-h-[85vh] w-full max-w-lg flex-col p-5"
+        className="liquid-glass--elevated relative z-10 flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden p-5"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="mb-4 flex shrink-0 items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-bold text-[var(--text-1)]">Prescrição Operacional</h2>
-            {machineId && (
+        <div className="mb-4 flex shrink-0 items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 id="prescricao-title" className="text-base font-bold text-[var(--text-1)]">
+              Prescrição Operacional
+            </h2>
+            {machineId ? (
               <p className="mt-0.5 font-mono text-xs text-[var(--text-3)]">{machineId}</p>
-            )}
+            ) : null}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
           >
             <X size={15} aria-hidden="true" />
           </button>
         </div>
 
-        {/* Conteúdo */}
-        <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
           {!machineId && (
             <p className="py-8 text-center text-sm text-[var(--text-3)]">
               Selecione uma máquina para ver a prescrição.
@@ -101,23 +107,27 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
           )}
 
           {showData && visibleAnalise && (
-            <div className={`rounded-xl border p-4 ${statusStyle(visibleAnalise.status)}`}>
-              <div className="mb-3 flex items-center justify-between gap-2">
+            <div className={`relative isolate rounded-xl border p-4 ${statusStyle(visibleAnalise.status)}`}>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.1em] opacity-70">
                   Recomendação atual
                 </span>
-                <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${statusStyle(visibleAnalise.status)}`}>
+                <span
+                  className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${statusStyle(visibleAnalise.status)}`}
+                >
                   {visibleAnalise.status}
                 </span>
               </div>
-              <p className="text-sm font-semibold leading-relaxed">
-                {visibleAnalise.explicacao_operador || visibleAnalise.recomendacao_tecnica || 'Nenhuma ação necessária.'}
+              <p className="text-sm font-semibold leading-relaxed text-[var(--text-1)]">
+                {visibleAnalise.explicacao_operador ||
+                  visibleAnalise.recomendacao_tecnica ||
+                  'Nenhuma ação necessária.'}
               </p>
-              {visibleAnalise.recomendacao_tecnica && (
-                <p className="mt-3 text-xs opacity-75">
+              {visibleAnalise.recomendacao_tecnica ? (
+                <p className="mt-3 text-xs leading-relaxed opacity-80">
                   Conduta técnica: {visibleAnalise.recomendacao_tecnica}
                 </p>
-              )}
+              ) : null}
               <p className="mt-3 text-[10px] opacity-60">
                 {fonteLabel(visibleAnalise.fonte_explicacao)} ·{' '}
                 {new Date(visibleAnalise.gerado_em).toLocaleString('pt-BR')}
@@ -126,7 +136,6 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
           )}
         </div>
 
-        {/* Footer */}
         <div className="mt-4 flex shrink-0 justify-end">
           <button
             type="button"
