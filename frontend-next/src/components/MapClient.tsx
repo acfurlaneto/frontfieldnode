@@ -13,6 +13,7 @@ type LeafletModule = typeof import("leaflet");
 type LeafletMap = import("leaflet").Map;
 type LeafletFeatureGroup = import("leaflet").FeatureGroup;
 type LeafletMarker = import("leaflet").Marker;
+type LeafletTileLayer = import("leaflet").TileLayer;
 
 const DEFAULT_CENTER: [number, number] = [-15.793889, -47.882778];
 
@@ -116,25 +117,15 @@ function getMarkerStatus(status: MachinePosition["status"]) {
   return { label: "Offline", color: "var(--status-critico)", glow: "var(--glow-red)" };
 }
 
-function getLabelOffset(machine: MachinePosition, index: number, positions: MachinePosition[]) {
-  const nearby = positions.some((other, otherIndex) => {
-    if (otherIndex === index) return false;
-    return Math.abs(other.lat - machine.lat) < 0.02 && Math.abs(other.lng - machine.lng) < 0.02;
-  });
-  if (!nearby) return [0, -22] as [number, number];
-  const offsets: [number, number][] = [[0, -30], [34, -18], [-34, -18], [30, 12], [-30, 12]];
-  return offsets[index % offsets.length];
-}
-
 function createMarkerIcon(L: LeafletModule, machine: MachinePosition, selected = false) {
   const status = getMarkerStatus(machine.status);
   const machineId = escapeHtml(machine.maquina_id ?? machine.modelo);
+  const markerSize = selected ? 42 : 34;
 
   return L.divIcon({
     className: `leaflet-machine-marker${selected ? " is-selected" : ""}`,
-    html: `<div aria-label="${machineId} — ${status.label}" title="${machineId}" style="display:flex;align-items:center;justify-content:center;width:${selected ? 42 : 34}px;height:${selected ? 42 : 34}px;border-radius:50%;border:2px solid ${status.color};background:rgba(8,12,18,0.82);color:${status.color};box-shadow:0 0 ${selected ? 22 : 12}px ${status.glow}, inset 0 0 0 4px rgba(255,255,255,0.04);transition:transform 180ms ease, box-shadow 180ms ease;"><span style="font-size:${selected ? 16 : 13}px;line-height:1;">🚜</span></div>`,
-    iconSize: [selected ? 42 : 34, selected ? 42 : 34],
-    iconAnchor: [selected ? 21 : 17, selected ? 21 : 17],
+    html: `<div class="map-machine-marker__content" style="transform:translate(-${markerSize / 2}px,-${markerSize / 2}px)" aria-label="${machineId} — ${status.label}" title="${machineId}"><span class="map-machine-marker__icon" style="width:${markerSize}px;height:${markerSize}px;border-color:${status.color};color:${status.color};box-shadow:0 0 ${selected ? 22 : 12}px ${status.glow}, inset 0 0 0 4px rgba(255,255,255,0.04);"><span style="font-size:${selected ? 16 : 13}px;line-height:1;">🚜</span></span><span class="map-machine-marker__label" style="border-color:color-mix(in srgb, ${status.color} 45%, transparent);"><span class="map-machine-marker__status-dot" style="background:${status.color};box-shadow:0 0 6px ${status.glow};"></span>${machineId} · ${status.label}</span></div>`,
+    iconAnchor: [markerSize / 2, markerSize / 2],
     popupAnchor: [0, selected ? -24 : -20],
   });
 }
@@ -173,10 +164,15 @@ export default function MapClient({
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [mapReady, setMapReady] = useState(false);
-  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>('dark');
+  const [mapTheme, setMapTheme] = useState<'dark' | 'light'>(() => (
+    typeof document !== "undefined" && document.documentElement.classList.contains("light")
+      ? "light"
+      : "dark"
+  ));
   const containerRef = useRef<HTMLDivElement | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const tileLayerRef = useRef<LeafletTileLayer | null>(null);
   const markersRef = useRef<LeafletFeatureGroup | null>(null);
   const markerRefs = useRef(new Map<string, LeafletMarker>());
   const [searchTerm, setSearchTerm] = useState("");
@@ -231,16 +227,14 @@ export default function MapClient({
         zoom: 4,
       });
 
-      const tileUrl = mapTheme === "dark"
-        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-
-      L.tileLayer(tileUrl, {
-        attribution: mapTheme === "dark"
-          ? '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          : "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-        subdomains: mapTheme === "dark" ? undefined : ["a", "b", "c"],
+      const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+        subdomains: ["a", "b", "c", "d"],
+        minZoom: 2,
+        maxZoom: 19,
+        crossOrigin: true,
       }).addTo(map);
+      tileLayerRef.current = tileLayer;
 
       const layerGroup = L.featureGroup().addTo(map);
       markersRef.current = layerGroup;
@@ -253,6 +247,7 @@ export default function MapClient({
       if (!active) {
         map.remove();
         mapRef.current = null;
+        tileLayerRef.current = null;
         setMapReady(false);
       }
     }
@@ -270,10 +265,17 @@ export default function MapClient({
         }
         cleanupLeafletContainer(container);
         mapRef.current = null;
+        tileLayerRef.current = null;
         setMapReady(false);
       }
     };
-  }, [mapTheme, shouldRenderMap]);
+  }, [shouldRenderMap]);
+
+  useEffect(() => {
+    const tileLayer = tileLayerRef.current;
+    if (!tileLayer) return;
+    tileLayer.setUrl("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png");
+  }, [mapTheme]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -299,24 +301,12 @@ export default function MapClient({
     markers.clearLayers();
     markerRefs.current.clear();
 
-    validPositions.forEach((machine, index) => {
+    validPositions.forEach((machine) => {
       const machineId = machine.maquina_id ?? String(machine.id);
-      const markerStatus = getMarkerStatus(machine.status);
       const marker = L.marker([machine.lat, machine.lng], {
         icon: createMarkerIcon(L, machine, machineId === selectedMachineId),
       })
         .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
-        .bindTooltip(
-          `<span class="map-machine-label__text" style="color:#F1F5F9 !important;font-weight:700;letter-spacing:0.02em;">${escapeHtml(machine.maquina_id ?? machine.modelo)} · ${markerStatus.label}</span>`,
-          {
-            permanent: true,
-            direction: "top",
-            offset: getLabelOffset(machine, index, validPositions),
-            opacity: 1,
-            className: "map-machine-label",
-            sticky: true,
-          },
-        )
         .on("click", () => setSelectedMachineId(machineId))
         .addTo(markers);
       markerRefs.current.set(machineId, marker);
@@ -437,7 +427,7 @@ export default function MapClient({
 
   return (
     <div
-      className={`map-surface map-surface--${mapTheme} ${fullBleed ? "h-full min-h-0" : "h-[calc(100vh-5.5rem)] min-h-[28rem] sm:h-[calc(100vh-5rem)]"} relative w-full`}
+      className={`map-surface map-surface--${mapTheme} ${mapTheme === "dark" ? "map-dark-filter" : ""} ${fullBleed ? "h-full min-h-0" : "h-[calc(100vh-5.5rem)] min-h-[28rem] sm:h-[calc(100vh-5rem)]"} relative w-full`}
       data-map-theme={mapTheme}
     >
       {process.env.NODE_ENV !== "production" && (

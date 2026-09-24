@@ -31,7 +31,7 @@ export function ChatFAB({ machines }: ChatFABProps) {
     <>
       {open && (
         <section
-          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom)+0.75rem)] right-3 z-[80] max-h-[min(32rem,calc(100dvh-8rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl p-4 shadow-2xl sm:right-6 sm:p-5 lg:bottom-20 lg:right-6"
+          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-3 z-[90] max-h-[min(32rem,calc(100dvh-8rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-[var(--line)] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.35)] sm:right-5 sm:p-5 lg:bottom-[5.25rem] lg:right-6"
           aria-label="Assistente de campo"
           role="dialog"
           aria-modal="false"
@@ -112,12 +112,12 @@ export function ChatFAB({ machines }: ChatFABProps) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label="Abrir assistente de campo"
-        className="chat-fab fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-3 z-[70] inline-flex min-h-11 items-center gap-2 rounded-full bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_24px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-6 lg:bottom-6"
+        aria-label={open ? 'Fechar assistente de campo' : 'Abrir assistente de campo'}
+        className="chat-fab fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-3 z-[85] inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_26px_var(--glow-normal)] transition duration-200 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] lg:bottom-6 lg:right-6"
       >
         <Sparkles size={16} aria-hidden="true" />
         <span className="hidden sm:inline">Pergunte à IA</span>
-        <span className="sm:hidden">IA</span>
+        <span className="sm:hidden" aria-hidden="true">IA</span>
       </button>
 
       <PrescricaoModal

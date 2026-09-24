@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Telemetry } from '@/types/telemetry';
 import { chartColors } from '@/lib/theme';
 
@@ -29,6 +30,8 @@ export function HistoryChart({
   tone: keyof typeof toneStyles;
 }) {
   const points = readings.map((r) => Number(r[field])).reverse();
+  const pointLabels = readings.map((reading) => new Date(reading.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })).reverse();
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   if (!points.length) {
     return (
@@ -68,8 +71,8 @@ export function HistoryChart({
   const ticks  = 5;
   const yTicks = Array.from({ length: ticks }, (_, i) => effectiveMin + (effectiveRange * i) / (ticks - 1));
   const xTicks = points
-    .filter((_, i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0)
-    .map((_, i) => i);
+    .map((_, i) => i)
+    .filter((i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0);
 
   const colors = toneStyles[tone] || toneStyles.emerald;
 
@@ -81,7 +84,10 @@ export function HistoryChart({
   const criticalY = rangeConfig ? clampY(pad.top + innerH - ((rangeConfig.critical - effectiveMin) / effectiveRange) * innerH) : null;
 
   return (
-    <article className={`metric-card ambient-glow-card ambient-glow-card--${tone} transition-all duration-200`}>
+    <article
+      className={`metric-card ambient-glow-card ambient-glow-card--${tone} transition-all duration-200`}
+      onClick={() => setSelectedIndex(null)}
+    >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold text-[var(--text-2)]">{title}</h2>
@@ -119,6 +125,7 @@ export function HistoryChart({
         role="img"
         aria-label={title}
         preserveAspectRatio="xMidYMid meet"
+        onClick={() => setSelectedIndex(null)}
       >
         <defs>
           <linearGradient id={`grad-${field}`} x1="0" x2="0" y1="0" y2="1">
@@ -161,7 +168,7 @@ export function HistoryChart({
           const cx = x(i);
           return (
             <text key={i} x={cx} y={pad.top + innerH + 18} textAnchor="middle" fill="var(--text-3)" fontSize="10">
-              {i + 1}
+              {pointLabels[i] ?? i + 1}
             </text>
           );
         })}
@@ -174,10 +181,22 @@ export function HistoryChart({
             fill={i === points.length - 1 ? colors.stroke : colors.stroke}
             stroke={i === points.length - 1 ? 'var(--background)' : chartColors.pointStroke}
             strokeWidth={i === points.length - 1 ? 2 : 1.5}
-            opacity={i === points.length - 1 ? 1 : 0.7}>
+            opacity={i === points.length - 1 ? 1 : 0.7}
+            onClick={(event) => {
+              event.stopPropagation();
+              setSelectedIndex((current) => current === i ? null : i);
+            }}>
             <title>{`${fmt.format(v)}${suffix}`}</title>
           </circle>
         ))}
+
+        {selectedIndex !== null && points[selectedIndex] !== undefined ? (
+          <g pointerEvents="none" transform={`translate(${Math.min(Math.max(x(selectedIndex) - 58, 4), width - 120)}, ${Math.max(y(points[selectedIndex]) - 48, 4)})`}>
+            <rect width="116" height="36" rx="8" fill="var(--panel)" stroke="var(--line)" />
+            <text x="58" y="14" textAnchor="middle" fill="var(--text-3)" fontSize="9">{pointLabels[selectedIndex] ?? 'Ponto'}</text>
+            <text x="58" y="28" textAnchor="middle" fill="var(--text-1)" fontSize="11" fontWeight="700">{fmt.format(points[selectedIndex])}{suffix}</text>
+          </g>
+        ) : null}
       </svg>
     </article>
   );

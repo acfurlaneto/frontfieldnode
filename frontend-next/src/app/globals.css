@@ -260,6 +260,17 @@ body {
 .chat-panel {
   animation: chat-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+@media (max-width: 1023px) {
+  .chat-fab {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
+
+  .chat-panel {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+}
+
 @keyframes ambient-drift {
   from { transform: translate3d(-1%, -1%, 0) scale(1); opacity: 0.82; }
   to { transform: translate3d(1%, 1%, 0) scale(1.04); opacity: 1; }
@@ -488,11 +499,15 @@ body {
 .map-surface .leaflet-tile-pane {
   transition: filter 300ms ease;
 }
-.map-surface--dark .leaflet-tile-pane {
-  filter: brightness(0.45) saturate(0.3) contrast(1.15);
-}
 .map-surface--light .leaflet-tile-pane {
   filter: brightness(0.92) saturate(0.82) contrast(1.03);
+}
+/* Voyager is the stable source for both themes; only Leaflet base layers and controls are inverted in dark mode. */
+.map-dark-filter .leaflet-tile-pane,
+.map-dark-filter .leaflet-control-zoom-in,
+.map-dark-filter .leaflet-control-zoom-out,
+.map-dark-filter .leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 .map-surface--light .liquid-glass--subtle {
   --text-1: #f1f5f9;
@@ -507,25 +522,60 @@ body {
   box-shadow: 0 12px 32px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.16);
 }
 
-.map-machine-label {
-  background: rgba(8, 12, 18, 0.74) !important;
-  border: 1px solid rgba(148, 163, 184, 0.28) !important;
-  border-radius: 9999px !important;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28) !important;
-  color: #F1F5F9 !important;
-  padding: 4px 8px !important;
+.leaflet-machine-marker {
+  width: max-content !important;
+  height: max-content !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.map-machine-marker__content {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: max-content;
+  pointer-events: auto;
+}
+.map-machine-marker__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 50%;
+  background: rgba(8, 12, 18, 0.88);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.map-machine-marker__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 13rem;
+  overflow: hidden;
+  border: 1px solid;
+  border-radius: 9999px;
+  background: rgba(8, 12, 18, 0.9);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28);
+  color: #F1F5F9;
+  padding: 5px 9px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.map-machine-label:before {
-  border-top-color: rgba(8, 12, 18, 0.74) !important;
+.map-machine-marker__status-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
 }
-.map-machine-label__text {
-  color: #F1F5F9 !important;
+.map-surface--light .map-machine-marker__label {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.55);
 }
 
 /* Cabeçalho de seção */

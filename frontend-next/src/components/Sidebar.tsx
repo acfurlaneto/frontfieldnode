@@ -20,7 +20,7 @@ export function Sidebar() {
       {/* ── Desktop sidebar ── */}
       <nav
         aria-label="Navegação principal"
-        className="!fixed inset-y-0 left-0 z-50 hidden h-[100dvh] w-[5.5rem] flex-col items-center rounded-none border-y-0 border-l-0 px-2 py-4 shadow-[var(--shadow-glass)] lg:flex liquid-glass"
+        className="!fixed inset-y-0 left-0 z-50 hidden h-[100dvh] w-[5.5rem] flex-col items-center rounded-r-2xl border-y-0 border-l-0 px-2 py-4 shadow-[var(--shadow-glass)] lg:flex liquid-glass"
       >
         <div className="flex flex-col items-center gap-4">
           <Link
