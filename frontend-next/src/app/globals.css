@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 @import "tailwindcss";
 
 /* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
@@ -503,7 +502,6 @@ body {
 .map-surface--light .leaflet-tile-pane {
   filter: brightness(0.92) saturate(0.82) contrast(1.03);
 }
-/* Voyager is the stable source for both themes; only Leaflet base layers and controls are inverted in dark mode. */
 .map-dark-filter .leaflet-tile-pane,
 .map-dark-filter .leaflet-control-zoom-in,
 .map-dark-filter .leaflet-control-zoom-out,
@@ -733,6 +731,3 @@ select {
   border-radius: 14px !important;
   box-shadow: var(--shadow-glass) !important;
 }
-=======
-PLACEHOLDER
->>>>>>> da9d8e685f047818ede2647fedbb4ec1a59cddb3

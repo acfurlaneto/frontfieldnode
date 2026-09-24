@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -228,9 +227,9 @@ export default function MapClient({
         zoom: 4,
       });
 
-      const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
-        subdomains: ["a", "b", "c", "d"],
+      const tileLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+        subdomains: ["a", "b", "c"],
         minZoom: 2,
         maxZoom: 19,
         crossOrigin: true,
@@ -275,7 +274,7 @@ export default function MapClient({
   useEffect(() => {
     const tileLayer = tileLayerRef.current;
     if (!tileLayer) return;
-    tileLayer.setUrl("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png");
+    tileLayer.setUrl("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
   }, [mapTheme]);
 
   useEffect(() => {
@@ -499,6 +498,3 @@ export default function MapClient({
     </div>
   );
 }
-=======
-REVERT_PENDING - use blob from b0bf159
->>>>>>> da9d8e685f047818ede2647fedbb4ec1a59cddb3
