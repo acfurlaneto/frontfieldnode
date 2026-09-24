@@ -512,7 +512,7 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.28) !important;
   border-radius: 9999px !important;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28) !important;
-  color: var(--text-1) !important;
+  color: #F1F5F9 !important;
   padding: 4px 8px !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -525,7 +525,7 @@ body {
   border-top-color: rgba(8, 12, 18, 0.74) !important;
 }
 .map-machine-label__text {
-  color: var(--text-1);
+  color: #F1F5F9 !important;
 }
 
 /* Cabeçalho de seção */

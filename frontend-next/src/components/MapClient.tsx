@@ -307,7 +307,7 @@ export default function MapClient({
       })
         .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
         .bindTooltip(
-          `<span class="map-machine-label__text">${escapeHtml(machine.maquina_id ?? machine.modelo)} · ${markerStatus.label}</span>`,
+          `<span class="map-machine-label__text" style="color:#F1F5F9 !important;font-weight:700;letter-spacing:0.02em;">${escapeHtml(machine.maquina_id ?? machine.modelo)} · ${markerStatus.label}</span>`,
           {
             permanent: true,
             direction: "top",
