@@ -31,7 +31,7 @@ export function AppShell({
       <section className="relative z-10 lg:pl-[5.5rem]">
         <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[color:var(--surface-header)]/80 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-            <div className={showBackButton ? 'pl-12 lg:pl-0' : ''}>
+            <div className={showBackButton ? 'pl-14 sm:pl-14 lg:pl-0' : ''}>
               {eyebrow ? (
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ui-accent)]">
                   {eyebrow}
