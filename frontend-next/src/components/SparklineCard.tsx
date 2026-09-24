@@ -53,29 +53,6 @@ function ChartTooltip({
   );
 }
 
-// Dot customizado: só renderiza no último ponto
-function LastDot(props: {
-  cx?: number;
-  cy?: number;
-  index?: number;
-  dataLength: number;
-  stroke: string;
-}) {
-  const { cx, cy, index, dataLength, stroke } = props;
-  if (index !== dataLength - 1) return null;
-  if (cx == null || cy == null) return null;
-  return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={5.5}
-      fill={stroke}
-      stroke="var(--background)"
-      strokeWidth={2}
-    />
-  );
-}
-
 export function SparklineCard({
   titulo,
   valor,
@@ -103,20 +80,20 @@ export function SparklineCard({
       aria-label={titulo}
       className={`metric-card metric-card--${status} transition-all duration-200`}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+      <p className="text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {titulo}
       </p>
 
-      <div className="mt-3 flex items-end justify-between gap-2">
-        <p className="text-3xl font-bold tracking-tighter text-[var(--text-1)] sm:text-4xl">
+      <div className="mt-3 flex flex-col items-center justify-center gap-1">
+        <p className="text-center text-4xl font-bold tracking-tighter text-[var(--text-1)] sm:text-5xl">
           {valor}
           {unidade ? (
-            <span className="ml-1 text-base font-normal text-[var(--text-3)]">
+            <span className="ml-1 text-base font-normal text-[var(--text-3)] sm:text-lg">
               {unidade}
             </span>
           ) : null}
         </p>
-        <div className="mb-1 flex flex-col items-end gap-0.5">
+        <div className="flex flex-col items-center gap-0.5">
           {tendencia ? (
             <p className="text-xs text-[var(--text-3)]">{tendencia}</p>
           ) : null}
@@ -162,13 +139,7 @@ export function SparklineCard({
               isAnimationActive
               animationDuration={700}
               animationEasing="ease-out"
-              dot={(dotProps) => (
-                <LastDot
-                  {...dotProps}
-                  dataLength={dados.length}
-                  stroke={stroke}
-                />
-              )}
+              dot={false}
               activeDot={{ r: 5, fill: stroke, stroke: 'var(--background)', strokeWidth: 2 }}
             />
           </AreaChart>
