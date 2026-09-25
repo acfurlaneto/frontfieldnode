@@ -87,7 +87,7 @@ export function SparklineCard({
   return (
     <article
       aria-label={titulo}
-      className={`metric-card metric-card--${status} transition-all duration-200`}
+      className={`metric-card ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
     >
       <p className="text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {titulo}

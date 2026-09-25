@@ -74,7 +74,7 @@ export function HistoryChart({
   const yTicks = Array.from({ length: ticks }, (_, i) => effectiveMin + (effectiveRange * i) / (ticks - 1));
   const xTicks = points
     .map((_, i) => i)
-    .filter((i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0);
+    .filter((i) => points.length <= 6 || i % Math.ceil(points.length / 6) === 0);
 
   const metric = metricStyles[field];
 
@@ -99,26 +99,22 @@ export function HistoryChart({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full" style={{ background: metric.stroke }} />
+            <span className="text-[10px] font-semibold text-[var(--text-2)]">{metric.label}</span>
+          </span>
           {rangeConfig && (
             <>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1" title={`Atenção a partir de ${fmt.format(rangeConfig.alert)}${rangeConfig.unit}`}>
                 <span className="h-2 w-2 rounded-full bg-[color:var(--status-atencao)]" />
-                <span className="text-[10px] font-medium text-[var(--text-3)]">
-                  Alerta {fmt.format(rangeConfig.alert)}{rangeConfig.unit}
-                </span>
+                <span className="text-[10px] font-medium text-[var(--text-3)]">Atenção</span>
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1" title={`Crítico a partir de ${fmt.format(rangeConfig.critical)}${rangeConfig.unit}`}>
                 <span className="h-2 w-2 rounded-full bg-[color:var(--status-critico)]" />
-                <span className="text-[10px] font-medium text-[var(--text-3)]">
-                  Crítico {fmt.format(rangeConfig.critical)}{rangeConfig.unit}
-                </span>
+                <span className="text-[10px] font-medium text-[var(--text-3)]">Crítico</span>
               </span>
             </>
           )}
-          <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full" style={{ background: metric.stroke }} />
-            <span className="text-[11px] font-medium text-[var(--text-3)]">{metric.label}</span>
-          </span>
         </div>
       </div>
 
@@ -136,7 +132,7 @@ export function HistoryChart({
             <stop offset="100%" stopColor={chartColors.transparent} />
           </linearGradient>
           <filter id={`glow-${field}`} x="-25%" y="-25%" width="150%" height="150%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -176,16 +172,16 @@ export function HistoryChart({
           );
         })}
 
-        <path d={area} fill={`url(#grad-${field})`} opacity="0.65" />
-        <path d={line} fill="none" stroke={metric.stroke} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${field})`} />
+        <path d={area} fill={`url(#grad-${field})`} opacity="0.38" />
+        <path d={line} fill="none" stroke={metric.stroke} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${field})`} />
 
         {points.map((v, i) => (
-          <circle key={i} cx={x(i)} cy={y(v)} r={i === points.length - 1 ? 6 : 3}
+          <circle key={i} cx={x(i)} cy={y(v)} r={selectedIndex === i ? 5 : 9}
             className="cursor-pointer"
-            fill={metric.stroke}
-            stroke={i === points.length - 1 ? 'var(--background)' : chartColors.pointStroke}
-            strokeWidth={i === points.length - 1 ? 2 : 1.5}
-            opacity={i === points.length - 1 ? 1 : 0.7}
+            fill={selectedIndex === i ? metric.stroke : 'transparent'}
+            stroke={selectedIndex === i ? 'var(--background)' : 'transparent'}
+            strokeWidth={selectedIndex === i ? 2 : 0}
+            opacity={selectedIndex === i ? 1 : 0}
             onClick={(event) => {
               event.stopPropagation();
               setSelectedIndex((current) => current === i ? null : i);
