@@ -9,6 +9,7 @@
   --surface-3:   #15142A;
   --panel:       #080B12;
   --panel-2:     #0E1222;
+  --background-image: url('/fieldnode-dark-atmosphere.jpg');
   --panel-glass:        rgba(255,255,255,0.04);
   --panel-glass-mid:    rgba(255,255,255,0.06);
   --panel-glass-strong: rgba(255,255,255,0.10);
@@ -113,18 +114,19 @@
 
 /* ─── LIGHT THEME ─────────────────────────────────────────────────────────── */
 .light {
-  --background:  #F4F7F5;
-  --surface-1:   #FFFFFF;
-  --surface-2:   #EDF2F1;
-  --surface-3:   #E4EBE8;
-  --panel:       #FFFFFF;
-  --panel-2:     #EDF2F1;
+  --background:  #E5E7ED;
+  --surface-1:   #EEF0F5;
+  --surface-2:   #E1E4EB;
+  --surface-3:   #D7DAE3;
+  --panel:       #ECEEF3;
+  --panel-2:     #E2E5EB;
+  --background-image: none;
   --panel-glass:        rgba(15,23,42,0.03);
   --panel-glass-mid:    rgba(15,23,42,0.05);
   --panel-glass-strong: rgba(15,23,42,0.07);
   --panel-glass-soft:   rgba(15,23,42,0.02);
 
-  --foreground: #17202A;
+  --foreground: #1C202B;
   --text-1:     #0F172A;
   --text-2:     #334155;
   --text-3:     #64748B;
@@ -179,10 +181,10 @@
   --glass-inset-top:    rgba(255,255,255,0.50);
   --glass-inset-bot:    rgba(0,0,0,0.04);
 
-  --surface-page:   #F4F7F5;
-  --surface-rail:   rgba(255,255,255,0.84);
-  --surface-header: rgba(244,247,245,0.80);
-  --surface-card:   rgba(255,255,255,0.76);
+  --surface-page:   #E5E7ED;
+  --surface-rail:   rgba(235,237,243,0.84);
+  --surface-header: rgba(229,232,238,0.82);
+  --surface-card:   rgba(239,241,246,0.76);
   --ambient-emerald: rgba(16,185,129,0.07);
   --ambient-cyan:    rgba(8,145,178,0.05);
   --ambient-violet:  rgba(139,92,246,0.045);
@@ -255,7 +257,11 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   isolation: isolate;
   min-height: 100vh;
-  background: var(--surface-page);
+  background-color: var(--surface-page);
+  background-image: var(--background-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 .app-background::before {
   content: '';
@@ -277,7 +283,7 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(135deg, transparent 0%, color-mix(in srgb, var(--surface-page) 24%, transparent) 48%, transparent 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface-page) 18%, transparent) 0%, color-mix(in srgb, var(--surface-page) 42%, transparent) 48%, color-mix(in srgb, var(--surface-page) 18%, transparent) 100%);
 }
 
 .chat-fab,
