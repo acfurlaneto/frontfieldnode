@@ -87,8 +87,7 @@ export default async function DashboardPage() {
       actions={
         <div className="flex items-center gap-2">
           <ReportButton machines={machines} />
-          <div className="status-pill status-pill--normal hidden items-center gap-1.5 border px-2.5 py-1.5 sm:flex">
-            <span className="status-dot pulse" aria-hidden="true" />
+          <div className="status-pill status-pill--normal hidden items-center border px-2.5 py-1.5 sm:flex">
             <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[color:var(--status-normal)]">
               Sync ativo
             </span>

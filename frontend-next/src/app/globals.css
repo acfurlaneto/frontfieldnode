@@ -3,12 +3,12 @@
 /* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
 :root,
 .dark {
-  --background:  #0A0B10;
-  --surface-1:   #0E1520;
-  --surface-2:   #131D2B;
-  --surface-3:   #192435;
-  --panel:       #0E1520;
-  --panel-2:     #131D2B;
+  --background:  #030407;
+  --surface-1:   #080A11;
+  --surface-2:   #0D1020;
+  --surface-3:   #15142A;
+  --panel:       #080B12;
+  --panel-2:     #0E1222;
   --panel-glass:        rgba(255,255,255,0.04);
   --panel-glass-mid:    rgba(255,255,255,0.06);
   --panel-glass-strong: rgba(255,255,255,0.10);
@@ -40,7 +40,7 @@
   --status-neutro:  var(--text-3);
 
   /* accent de interface */
-  --ui-accent: var(--green);
+  --ui-accent: var(--violet);
 
   /* gráficos */
   --chart-normal-stroke:  var(--green);
@@ -62,7 +62,7 @@
   --chart-transparent:    rgba(0,0,0,0);
 
   /* glows */
-  --focus-ring:         rgba(15,212,146,0.28);
+  --focus-ring:         rgba(181,110,255,0.30);
   --glow-normal:        rgba(15,212,146,0.15);
   --glow-normal-strong: rgba(15,212,146,0.60);
   --glow-amber:         rgba(251,173,20,0.18);
@@ -77,14 +77,14 @@
   --glass-inset-bot:    rgba(0,0,0,0.12);
 
   /* superfícies compostas */
-  --surface-page:   #0A0B10;
-  --surface-rail:   rgba(11,15,24,0.88);
-  --surface-header: rgba(8,11,17,0.78);
-  --surface-card:   rgba(17,24,37,0.72);
-  --ambient-emerald: rgba(15,212,146,0.12);
-  --ambient-cyan:    rgba(34,229,255,0.08);
-  --ambient-violet:  rgba(181,110,255,0.08);
-  --ambient-blue:    rgba(59,130,246,0.06);
+  --surface-page:   #030407;
+  --surface-rail:   rgba(6,8,15,0.92);
+  --surface-header: rgba(3,5,10,0.86);
+  --surface-card:   rgba(11,14,27,0.78);
+  --ambient-emerald: rgba(139,92,246,0.12);
+  --ambient-cyan:    rgba(34,211,238,0.10);
+  --ambient-violet:  rgba(168,85,247,0.12);
+  --ambient-blue:    rgba(59,130,246,0.08);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(0,0,0,0.7);
 
@@ -264,10 +264,10 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(34% 28% at 0% 0%, color-mix(in srgb, var(--green) 22%, transparent), transparent 76%),
-    radial-gradient(32% 26% at 100% 0%, color-mix(in srgb, var(--cyan) 18%, transparent), transparent 78%),
-    radial-gradient(30% 25% at 100% 100%, color-mix(in srgb, var(--cyan) 14%, transparent), transparent 80%),
-    radial-gradient(28% 24% at 0% 100%, color-mix(in srgb, var(--green) 14%, transparent), transparent 80%);
+    radial-gradient(34% 28% at 0% 0%, color-mix(in srgb, var(--violet) 24%, transparent), transparent 76%),
+    radial-gradient(32% 26% at 100% 0%, color-mix(in srgb, var(--cyan) 20%, transparent), transparent 78%),
+    radial-gradient(30% 25% at 100% 100%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 80%),
+    radial-gradient(28% 24% at 0% 100%, color-mix(in srgb, var(--violet) 16%, transparent), transparent 80%);
   filter: blur(72px);
   animation: ambient-drift 52s ease-in-out infinite alternate;
 }
@@ -565,8 +565,8 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(45% 60% at 18% 20%, rgba(15,212,146,0.24), transparent 72%),
-    radial-gradient(42% 55% at 78% 65%, rgba(34,229,255,0.18), transparent 72%);
+    radial-gradient(45% 60% at 18% 20%, rgba(168,85,247,0.22), transparent 72%),
+    radial-gradient(42% 55% at 78% 65%, rgba(34,211,238,0.16), transparent 72%);
   filter: blur(58px);
 }
 .ambient-glow-card {
