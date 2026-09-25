@@ -1,0 +1,12 @@
+{
+  "name": "fieldnode",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FieldNode — launcher da aplicação frontend Next.js",
+  "scripts": {
+    "dev": "npm --prefix frontend-next run dev",
+    "build": "npm --prefix frontend-next run build",
+    "start": "npm --prefix frontend-next run start",
+    "lint": "npm --prefix frontend-next run lint"
+  }
+}
