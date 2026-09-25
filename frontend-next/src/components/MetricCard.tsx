@@ -14,36 +14,28 @@ const toneBorder = {
   slate:   'border-[var(--line)]',
 } as const;
 
-const metricText = {
-  temperatura: 'var(--metric-temperature)',
-  vibracao: 'var(--metric-vibration)',
-  rpm: 'var(--metric-rpm)',
-} as const;
-
 export function MetricCard({
   label,
   value,
   helper,
   tone = 'slate',
-  metric,
 }: {
   label: string;
   value: ReactNode;
   helper?: string;
   tone?: keyof typeof toneClass;
-  metric?: keyof typeof metricText;
 }) {
   return (
     <article
       role="group"
       aria-label={label}
-      className={`metric-card ${metric ? `metric-card--metric-${metric}` : `metric-card--${tone}`} border ${toneBorder[tone]}`}
+      className={`metric-card metric-card--${tone} border ${toneBorder[tone]}`}
     >
       <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {label}
       </p>
       <div className={`mt-3 text-2xl font-bold tracking-tight sm:text-3xl ${toneClass[tone]}`}>
-        <span style={metric ? { color: metricText[metric] } : undefined}>{value}</span>
+        {value}
       </div>
       {helper ? (
         <p className="mt-1.5 text-xs text-[var(--text-3)]">{helper}</p>

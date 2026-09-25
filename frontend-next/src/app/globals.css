@@ -553,20 +553,6 @@ h1, h2, h3, h4, h5, h6 {
 .metric-card--amber::after { background: radial-gradient(ellipse, color-mix(in srgb, var(--amber) 30%, transparent), transparent 68%); }
 .metric-card--critico::after,
 .metric-card--red::after { background: radial-gradient(ellipse, color-mix(in srgb, var(--red) 30%, transparent), transparent 68%); }
-.metric-card--metric-temperatura::after,
-.metric-card--metric-vibracao::after,
-.metric-card--metric-rpm::after {
-  content: '';
-  position: absolute;
-  inset: -32% -14%;
-  z-index: -1;
-  pointer-events: none;
-  filter: blur(52px);
-  opacity: 0.25;
-}
-.metric-card--metric-temperatura::after { background: radial-gradient(ellipse, var(--metric-temperature), transparent 68%); }
-.metric-card--metric-vibracao::after { background: radial-gradient(ellipse, var(--metric-vibration), transparent 68%); }
-.metric-card--metric-rpm::after { background: radial-gradient(ellipse, var(--metric-rpm), transparent 68%); }
 
 /* Glow ambiental fica atras do agrupamento, nunca atras de texto solto. */
 .ambient-glow-wrap {

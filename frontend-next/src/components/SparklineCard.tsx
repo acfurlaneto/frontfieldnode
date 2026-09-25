@@ -149,7 +149,6 @@ export function SparklineCard({
               animationDuration={700}
               animationEasing="ease-out"
               dot={false}
-              activeDot={{ r: 5, fill: stroke, stroke: 'var(--background)', strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

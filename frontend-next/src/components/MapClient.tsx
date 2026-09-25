@@ -88,9 +88,9 @@ function getPopupHtml(machine: MachinePosition) {
         </span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12px;color:var(--text-2);">
-        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Ao vivo agora · RPM</span><div style="margin-top:2px;font-weight:700;color:var(--metric-rpm);">${escapeHtml(String(machine.telemetria.rpm))} RPM</div></div>
-        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Temperatura</span><div style="margin-top:2px;font-weight:700;color:var(--metric-temperature);">${escapeHtml(String(machine.telemetria.temperatura))}°C</div></div>
-        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">RPM</span><div style="margin-top:2px;font-weight:700;color:var(--metric-rpm);">${escapeHtml(String(machine.telemetria.rpm))}</div></div>
+        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Ao vivo agora</span><div style="margin-top:2px;font-weight:700;color:${statusColor};">${escapeHtml(String(machine.telemetria.rpm))} RPM</div></div>
+        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Temperatura</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.temperatura))}°C</div></div>
+        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">RPM</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.rpm))}</div></div>
         <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Última atualização</span><div style="margin-top:2px;font-weight:600;color:var(--text-1);">${escapeHtml(new Date(machine.telemetria.timestamp).toLocaleString())}</div></div>
       </div>
     </div>
