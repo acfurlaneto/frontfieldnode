@@ -4,12 +4,11 @@ import { riskTone, StatusBadge } from '@/components/StatusBadge';
 import { PrescricaoButton } from '@/components/PrescricaoButton';
 import { Thermometer, Vibrate, Gauge } from 'lucide-react';
 
-function metricTone(value: number, warning: number, critical: number, reverse = false) {
-  if (reverse) return value < critical ? 'text-[color:var(--status-atencao)]' : 'text-[color:var(--status-normal)]';
-  if (value > critical) return 'text-[color:var(--status-critico)]';
-  if (value > warning)  return 'text-[color:var(--status-atencao)]';
-  return 'text-[color:var(--status-normal)]';
-}
+const metricColor = {
+  temperatura: 'var(--metric-temperature)',
+  vibracao: 'var(--metric-vibration)',
+  rpm: 'var(--metric-rpm)',
+} as const;
 
 function machineKind(id: string) {
   if (id.startsWith('TRAT')) return 'Trator';
@@ -47,7 +46,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             <Thermometer size={10} aria-hidden="true" />
             Temp
           </dt>
-          <dd className={`mt-1.5 text-sm font-bold ${metricTone(reading.temperatura, 75, 85)}`}>
+          <dd className="mt-1.5 text-sm font-bold" style={{ color: metricColor.temperatura }}>
             {reading.temperatura}°C
           </dd>
         </div>
@@ -56,7 +55,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             <Vibrate size={10} aria-hidden="true" />
             Vib
           </dt>
-          <dd className={`mt-1.5 text-sm font-bold ${metricTone(reading.vibracao, 0.5, 0.8)}`}>
+          <dd className="mt-1.5 text-sm font-bold" style={{ color: metricColor.vibracao }}>
             {reading.vibracao}g
           </dd>
         </div>
@@ -65,7 +64,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             <Gauge size={10} aria-hidden="true" />
             RPM
           </dt>
-          <dd className={`mt-1.5 text-sm font-bold ${metricTone(reading.rpm, 0, 1300, true)}`}>
+          <dd className="mt-1.5 text-sm font-bold" style={{ color: metricColor.rpm }}>
             {reading.rpm}
           </dd>
         </div>

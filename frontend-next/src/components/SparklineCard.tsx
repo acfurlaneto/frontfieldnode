@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 
 type SparklineStatus = 'normal' | 'atencao' | 'critico';
+type MetricKind = 'temperatura' | 'vibracao' | 'rpm';
 
 const strokeHex: Record<SparklineStatus, string> = {
   normal:  'var(--chart-normal-stroke)',
@@ -22,12 +23,19 @@ const fillStop0: Record<SparklineStatus, string> = {
   critico: 'var(--chart-critico-stroke)',
 };
 
+const metricStroke: Record<MetricKind, string> = {
+  temperatura: 'var(--metric-temperature)',
+  vibracao: 'var(--metric-vibration)',
+  rpm: 'var(--metric-rpm)',
+};
+
 interface SparklineCardProps {
   titulo: string;
   valor: string | number;
   unidade?: string;
   dados: { valor: number; label?: string }[];
   status: SparklineStatus;
+  metric?: MetricKind;
   tendencia?: string;
   isDemoData?: boolean;
 }
@@ -59,10 +67,11 @@ export function SparklineCard({
   unidade,
   dados,
   status,
+  metric,
   tendencia,
   isDemoData,
 }: SparklineCardProps) {
-  const stroke = strokeHex[status];
+  const stroke = metric ? metricStroke[metric] : strokeHex[status];
   const uid = `${status}-${titulo.replace(/\W/g, '')}`;
   const gradId = `area-${uid}`;
   const glowId = `glow-${uid}`;
@@ -85,7 +94,7 @@ export function SparklineCard({
       </p>
 
       <div className="mt-3 flex flex-col items-center justify-center gap-1">
-        <p className="text-center text-4xl font-bold tracking-tighter text-[var(--text-1)] sm:text-5xl">
+        <p className="text-center text-4xl font-bold tracking-tighter sm:text-5xl" style={{ color: metric ? stroke : 'var(--text-1)' }}>
           {valor}
           {unidade ? (
             <span className="ml-1 text-base font-normal text-[var(--text-3)] sm:text-lg">

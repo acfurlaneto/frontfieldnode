@@ -2,11 +2,13 @@ import { useState } from 'react';
 import type { Telemetry } from '@/types/telemetry';
 import { chartColors } from '@/lib/theme';
 
-const toneStyles = {
-  red:     { ...chartColors.critico, label: 'Crítico' },
-  amber:   { ...chartColors.atencao, label: 'Atenção' },
-  emerald: chartColors.normal,
-};
+type ChartTone = 'red' | 'amber' | 'emerald';
+
+const metricStyles = {
+  temperatura: { stroke: 'var(--metric-temperature)', label: 'Temperatura' },
+  vibracao: { stroke: 'var(--metric-vibration)', label: 'Vibração' },
+  rpm: { stroke: 'var(--metric-rpm)', label: 'RPM' },
+} as const;
 
 const thresholdRanges: Record<string, { alert: number; critical: number; unit: string; higherIsWorse: boolean; min: number; max: number }> = {
   temperatura: { alert: 95, critical: 110, unit: '°C', higherIsWorse: true,  min: 0, max: 150  },
@@ -27,7 +29,7 @@ export function HistoryChart({
   readings: Telemetry[];
   field: 'temperatura' | 'vibracao' | 'rpm';
   suffix?: string;
-  tone: keyof typeof toneStyles;
+  tone: ChartTone;
 }) {
   const points = readings.map((r) => Number(r[field])).reverse();
   const pointLabels = readings.map((reading) => new Date(reading.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })).reverse();
@@ -74,7 +76,7 @@ export function HistoryChart({
     .map((_, i) => i)
     .filter((i) => points.length <= 12 || i % Math.ceil(points.length / 12) === 0);
 
-  const colors = toneStyles[tone] || toneStyles.emerald;
+  const metric = metricStyles[field];
 
   function clampY(value: number) {
     return Math.max(pad.top, Math.min(pad.top + innerH, value));
@@ -85,7 +87,8 @@ export function HistoryChart({
 
   return (
     <article
-      className={`metric-card ambient-glow-card ambient-glow-card--${tone} transition-all duration-200`}
+      className={`metric-card metric-chart-card metric-chart-card--${field} transition-all duration-200`}
+      data-risk-tone={tone}
       onClick={() => setSelectedIndex(null)}
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -113,8 +116,8 @@ export function HistoryChart({
             </>
           )}
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full" style={{ background: colors.stroke }} />
-            <span className="text-[11px] font-medium text-[var(--text-3)]">{field}</span>
+            <span className="h-2 w-2 rounded-full" style={{ background: metric.stroke }} />
+            <span className="text-[11px] font-medium text-[var(--text-3)]">{metric.label}</span>
           </span>
         </div>
       </div>
@@ -129,7 +132,7 @@ export function HistoryChart({
       >
         <defs>
           <linearGradient id={`grad-${field}`} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%"   stopColor={colors.fill} />
+            <stop offset="0%"   stopColor={metric.stroke} stopOpacity="0.25" />
             <stop offset="100%" stopColor={chartColors.transparent} />
           </linearGradient>
           <filter id={`glow-${field}`} x="-25%" y="-25%" width="150%" height="150%">
@@ -174,11 +177,12 @@ export function HistoryChart({
         })}
 
         <path d={area} fill={`url(#grad-${field})`} opacity="0.65" />
-        <path d={line} fill="none" stroke={colors.stroke} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${field})`} />
+        <path d={line} fill="none" stroke={metric.stroke} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#glow-${field})`} />
 
         {points.map((v, i) => (
           <circle key={i} cx={x(i)} cy={y(v)} r={i === points.length - 1 ? 6 : 3}
-            fill={i === points.length - 1 ? colors.stroke : colors.stroke}
+            className="cursor-pointer"
+            fill={metric.stroke}
             stroke={i === points.length - 1 ? 'var(--background)' : chartColors.pointStroke}
             strokeWidth={i === points.length - 1 ? 2 : 1.5}
             opacity={i === points.length - 1 ? 1 : 0.7}

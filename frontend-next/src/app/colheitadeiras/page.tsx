@@ -30,7 +30,7 @@ export default async function HarvestersPage() {
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <MetricCard label="Monitoradas" value={readings.length} helper="com leitura recente" />
           <MetricCard label="Alertas" value={critical + warning} helper={`${critical} criticos, ${warning} em atencao`} tone={critical ? 'red' : warning ? 'amber' : 'emerald'} />
-          <MetricCard label="Temp media" value={`${averageTemp.toFixed(1)}C`} helper="entre leituras recentes" tone="amber" />
+          <MetricCard label="Temp media" value={`${averageTemp.toFixed(1)}C`} helper="entre leituras recentes" tone="amber" metric="temperatura" />
         </section>
 
         {readings.length === 0 ? (

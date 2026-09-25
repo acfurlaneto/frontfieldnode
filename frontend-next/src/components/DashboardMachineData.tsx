@@ -90,9 +90,9 @@ export function DashboardMachineData({ machines, initialReadings }: { machines: 
       </div>
       {error ? <p className="rounded-xl border border-[color:var(--status-critico)]/30 bg-[color:var(--status-critico)]/10 p-3 text-xs text-[var(--text-2)]">{error}</p> : null}
       <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-3">
-        <SparklineCard key={`${selectedMachineId}-rpm`} titulo="RPM Médio" valor={rpmValue || '—'} unidade="rpm" dados={rpm.dados} status={status(rpmValue, 'rpm')} isDemoData={rpm.isDemoData && !readings.length} />
-        <SparklineCard key={`${selectedMachineId}-temperature`} titulo="Temperatura do Motor" valor={readings.length ? temperaturaValue.toFixed(1) : '—'} unidade="°C" dados={temperatura.dados} status={status(temperaturaValue, 'temperatura')} isDemoData={temperatura.isDemoData && !readings.length} />
-        <SparklineCard key={`${selectedMachineId}-vibration`} titulo="Vibração do Rotor" valor={readings.length ? vibracaoValue.toFixed(2) : '—'} unidade="g" dados={vibracao.dados} status={status(vibracaoValue, 'vibracao')} isDemoData={vibracao.isDemoData && !readings.length} />
+        <SparklineCard key={`${selectedMachineId}-rpm`} titulo="RPM Médio" valor={rpmValue || '—'} unidade="rpm" dados={rpm.dados} status={status(rpmValue, 'rpm')} metric="rpm" isDemoData={rpm.isDemoData && !readings.length} />
+        <SparklineCard key={`${selectedMachineId}-temperature`} titulo="Temperatura do Motor" valor={readings.length ? temperaturaValue.toFixed(1) : '—'} unidade="°C" dados={temperatura.dados} status={status(temperaturaValue, 'temperatura')} metric="temperatura" isDemoData={temperatura.isDemoData && !readings.length} />
+        <SparklineCard key={`${selectedMachineId}-vibration`} titulo="Vibração do Rotor" valor={readings.length ? vibracaoValue.toFixed(2) : '—'} unidade="g" dados={vibracao.dados} status={status(vibracaoValue, 'vibracao')} metric="vibracao" isDemoData={vibracao.isDemoData && !readings.length} />
       </div>
     </section>
   );

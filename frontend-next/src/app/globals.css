@@ -53,6 +53,9 @@
   --chart-blue-fill:      color-mix(in srgb, var(--blue) 18%, transparent);
   --chart-violet-stroke:  var(--violet);
   --chart-violet-fill:    color-mix(in srgb, var(--violet) 18%, transparent);
+  --metric-temperature:   #F472B6;
+  --metric-vibration:     #60A5FA;
+  --metric-rpm:           #A855F7;
   --chart-grid:           rgba(255,255,255,0.05);
   --chart-surface:        rgba(255,255,255,0.02);
   --chart-point-stroke:   rgba(0,0,0,0.5);
@@ -155,6 +158,9 @@
   --chart-blue-fill:      color-mix(in srgb, var(--blue) 12%, transparent);
   --chart-violet-stroke:  var(--violet);
   --chart-violet-fill:    color-mix(in srgb, var(--violet) 12%, transparent);
+  --metric-temperature:   #DB2777;
+  --metric-vibration:     #2563EB;
+  --metric-rpm:           #7C3AED;
   --chart-grid:           rgba(15,23,42,0.08);
   --chart-surface:        rgba(15,23,42,0.02);
   --chart-point-stroke:   rgba(255,255,255,0.6);
@@ -580,6 +586,21 @@ h1, h2, h3, h4, h5, h6 {
 .ambient-glow-card--amber::after { background: radial-gradient(ellipse, rgba(251,173,20,0.34), transparent 68%); }
 .ambient-glow-card--emerald::after { background: radial-gradient(ellipse, rgba(15,212,146,0.34), transparent 68%); }
 
+/* Gráficos: a cor identifica a métrica; risco fica restrito às referências pontilhadas. */
+.metric-chart-card { isolation: isolate; overflow: hidden; }
+.metric-chart-card::after {
+  content: '';
+  position: absolute;
+  inset: -28% -12%;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(52px);
+  opacity: 0.22;
+}
+.metric-chart-card--temperatura::after { background: radial-gradient(ellipse, var(--metric-temperature), transparent 68%); }
+.metric-chart-card--vibracao::after { background: radial-gradient(ellipse, var(--metric-vibration), transparent 68%); }
+.metric-chart-card--rpm::after { background: radial-gradient(ellipse, var(--metric-rpm), transparent 68%); }
+
 /* Overlay sobre mapa */
 .map-overlay {
   position: relative;
@@ -816,9 +837,19 @@ button, a, input, select, textarea, [role="button"] {
 
 select {
   color-scheme: dark;
+  background-color: var(--panel) !important;
+  color: var(--text-1) !important;
+}
+select option {
+  background-color: var(--panel);
+  color: var(--text-1);
 }
 .light select {
   color-scheme: light;
+}
+.light select option {
+  background-color: var(--panel);
+  color: var(--text-1);
 }
 
 /* ─── RECHARTS ────────────────────────────────────────────────────────────── */

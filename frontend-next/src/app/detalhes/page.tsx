@@ -105,9 +105,9 @@ export default function DetailsPage({ searchParams }: { searchParams: Promise<{ 
       >
         <div className="space-y-5">
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Temperatura" value={`${latest.temperatura}°C`} tone={tempTone} helper="última leitura" />
-            <MetricCard label="Vibração"    value={`${latest.vibracao}g`}     tone={vibTone}  helper="última leitura" />
-            <MetricCard label="RPM"         value={latest.rpm}                tone={rpmTone}  helper="rotação atual" />
+            <MetricCard label="Temperatura" value={`${latest.temperatura}°C`} tone={tempTone} metric="temperatura" helper="última leitura" />
+            <MetricCard label="Vibração"    value={`${latest.vibracao}g`}     tone={vibTone}  metric="vibracao" helper="última leitura" />
+            <MetricCard label="RPM"         value={latest.rpm}                tone={rpmTone}  metric="rpm" helper="rotação atual" />
             <article className="metric-card transition-all duration-200">
               <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Status</p>
               <div className="mt-3">
