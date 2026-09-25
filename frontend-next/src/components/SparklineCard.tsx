@@ -94,7 +94,7 @@ export function SparklineCard({
       </p>
 
       <div className="mt-3 flex flex-col items-center justify-center gap-1">
-        <p className="text-center text-4xl font-bold tracking-tighter sm:text-5xl" style={{ color: metric ? stroke : 'var(--text-1)' }}>
+        <p className="text-center text-4xl font-bold tracking-tighter sm:text-5xl" style={{ color: status === 'normal' ? 'var(--status-normal)' : status === 'atencao' ? 'var(--status-atencao)' : 'var(--status-critico)' }}>
           {valor}
           {unidade ? (
             <span className="ml-1 text-base font-normal text-[var(--text-3)] sm:text-lg">

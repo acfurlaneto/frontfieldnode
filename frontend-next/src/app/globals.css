@@ -3,13 +3,12 @@
 /* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
 :root,
 .dark {
-  --background:  #030407;
-  --surface-1:   #080A11;
-  --surface-2:   #0D1020;
-  --surface-3:   #15142A;
-  --panel:       #080B12;
-  --panel-2:     #0E1222;
-  --background-image: url('/fieldnode-dark-atmosphere.jpg');
+  --background:  #071426;
+  --surface-1:   #0A1B31;
+  --surface-2:   #0E2340;
+  --surface-3:   #14325A;
+  --panel:       #0A1A30;
+  --panel-2:     #102541;
   --panel-glass:        rgba(255,255,255,0.04);
   --panel-glass-mid:    rgba(255,255,255,0.06);
   --panel-glass-strong: rgba(255,255,255,0.10);
@@ -41,7 +40,7 @@
   --status-neutro:  var(--text-3);
 
   /* accent de interface */
-  --ui-accent: var(--violet);
+  --ui-accent: var(--blue);
 
   /* gráficos */
   --chart-normal-stroke:  var(--green);
@@ -78,14 +77,14 @@
   --glass-inset-bot:    rgba(0,0,0,0.12);
 
   /* superfícies compostas */
-  --surface-page:   #030407;
-  --surface-rail:   rgba(6,8,15,0.92);
-  --surface-header: rgba(3,5,10,0.86);
-  --surface-card:   rgba(11,14,27,0.78);
-  --ambient-emerald: rgba(139,92,246,0.12);
-  --ambient-cyan:    rgba(34,211,238,0.10);
-  --ambient-violet:  rgba(168,85,247,0.12);
-  --ambient-blue:    rgba(59,130,246,0.08);
+  --surface-page:   #071426;
+  --surface-rail:   rgba(7,20,38,0.92);
+  --surface-header: rgba(6,17,32,0.86);
+  --surface-card:   rgba(10,28,51,0.78);
+  --ambient-emerald: rgba(37,99,235,0.10);
+  --ambient-cyan:    rgba(56,189,248,0.12);
+  --ambient-violet:  rgba(96,165,250,0.10);
+  --ambient-blue:    rgba(29,78,216,0.12);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(0,0,0,0.7);
 
@@ -114,13 +113,12 @@
 
 /* ─── LIGHT THEME ─────────────────────────────────────────────────────────── */
 .light {
-  --background:  #E5E7ED;
-  --surface-1:   #EEF0F5;
-  --surface-2:   #E1E4EB;
-  --surface-3:   #D7DAE3;
-  --panel:       #ECEEF3;
-  --panel-2:     #E2E5EB;
-  --background-image: none;
+  --background:  #EAF4FF;
+  --surface-1:   #F4F9FF;
+  --surface-2:   #E5F0FC;
+  --surface-3:   #D6E7F8;
+  --panel:       #EEF6FF;
+  --panel-2:     #E4F0FC;
   --panel-glass:        rgba(15,23,42,0.03);
   --panel-glass-mid:    rgba(15,23,42,0.05);
   --panel-glass-strong: rgba(15,23,42,0.07);
@@ -181,10 +179,10 @@
   --glass-inset-top:    rgba(255,255,255,0.50);
   --glass-inset-bot:    rgba(0,0,0,0.04);
 
-  --surface-page:   #E5E7ED;
-  --surface-rail:   rgba(235,237,243,0.84);
-  --surface-header: rgba(229,232,238,0.82);
-  --surface-card:   rgba(239,241,246,0.76);
+  --surface-page:   #EAF4FF;
+  --surface-rail:   rgba(235,245,255,0.84);
+  --surface-header: rgba(234,244,255,0.82);
+  --surface-card:   rgba(246,250,255,0.76);
   --ambient-emerald: rgba(16,185,129,0.07);
   --ambient-cyan:    rgba(8,145,178,0.05);
   --ambient-violet:  rgba(139,92,246,0.045);
@@ -258,10 +256,11 @@ h1, h2, h3, h4, h5, h6 {
   isolation: isolate;
   min-height: 100vh;
   background-color: var(--surface-page);
-  background-image: var(--background-image);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-image:
+    radial-gradient(52% 44% at 8% 4%, color-mix(in srgb, var(--blue) 20%, transparent), transparent 74%),
+    radial-gradient(46% 42% at 96% 16%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 76%),
+    radial-gradient(48% 48% at 74% 100%, color-mix(in srgb, var(--violet) 15%, transparent), transparent 78%),
+    linear-gradient(135deg, var(--surface-page), color-mix(in srgb, var(--surface-2) 70%, var(--surface-page)) 52%, var(--surface-page));
 }
 .app-background::before {
   content: '';
@@ -270,10 +269,10 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(34% 28% at 0% 0%, color-mix(in srgb, var(--violet) 24%, transparent), transparent 76%),
-    radial-gradient(32% 26% at 100% 0%, color-mix(in srgb, var(--cyan) 20%, transparent), transparent 78%),
-    radial-gradient(30% 25% at 100% 100%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 80%),
-    radial-gradient(28% 24% at 0% 100%, color-mix(in srgb, var(--violet) 16%, transparent), transparent 80%);
+    radial-gradient(34% 28% at 0% 0%, color-mix(in srgb, var(--blue) 22%, transparent), transparent 76%),
+    radial-gradient(32% 26% at 100% 0%, color-mix(in srgb, var(--cyan) 18%, transparent), transparent 78%),
+    radial-gradient(30% 25% at 100% 100%, color-mix(in srgb, var(--violet) 14%, transparent), transparent 80%),
+    radial-gradient(28% 24% at 0% 100%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 80%);
   filter: blur(72px);
   animation: ambient-drift 52s ease-in-out infinite alternate;
 }
