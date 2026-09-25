@@ -20,7 +20,7 @@ function FleetData({ machines, readings }: { machines: FleetStatus; readings: Te
 
       <section aria-label="Resumo da frota">
         <p className="section-heading mb-3">Resumo da frota</p>
-        <div className="grid grid-cols-3 gap-3 rounded-2xl p-4 liquid-glass">
+        <div className="fleet-summary grid grid-cols-3 gap-3 rounded-2xl border border-[var(--border-subtle)] p-4">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--text-1)]">{machines.length}</p>
             <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Total</p>
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
       actions={
         <div className="flex items-center gap-2">
           <ReportButton machines={machines} />
-          <div className="hidden items-center gap-1.5 rounded-lg border border-[color:var(--status-normal)]/20 bg-[color:var(--status-normal)]/8 px-2.5 py-1.5 sm:flex">
+          <div className="status-pill status-pill--normal hidden items-center gap-1.5 border px-2.5 py-1.5 sm:flex">
             <span className="status-dot pulse" aria-hidden="true" />
             <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[color:var(--status-normal)]">
               Sync ativo

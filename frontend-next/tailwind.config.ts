@@ -59,8 +59,10 @@ const config: Config = {
         'card-hover': '0 4px 24px rgba(0,0,0,0.18)',
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
+        display: ['var(--font-display)', 'sans-serif'],
+        body: ['var(--font-body)', 'sans-serif'],
+        sans: ['var(--font-body)', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       letterSpacing: {
         label: '0.06em',

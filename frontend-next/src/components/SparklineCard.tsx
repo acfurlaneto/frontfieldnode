@@ -11,15 +11,15 @@ import {
 type SparklineStatus = 'normal' | 'atencao' | 'critico';
 
 const strokeHex: Record<SparklineStatus, string> = {
-  normal:  '#0FD492',
-  atencao: '#FBAD14',
-  critico: '#F04F4F',
+  normal:  'var(--chart-normal-stroke)',
+  atencao: 'var(--chart-atencao-stroke)',
+  critico: 'var(--chart-critico-stroke)',
 };
 
 const fillStop0: Record<SparklineStatus, string> = {
-  normal:  'rgba(15,212,146,0.62)',
-  atencao: 'rgba(251,173,20,0.58)',
-  critico: 'rgba(240,79,79,0.60)',
+  normal:  'var(--chart-normal-stroke)',
+  atencao: 'var(--chart-atencao-stroke)',
+  critico: 'var(--chart-critico-stroke)',
 };
 
 interface SparklineCardProps {
@@ -110,7 +110,7 @@ export function SparklineCard({
           <AreaChart data={dados} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={fillStop0[status]} />
+                <stop offset="0%" stopColor={fillStop0[status]} stopOpacity="0.56" />
                 <stop offset="55%" stopColor={stroke} stopOpacity="0.18" />
                 <stop offset="100%" stopColor="rgba(0,0,0,0)" />
               </linearGradient>
@@ -133,7 +133,7 @@ export function SparklineCard({
               type="monotone"
               dataKey="valor"
               stroke={stroke}
-              strokeWidth={2.8}
+              strokeWidth={2.5}
               fill={`url(#${gradId})`}
               filter={`url(#${glowId})`}
               isAnimationActive

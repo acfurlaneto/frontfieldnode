@@ -20,13 +20,13 @@ export function Sidebar() {
       {/* ── Desktop sidebar ── */}
       <nav
         aria-label="Navegação principal"
-        className="!fixed inset-y-0 left-0 z-50 hidden h-[100dvh] w-[5.5rem] flex-col items-center rounded-r-2xl border-y-0 border-l-0 px-2 py-4 shadow-[var(--shadow-glass)] lg:flex liquid-glass"
+        className="navigation-rail !fixed inset-y-4 left-4 z-50 hidden h-[calc(100dvh-2rem)] w-20 flex-col items-center rounded-[2rem] border px-2 py-4 lg:flex"
       >
         <div className="flex flex-col items-center gap-4">
           <Link
             href="/dashboard"
             aria-label="FieldNode — ir para o dashboard"
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--ui-accent)] text-[11px] font-black tracking-tight text-slate-950 shadow-[0_0_18px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
+            className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-[color:var(--ui-accent)] text-[11px] font-black tracking-tight text-slate-950 shadow-[0_0_18px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
           >
             FN
           </Link>
@@ -42,9 +42,9 @@ export function Sidebar() {
                 title={label}
                 aria-label={label}
                 aria-current={isActive ? 'page' : undefined}
-                className={`group relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95 ${
+                className={`group relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-transparent transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95 ${
                   isActive
-                    ? 'bg-[color:var(--ui-accent)]/12 text-[color:var(--ui-accent)] shadow-[0_0_14px_var(--glow-normal)]'
+                    ? 'nav-item--active text-[color:var(--ui-accent)]'
                     : 'text-[var(--text-3)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]'
                 }`}
               >
@@ -64,7 +64,7 @@ export function Sidebar() {
         </div>
 
         <div
-          className="flex w-10 flex-col items-center gap-2 border-t border-[var(--line)] pt-4"
+          className="flex w-10 flex-col items-center gap-2 border-t border-[var(--border-subtle)] pt-4"
           title="Gateway conectado"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--status-normal)] shadow-[0_0_6px_var(--glow-normal-strong)]" />
@@ -77,7 +77,7 @@ export function Sidebar() {
       {/* ── Mobile bottom nav ── */}
       <nav
         aria-label="Navegação mobile"
-        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex items-center justify-between gap-1 rounded-2xl px-2 py-1.5 shadow-[var(--shadow-glass)] lg:hidden liquid-glass"
+        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex items-center justify-between gap-1 rounded-[1.5rem] px-2 py-1.5 shadow-[var(--shadow-glass)] lg:hidden liquid-glass"
       >
         {items.map(({ icon: Icon, href, label }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -89,7 +89,7 @@ export function Sidebar() {
               aria-current={isActive ? 'page' : undefined}
               className={`flex min-h-[3.25rem] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95 ${
                 isActive
-                  ? 'bg-[color:var(--ui-accent)]/12 text-[color:var(--ui-accent)] shadow-[0_0_12px_var(--glow-normal)]'
+                    ? 'nav-item--active text-[color:var(--ui-accent)]'
                   : 'text-[var(--text-3)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]'
               }`}
             >

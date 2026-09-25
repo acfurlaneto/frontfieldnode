@@ -31,7 +31,7 @@ export function ApiStatusIndicator() {
   }, []);
 
   return (
-    <div className="flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--panel-glass-mid)] px-2.5 py-1.5">
+    <div className="status-pill flex items-center gap-1.5 border px-2.5 py-1.5">
       <span
         className={`h-1.5 w-1.5 rounded-full ${
           isOnline

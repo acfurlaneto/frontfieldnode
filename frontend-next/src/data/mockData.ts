@@ -9,20 +9,20 @@
 
 /** Série de RPM para sparkline demonstrativa */
 export const mockRpmSeries = [
-  { valor: 1750 }, { valor: 1800 }, { valor: 1820 },
-  { valor: 1790 }, { valor: 1850 }, { valor: 1820 },
+  { valor: 1750, label: 'Ponto 1' }, { valor: 1800, label: 'Ponto 2' }, { valor: 1820, label: 'Ponto 3' },
+  { valor: 1790, label: 'Ponto 4' }, { valor: 1850, label: 'Ponto 5' }, { valor: 1820, label: 'Ponto 6' },
 ];
 
 /** Série de temperatura para sparkline demonstrativa */
 export const mockTemperaturaSeries = [
-  { valor: 72 }, { valor: 74 }, { valor: 76 },
-  { valor: 79 }, { valor: 82 }, { valor: 78 },
+  { valor: 72, label: 'Ponto 1' }, { valor: 74, label: 'Ponto 2' }, { valor: 76, label: 'Ponto 3' },
+  { valor: 79, label: 'Ponto 4' }, { valor: 82, label: 'Ponto 5' }, { valor: 78, label: 'Ponto 6' },
 ];
 
 /** Série de vibração para sparkline demonstrativa */
 export const mockVibracaoSeries = [
-  { valor: 1.8 }, { valor: 2.0 }, { valor: 1.9 },
-  { valor: 2.2 }, { valor: 2.1 }, { valor: 2.1 },
+  { valor: 1.8, label: 'Ponto 1' }, { valor: 2.0, label: 'Ponto 2' }, { valor: 1.9, label: 'Ponto 3' },
+  { valor: 2.2, label: 'Ponto 4' }, { valor: 2.1, label: 'Ponto 5' }, { valor: 2.1, label: 'Ponto 6' },
 ];
 
 /** Resumo de frota para overlay do mapa quando API não retornar dados */

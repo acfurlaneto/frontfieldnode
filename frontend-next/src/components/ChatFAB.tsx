@@ -31,21 +31,21 @@ export function ChatFAB({ machines }: ChatFABProps) {
     <>
       {open && (
         <section
-          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-3 z-[90] max-h-[min(32rem,calc(100dvh-8rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-[var(--line)] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.35)] sm:right-5 sm:p-5 lg:bottom-[5.25rem] lg:right-6"
-          aria-label="Assistente de campo"
+          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-3 z-[90] max-h-[min(31rem,calc(100dvh-7.5rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto overscroll-contain rounded-[1.5rem] border border-[var(--line)] p-4 shadow-[var(--shadow-elevated)] sm:right-5 sm:p-5 lg:bottom-[5.25rem] lg:right-6"
+          aria-label="Pergunte à IA"
           role="dialog"
           aria-modal="false"
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="flex gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[color:var(--ui-accent)]/10 text-[color:var(--ui-accent)]">
+            <div className="flex min-w-0 gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color:var(--ui-accent)]/12 text-[color:var(--ui-accent)] shadow-[0_0_18px_var(--glow-normal)]">
                 <Sparkles size={16} aria-hidden="true" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ui-accent)]">
-                  Assistente de campo
+                  Pergunte à IA
                 </p>
-                <h2 className="mt-0.5 text-sm font-bold text-[var(--text-1)]">
+                <h2 className="mt-0.5 truncate text-sm font-bold text-[var(--text-1)]">
                   O que merece atenção?
                 </h2>
               </div>
@@ -54,7 +54,7 @@ export function ChatFAB({ machines }: ChatFABProps) {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Fechar assistente"
-              className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
             >
               <X size={14} aria-hidden="true" />
             </button>
@@ -112,8 +112,9 @@ export function ChatFAB({ machines }: ChatFABProps) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label={open ? 'Fechar assistente de campo' : 'Abrir assistente de campo'}
-        className="chat-fab fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-3 z-[85] inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_26px_var(--glow-normal)] transition duration-200 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] lg:bottom-6 lg:right-6"
+        aria-label={open ? 'Fechar Pergunte à IA' : 'Abrir Pergunte à IA'}
+        title={open ? 'Fechar Pergunte à IA' : 'Abrir Pergunte à IA'}
+        className="chat-fab fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-3 z-[85] inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_24px_var(--glow-normal)] transition duration-200 hover:brightness-110 hover:shadow-[0_0_28px_var(--glow-normal-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] lg:bottom-6 lg:right-6"
       >
         <Sparkles size={16} aria-hidden="true" />
         <span className="hidden sm:inline">Pergunte à IA</span>

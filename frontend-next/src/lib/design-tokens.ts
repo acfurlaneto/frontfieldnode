@@ -17,7 +17,7 @@ export const primaryButton =
   'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[color:var(--ui-accent)] px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_20px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97]';
 
 export const secondaryButton =
-  'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-5 py-2.5 text-sm font-semibold text-[var(--text-1)] transition hover:border-[rgba(255,255,255,0.18)] hover:bg-[var(--panel-glass-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97]';
+  'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--panel-glass-mid)] px-5 py-2.5 text-sm font-semibold text-[var(--text-1)] transition hover:border-[var(--border-highlight)] hover:bg-[var(--panel-glass-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97]';
 
 // Cores semânticas para texto
 export const statusColor = {

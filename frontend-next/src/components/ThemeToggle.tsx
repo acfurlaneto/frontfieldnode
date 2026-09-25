@@ -38,7 +38,7 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
       title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-      className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:border-[rgba(255,255,255,0.16)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
+      className="icon-control flex h-9 w-9 items-center justify-center rounded-xl border text-[var(--text-3)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
     >
       {theme === 'dark'
         ? <Sun size={16} strokeWidth={1.8} aria-hidden="true" />

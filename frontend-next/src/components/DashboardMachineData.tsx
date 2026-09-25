@@ -71,7 +71,7 @@ export function DashboardMachineData({ machines, initialReadings }: { machines: 
 
   return (
     <section aria-label="Indicadores da máquina selecionada" className="space-y-4">
-      <div className="flex flex-col gap-3 rounded-2xl p-3 liquid-glass sm:flex-row sm:items-center sm:justify-between">
+      <div className="fleet-summary flex flex-col gap-3 rounded-2xl border border-[var(--border-subtle)] p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Tractor size={15} className="text-[color:var(--ui-accent)]" aria-hidden="true" />
           <div>
@@ -82,7 +82,7 @@ export function DashboardMachineData({ machines, initialReadings }: { machines: 
         </div>
         <label className="relative w-full sm:w-72">
           <span className="sr-only">Selecionar máquina</span>
-          <select value={selectedMachineId} onChange={(event) => setSelectedMachineId(event.target.value)} className="h-11 w-full appearance-none rounded-xl border border-[var(--line)] bg-[var(--panel)] px-3 pr-9 text-sm font-medium text-[var(--text-1)] outline-none transition focus:border-[color:var(--ui-accent)] focus:ring-2 focus:ring-[color:var(--ui-accent)]/20">
+          <select value={selectedMachineId} onChange={(event) => setSelectedMachineId(event.target.value)} className="data-tile h-11 w-full appearance-none border px-3 pr-9 text-sm font-medium text-[var(--text-1)] outline-none focus:border-[color:var(--ui-accent)] focus:ring-2 focus:ring-[color:var(--ui-accent)]/20">
             {options.map((item) => <option key={item.maquina_id} value={item.maquina_id}>{item.maquina_id} · {item.modelo.nome}</option>)}
           </select>
           <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-2)]" aria-hidden="true" />

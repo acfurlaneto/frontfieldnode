@@ -29,7 +29,7 @@ export function MetricCard({
     <article
       role="group"
       aria-label={label}
-      className={`metric-card border ${toneBorder[tone]}`}
+      className={`metric-card metric-card--${tone} border ${toneBorder[tone]}`}
     >
       <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {label}

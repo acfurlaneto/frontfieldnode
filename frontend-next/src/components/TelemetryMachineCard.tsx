@@ -42,7 +42,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
 
       {/* Métricas */}
       <dl className="mt-5 grid grid-cols-3 gap-2">
-        <div className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-3">
+        <div className="data-tile border p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Thermometer size={10} aria-hidden="true" />
             Temp
@@ -51,7 +51,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             {reading.temperatura}°C
           </dd>
         </div>
-        <div className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-3">
+        <div className="data-tile border p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Vibrate size={10} aria-hidden="true" />
             Vib
@@ -60,7 +60,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             {reading.vibracao}g
           </dd>
         </div>
-        <div className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-3">
+        <div className="data-tile border p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Gauge size={10} aria-hidden="true" />
             RPM

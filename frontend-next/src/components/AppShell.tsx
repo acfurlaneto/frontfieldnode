@@ -28,8 +28,8 @@ export function AppShell({
       <Sidebar />
       {showBackButton ? <BackButton /> : null}
 
-      <section className="relative z-10 lg:pl-[5.5rem]">
-        <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[color:var(--surface-header)]/80 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+      <section className="relative z-10 lg:pl-[7.5rem]">
+        <header className="app-header sticky top-0 z-20 border-b px-4 py-3.5 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
             <div className={showBackButton ? 'pl-20 lg:pl-8' : ''}>
               {eyebrow ? (
@@ -37,7 +37,7 @@ export function AppShell({
                   {eyebrow}
                 </p>
               ) : null}
-              <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-[var(--text-1)] sm:text-xl">
+              <h1 className="mt-0.5 text-xl font-bold tracking-tight text-[var(--text-1)] sm:text-2xl">
                 {title}
               </h1>
               {description ? (
@@ -55,7 +55,7 @@ export function AppShell({
           </div>
         </header>
 
-        <div className={`mx-auto w-full max-w-7xl min-h-0 px-4 py-5 sm:px-6 lg:px-8 ${contentClassName}`}>
+        <div className={`app-content mx-auto w-full max-w-7xl min-h-0 px-4 py-6 sm:px-6 lg:px-8 ${contentClassName}`}>
           {children}
         </div>
       </section>
