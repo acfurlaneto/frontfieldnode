@@ -17,10 +17,10 @@ type ReportButtonProps = {
 };
 
 const selectClass =
-  'rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-1)] outline-none transition hover:border-[rgba(255,255,255,0.18)] focus:border-[color:var(--ui-accent)]/60';
+  'rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-1)] outline-none transition hover:border-[color:var(--ui-accent)]/40 focus:border-[color:var(--ui-accent)]/60';
 
 const btnClass =
-  'inline-flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:border-[rgba(255,255,255,0.18)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95';
+  'inline-flex items-center gap-1.5 rounded-xl bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95';
 
 export function ReportButton({
   machineId,

@@ -142,7 +142,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
 
         {/* Leitura + Eficiência */}
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
-          <div className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-4 sm:p-5">
+          <div className="rounded-xl bg-[var(--panel-glass-mid)] p-4 sm:p-5">
             <div className="flex items-start gap-3">
               <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
                 readout.tone === 'positive'
@@ -163,7 +163,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
             </div>
           </div>
 
-          <div className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-4 sm:p-5">
+          <div className="rounded-xl bg-[var(--panel-glass-mid)] p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className={fieldLabel}>Eficiência operacional</p>
@@ -197,7 +197,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
             </div>
           </div>
 
-          <div className="hidden overflow-hidden rounded-xl border border-[var(--line)] md:block">
+          <div className="hidden overflow-hidden rounded-xl md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-[var(--line)] bg-[var(--panel-glass-mid)] text-[10px] uppercase tracking-[0.1em] text-[var(--text-3)]">
                 <tr>
@@ -244,7 +244,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
               ...metrics.map(({ label, value, context, tone }) => ({ label, value, context, tone })),
               { label: 'Eficiência operacional', value: `${relatorio.eficiencia_operacional.toFixed(1)}%`, context: 'índice operacional consolidado', tone: 'positive' as const },
             ].map(({ label, value, context, tone }) => (
-              <article key={label} className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-4">
+              <article key={label} className="rounded-xl bg-[var(--panel-glass-mid)] p-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-xs font-semibold text-[var(--text-1)]">{label}</p>
                   <p className={`text-lg font-bold ${metricValueClass(tone)}`}>{value}</p>

@@ -70,7 +70,7 @@ function OperatorDetails({ operator, onClose }: { operator: Operator; onClose: (
             type="button"
             onClick={onClose}
             aria-label="Fechar detalhes do operário"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:text-[var(--text-1)] focus-visible:outline-2 active:scale-95"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:text-[var(--text-1)] focus-visible:outline-2 active:scale-95"
           >
             <X size={15} aria-hidden="true" />
           </button>
@@ -136,7 +136,7 @@ export function OperatorDirectory({ operators }: { operators: Operator[] }) {
               type="button"
               onClick={() => setSelectedOperator(operator)}
               aria-label={`Ver detalhes de ${operator.nome}`}
-              className="metric-card w-full text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--ui-accent)]/30 focus-visible:outline-2 active:scale-[0.99]"
+              className="metric-card w-full text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-glass)] focus-visible:outline-2 active:scale-[0.99]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">

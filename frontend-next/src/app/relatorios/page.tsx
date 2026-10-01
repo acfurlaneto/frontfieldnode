@@ -153,7 +153,7 @@ export default function RelatoriosPage() {
               type="button"
               onClick={handleGenerate}
               disabled={!selectedMachine || estadoRelatorio.tipo === 'carregando'}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[color:var(--ui-accent)] px-5 text-sm font-bold text-slate-950 shadow-[0_0_20px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97]"
+              className="btn-brand inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed"
             >
               <RefreshCw
                 size={15}

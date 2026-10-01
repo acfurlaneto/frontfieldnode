@@ -31,14 +31,14 @@ export function ChatFAB({ machines }: ChatFABProps) {
     <>
       {open && (
         <section
-          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-3 z-[90] max-h-[min(31rem,calc(100dvh-7.5rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto overscroll-contain rounded-[1.5rem] border border-[var(--line)] p-4 shadow-[var(--shadow-elevated)] sm:right-5 sm:p-5 lg:bottom-[5.25rem] lg:right-6"
+          className="chat-panel liquid-glass--elevated fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-3 z-[90] max-h-[min(31rem,calc(100dvh-7.5rem))] w-[min(26rem,calc(100vw-1.5rem))] overflow-y-auto overscroll-contain rounded-[1.5rem] p-4 sm:right-5 sm:p-5 lg:bottom-[5.25rem] lg:right-6"
           aria-label="Pergunte à IA"
           role="dialog"
           aria-modal="false"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color:var(--ui-accent)]/12 text-[color:var(--ui-accent)] shadow-[0_0_18px_var(--glow-normal)]">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[color:var(--ui-accent)]/14 text-[color:var(--ui-accent)] shadow-[0_0_20px_var(--glow-accent)]">
                 <Sparkles size={16} aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -54,7 +54,7 @@ export function ChatFAB({ machines }: ChatFABProps) {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Fechar assistente"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-95"
             >
               <X size={14} aria-hidden="true" />
             </button>
@@ -74,7 +74,7 @@ export function ChatFAB({ machines }: ChatFABProps) {
                   <select
                     value={selectedMachine}
                     onChange={(e) => setSelectedMachine(e.target.value)}
-                    className="min-h-10 w-full appearance-none rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 pr-8 text-sm font-medium text-[var(--text-1)] outline-none transition hover:border-[var(--glass-border-top)] focus:border-[color:var(--ui-accent)]/60"
+                    className="min-h-10 w-full appearance-none rounded-xl bg-[var(--panel-glass-mid)] px-3 pr-8 text-sm font-medium text-[var(--text-1)] outline-none transition hover:bg-[var(--panel-glass-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)]"
                   >
                     {machineOptions.map((m) => (
                       <option key={m.maquina_id} value={m.maquina_id}>
@@ -94,14 +94,14 @@ export function ChatFAB({ machines }: ChatFABProps) {
                 type="button"
                 onClick={() => setShowPrescription(true)}
                 disabled={!selectedMachine}
-                className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_20px_var(--glow-normal)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.97]"
+                className="btn-brand mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] disabled:cursor-not-allowed"
               >
                 <Sparkles size={15} aria-hidden="true" />
                 Analisar máquina
               </button>
             </>
           ) : (
-            <p className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] p-3 text-xs leading-relaxed text-[var(--text-2)]">
+            <p className="mt-4 rounded-xl bg-[var(--panel-glass-mid)] p-3 text-xs leading-relaxed text-[var(--text-2)]">
               A frota ainda não está disponível. A assistente continuará visível e poderá ser usada quando uma máquina for carregada.
             </p>
           )}
@@ -114,7 +114,7 @@ export function ChatFAB({ machines }: ChatFABProps) {
         aria-expanded={open}
         aria-label={open ? 'Fechar Pergunte à IA' : 'Abrir Pergunte à IA'}
         title={open ? 'Fechar Pergunte à IA' : 'Abrir Pergunte à IA'}
-        className="chat-fab fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-3 z-[85] inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--ui-accent)] px-4 text-sm font-bold text-slate-950 shadow-[0_0_24px_var(--glow-normal)] transition duration-200 hover:brightness-110 hover:shadow-[0_0_28px_var(--glow-normal-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] lg:bottom-6 lg:right-6"
+        className="chat-fab fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-3 z-[85] inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-bold transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97] sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))] lg:bottom-6 lg:right-6"
       >
         <Sparkles size={16} aria-hidden="true" />
         <span className="hidden sm:inline">Pergunte à IA</span>

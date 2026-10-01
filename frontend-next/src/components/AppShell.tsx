@@ -28,8 +28,8 @@ export function AppShell({
       <Sidebar />
       {showBackButton ? <BackButton /> : null}
 
-      <section className="relative z-10 lg:pl-[7.5rem]">
-        <header className="app-header sticky top-0 z-20 border-b px-4 py-3.5 backdrop-blur-xl sm:px-6 lg:px-8">
+      <section className="relative z-10 lg:pl-[6.5rem]">
+        <header className="app-header app-header--brand sticky top-0 z-20 border-b px-4 py-3.5 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
             <div className={showBackButton ? 'pl-20 lg:pl-8' : ''}>
               {eyebrow ? (

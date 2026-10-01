@@ -17,7 +17,7 @@ export default function DashboardError({
   return (
     <main className="min-h-screen bg-[var(--surface-page)] px-4 py-6 sm:px-6 lg:px-8">
       <section className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[color:var(--status-critico)]/20 bg-[color:var(--status-critico)]/8 text-[color:var(--status-critico)]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[color:var(--status-critico)]/10 text-[color:var(--status-critico)] shadow-[0_0_28px_var(--glow-red)]">
           <AlertTriangle size={24} strokeWidth={1.8} aria-hidden="true" />
         </div>
         <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--status-critico)]">
@@ -33,7 +33,7 @@ export default function DashboardError({
         <button
           type="button"
           onClick={reset}
-          className="mt-6 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-5 py-2.5 text-sm font-semibold text-[var(--text-1)] transition hover:border-[rgba(255,255,255,0.18)] hover:bg-[var(--panel-glass-strong)] active:scale-95"
+          className="mt-6 rounded-xl bg-[var(--panel-glass-mid)] px-5 py-2.5 text-sm font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
         >
           Tentar novamente
         </button>

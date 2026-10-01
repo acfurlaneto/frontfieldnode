@@ -19,7 +19,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
       {machines.map((machine) => (
         <article
           key={machine.id}
-          className="metric-card transition-all duration-200 hover:border-[color:var(--ui-accent)]/25 hover:-translate-y-0.5 hover:shadow-[var(--shadow-glass)]"
+          className="metric-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-glass)]"
         >
           {/* Cabeçalho */}
           <div className="flex items-start justify-between gap-3">
@@ -38,7 +38,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
 
           {/* Dados */}
           <dl className="mt-5 grid grid-cols-2 gap-2 text-xs">
-            <div className="data-tile border p-3">
+            <div className="data-tile p-3">
               <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 ID
               </dt>
@@ -46,7 +46,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
                 {machine.maquina_id || machine.id}
               </dd>
             </div>
-            <div className="data-tile border p-3">
+            <div className="data-tile p-3">
               <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 Operário
               </dt>
@@ -54,7 +54,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
                 {machine.operario.nome}
               </dd>
             </div>
-            <div className="data-tile border p-3">
+            <div className="data-tile p-3">
               <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 <Gauge size={9} aria-hidden="true" /> Velocidade
               </dt>
@@ -62,7 +62,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
                 {machine.estado_de_movimento.velocidade} km/h
               </dd>
             </div>
-            <div className="data-tile border p-3">
+            <div className="data-tile p-3">
               <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 <Clock size={9} aria-hidden="true" /> Horas
               </dt>
@@ -77,7 +77,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
             <div className="mt-4">
               <Link
                 href={`/maquinas/${machine.maquina_id}/prescricao`}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--ui-accent)]/20 bg-[color:var(--ui-accent)]/8 px-3 py-2 text-xs font-semibold text-[color:var(--ui-accent)] transition hover:border-[color:var(--ui-accent)]/35 hover:bg-[color:var(--ui-accent)]/12"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[color:var(--ui-accent)]/12 px-3 py-2 text-xs font-semibold text-[color:var(--ui-accent)] transition hover:bg-[color:var(--ui-accent)]/18"
               >
                 Ver Prescrição
                 <MoveRight size={12} aria-hidden="true" />

@@ -71,7 +71,7 @@ export function DashboardMachineData({ machines, initialReadings }: { machines: 
 
   return (
     <section aria-label="Indicadores da máquina selecionada" className="space-y-4">
-      <div className="fleet-summary flex flex-col gap-3 rounded-2xl border border-[var(--border-subtle)] p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="fleet-summary flex flex-col gap-3 rounded-2xl p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Tractor size={15} className="text-[color:var(--ui-accent)]" aria-hidden="true" />
           <div>

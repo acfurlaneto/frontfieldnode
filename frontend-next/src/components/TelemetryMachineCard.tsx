@@ -19,7 +19,15 @@ function machineKind(id: string) {
 }
 
 function riskLabel(reading: Telemetry) {
-  return reading.status_risco?.rotuloRisco || 'NORMAL';
+  const rotulo = reading.status_risco?.rotuloRisco?.trim();
+  if (!rotulo) return 'NORMAL';
+  const normalized = rotulo
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  if (normalized === 'ATENCAO' || normalized === 'ALERTA') return 'ALERTA';
+  if (normalized === 'CRITICO') return 'CRÍTICO';
+  return rotulo.toUpperCase();
 }
 
 export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
@@ -42,7 +50,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
 
       {/* Métricas */}
       <dl className="mt-5 grid grid-cols-3 gap-2">
-        <div className="data-tile border p-3">
+        <div className="data-tile p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Thermometer size={10} aria-hidden="true" />
             Temp
@@ -51,7 +59,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             {reading.temperatura}°C
           </dd>
         </div>
-        <div className="data-tile border p-3">
+        <div className="data-tile p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Vibrate size={10} aria-hidden="true" />
             Vib
@@ -60,7 +68,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
             {reading.vibracao}g
           </dd>
         </div>
-        <div className="data-tile border p-3">
+        <div className="data-tile p-3">
           <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
             <Gauge size={10} aria-hidden="true" />
             RPM
@@ -75,7 +83,7 @@ export function TelemetryMachineCard({ reading }: { reading: Telemetry }) {
       <div className="mt-4 flex gap-2">
         <Link
           href={`/detalhes?id=${encodeURIComponent(reading.maquina_id)}`}
-          className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-center text-xs font-semibold text-[var(--text-2)] transition hover:border-[color:var(--ui-accent)]/30 hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]"
+          className="flex-1 rounded-xl bg-[var(--panel-glass-mid)] px-3 py-2 text-center text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)]"
         >
           Detalhes
         </Link>

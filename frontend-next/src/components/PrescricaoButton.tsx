@@ -15,7 +15,7 @@ export function PrescricaoButton({ machineId }: PrescricaoButtonProps) {
       <button
         type="button"
         onClick={() => setShowModal(true)}
-        className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:border-[rgba(255,255,255,0.18)] hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
+        className="rounded-xl bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
       >
         Decisão IA
       </button>

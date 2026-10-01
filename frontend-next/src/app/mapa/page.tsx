@@ -25,7 +25,7 @@ export default function MapaPage() {
       title="Mapa de frota"
       description="Posição e status operacional das máquinas"
       actions={
-        <Link href="/relatorios" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[color:var(--ui-accent)] px-3.5 text-xs font-bold text-slate-950 shadow-[0_0_20px_var(--glow-normal)] transition hover:brightness-110">
+        <Link href="/relatorios" className="btn-brand inline-flex min-h-10 items-center gap-2 rounded-xl px-3.5 text-xs font-bold">
           <FileText size={14} aria-hidden="true" />
           <span className="hidden sm:inline">Relatórios</span>
         </Link>

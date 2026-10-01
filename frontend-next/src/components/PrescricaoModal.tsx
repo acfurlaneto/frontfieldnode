@@ -90,7 +90,7 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
             type="button"
             onClick={onClose}
             aria-label="Fechar prescrição operacional"
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--panel-glass-mid)] text-[var(--text-3)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95"
           >
             <X size={15} aria-hidden="true" />
           </button>
@@ -122,7 +122,7 @@ export function PrescricaoModal({ machineId, isOpen, onClose }: PrescricaoModalP
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-4 py-2 text-sm font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
+            className="rounded-xl bg-[var(--panel-glass-mid)] px-4 py-2 text-sm font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
           >
             Fechar
           </button>

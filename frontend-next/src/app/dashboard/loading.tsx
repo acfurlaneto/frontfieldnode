@@ -7,7 +7,7 @@ export default function DashboardLoading() {
       aria-label="Carregando dashboard"
     >
       <div className="mx-auto max-w-7xl">
-        <div className="flex items-center justify-between gap-4 border-b border-[var(--line)] pb-5">
+        <div className="flex items-center justify-between gap-4 pb-5">
           <div className="space-y-2">
             <div className="h-2.5 w-16 animate-pulse rounded-full bg-[var(--panel-glass-strong)]" />
             <div className="h-6 w-56 animate-pulse rounded-xl bg-[var(--panel-glass-strong)]" />
@@ -16,7 +16,7 @@ export default function DashboardLoading() {
         </div>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="metric-card border border-[var(--line)] animate-pulse">
+            <div key={i} className="metric-card animate-pulse">
               <div className="h-2.5 w-20 rounded-full bg-[var(--panel-glass-strong)]" />
               <div className="mt-4 h-9 w-28 rounded-xl bg-[var(--panel-glass-strong)]" />
               <div className="mt-4 h-10 rounded-xl bg-[var(--panel-glass-mid)]" />

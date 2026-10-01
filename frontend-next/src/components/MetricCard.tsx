@@ -7,13 +7,6 @@ const toneClass = {
   slate:   'text-[var(--text-1)]',
 } as const;
 
-const toneBorder = {
-  emerald: 'border-[color:var(--status-normal)]/20',
-  amber:   'border-[color:var(--status-atencao)]/20',
-  red:     'border-[color:var(--status-critico)]/20',
-  slate:   'border-[var(--line)]',
-} as const;
-
 export function MetricCard({
   label,
   value,
@@ -29,12 +22,12 @@ export function MetricCard({
     <article
       role="group"
       aria-label={label}
-      className={`metric-card metric-card--${tone} border ${toneBorder[tone]}`}
+      className={`metric-card metric-card--${tone}`}
     >
       <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {label}
       </p>
-      <div className={`mt-3 text-2xl font-bold tracking-tight sm:text-3xl ${toneClass[tone]}`}>
+      <div className={`stat-value mt-3 text-2xl font-bold sm:text-3xl ${toneClass[tone]}`}>
         {value}
       </div>
       {helper ? (

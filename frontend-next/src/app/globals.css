@@ -3,36 +3,52 @@
 /* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
 :root,
 .dark {
-  --background:  #030407;
-  --surface-1:   #080A11;
-  --surface-2:   #0D1020;
-  --surface-3:   #15142A;
-  --panel:       #080B12;
-  --panel-2:     #0E1222;
-  --background-image: url('/fieldnode-dark-atmosphere.jpg');
-  --panel-glass:        rgba(255,255,255,0.04);
-  --panel-glass-mid:    rgba(255,255,255,0.06);
-  --panel-glass-strong: rgba(255,255,255,0.10);
-  --panel-glass-soft:   rgba(255,255,255,0.025);
+  --background:  #000000;
+  --surface-1:   #050508;
+  --surface-2:   #0A0A10;
+  --surface-3:   #121019;
+  --panel:       #07070B;
+  --panel-2:     #0D0C15;
+  /* atmosfera do palco: construída 100% em CSS (ver .app-background) */
+  --surface-card-solid:   rgba(18,14,28,0.88);
+  /* base e tinta dos containers de KPI — a base fica atrás, a tinta dá o degradê */
+  --kpi-base:    var(--surface-card-solid);
+  --kpi-tint:    color-mix(in srgb, var(--green) 17%, transparent);
+  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 15%, transparent);
+  --kpi-tint-risk:  color-mix(in srgb, var(--red) 15%, transparent);
+  --panel-glass:        rgba(255,255,255,0.035);
+  --panel-glass-mid:    rgba(255,255,255,0.055);
+  --panel-glass-strong: rgba(255,255,255,0.09);
+  --panel-glass-soft:   rgba(255,255,255,0.02);
 
-  --foreground: #E2E8F0;
-  --text-1:     #F1F5F9;
-  --text-2:     #CBD5E1;
-  --text-3:     #64748B;
-  --muted:      #475569;
+  --foreground: #EDEDF3;
+  --text-1:     #F7F7FA;
+  --text-2:     #C6C5D4;
+  --text-3:     #8B8AA0;
+  --muted:      #5C5B70;
 
-  --line:        rgba(255,255,255,0.09);
-  --border-glass: rgba(255,255,255,0.09);
-  --border-subtle: rgba(255,255,255,0.08);
-  --border-highlight: rgba(255,255,255,0.18);
+  --line:        rgba(255,255,255,0.08);
+  --border-glass: rgba(255,255,255,0.08);
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-highlight: rgba(255,255,255,0.14);
 
-  /* primitivos de cor — ligeiramente mais saturados/vibrantes */
-  --green:  #0FD492;
+  /* controles de formulário — tokens próprios de propósito:
+     o chrome escuro da marca (.app-nav / .app-header--brand) reescreve
+     --text-1/--panel, então usar esses tokens direto deixaria o <select>
+     com fundo claro e texto branco (ilegível) no modo claro. */
+  --field-bg:   var(--panel);
+  --field-fg:   var(--text-1);
+  --field-line: var(--line);
+
+  /* primitivos de cor — verde/âmbar/vermelho seguem semânticos (operação) */
+  --green:  #12E79C;
   --amber:  #FBAD14;
   --red:    #F04F4F;
   --blue:   #60A5FA;
-  --violet: #B56EFF;
+  --violet: #A855F7;
   --cyan:   #22E5FF;
+  --purple:  #7C3AED;
+  --magenta: #D946EF;
 
   /* status semântico */
   --status-normal:  var(--green);
@@ -40,8 +56,10 @@
   --status-critico: var(--red);
   --status-neutro:  var(--text-3);
 
-  /* accent de interface */
+  /* accent de interface + gradiente de marca (roxo → magenta) */
   --ui-accent: var(--violet);
+  --brand-gradient: linear-gradient(135deg, #7C3AED 0%, #B026FF 48%, #E879F9 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(124,58,237,0.24), rgba(217,70,239,0.18));
 
   /* gráficos */
   --chart-normal-stroke:  var(--green);
@@ -62,37 +80,42 @@
   --chart-point-stroke:   rgba(0,0,0,0.5);
   --chart-transparent:    rgba(0,0,0,0);
 
-  /* glows */
-  --focus-ring:         rgba(181,110,255,0.30);
+  /* glows — verde segue sendo o brilho operacional; roxo/magenta é a marca */
+  --focus-ring:         rgba(168,85,247,0.32);
   --glow-normal:        rgba(15,212,146,0.15);
   --glow-normal-strong: rgba(15,212,146,0.60);
   --glow-amber:         rgba(251,173,20,0.18);
   --glow-red:           rgba(240,79,79,0.18);
-  --glow-violet:        rgba(181,110,255,0.20);
+  --glow-violet:        rgba(168,85,247,0.24);
   --glow-cyan:          rgba(34,229,255,0.18);
+  --glow-accent:        rgba(168,85,247,0.34);
+  --glow-accent-strong: rgba(217,70,239,0.55);
 
-  /* liquid glass — highlight especular de borda */
-  --glass-border-top:   rgba(255,255,255,0.18);
-  --glass-border-bot:   rgba(255,255,255,0.04);
-  --glass-inset-top:    rgba(255,255,255,0.10);
-  --glass-inset-bot:    rgba(0,0,0,0.12);
+  /* liquid glass — highlight especular interno (sem borda) */
+  --glass-border-top:   rgba(255,255,255,0.14);
+  --glass-border-bot:   rgba(255,255,255,0.03);
+  --glass-inset-top:    rgba(255,255,255,0.08);
+  --glass-inset-bot:    rgba(0,0,0,0.16);
 
   /* superfícies compostas */
-  --surface-page:   #030407;
-  --surface-rail:   rgba(6,8,15,0.92);
-  --surface-header: rgba(3,5,10,0.86);
-  --surface-card:   rgba(11,14,27,0.78);
-  --ambient-emerald: rgba(139,92,246,0.12);
-  --ambient-cyan:    rgba(34,211,238,0.10);
-  --ambient-violet:  rgba(168,85,247,0.12);
-  --ambient-blue:    rgba(59,130,246,0.08);
+  --surface-page:   #000000;
+  --surface-rail:   rgba(8,6,12,0.78);
+  --surface-header: rgba(0,0,0,0.72);
+  --surface-card:   rgba(18,14,26,0.62);
+
+  /* glow ambiente — feixes violeta nos cantos superiores, bloom central e wash inferior */
+  --ambient-glow-1: rgba(139,92,246,0.54);
+  --ambient-glow-2: rgba(168,85,247,0.48);
+  --ambient-glow-3: rgba(124,58,237,0.46);
+  --ambient-glow-4: rgba(109,40,217,0.42);
+
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(0,0,0,0.7);
 
   /* sombras */
-  --shadow-glass: 0 14px 38px rgba(0,0,0,0.38), inset 0 1px 0 var(--glass-inset-top), inset 0 -1px 0 var(--glass-inset-bot);
-  --shadow-card:  0 8px 24px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.025);
-  --shadow-elevated: 0 24px 64px rgba(0,0,0,0.52), inset 0 1px 0 var(--glass-inset-top);
+  --shadow-glass: 0 22px 56px rgba(0,0,0,0.62), inset 0 1px 0 var(--glass-inset-top);
+  --shadow-card:  0 14px 34px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05);
+  --shadow-elevated: 0 30px 76px rgba(0,0,0,0.70), inset 0 1px 0 var(--glass-inset-top);
 
   /* espaçamento */
   --space-1: 4px;
@@ -102,9 +125,11 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  --radius-panel: 20px;
-  --radius-card: 20px;
+  --radius-panel: 28px;
+  --radius-card: 28px;
+  --radius-tile: 18px;
   --radius-pill: 9999px;
+  --radius-rail: 34px;
   --transition-ui: 180ms cubic-bezier(0.22, 1, 0.36, 1);
   --font-primary: var(--font-body), sans-serif;
   --font-code:    ui-monospace, SFMono-Regular, monospace;
@@ -114,41 +139,54 @@
 
 /* ─── LIGHT THEME ─────────────────────────────────────────────────────────── */
 .light {
-  --background:  #E5E7ED;
-  --surface-1:   #EEF0F5;
-  --surface-2:   #E1E4EB;
-  --surface-3:   #D7DAE3;
-  --panel:       #ECEEF3;
-  --panel-2:     #E2E5EB;
-  --background-image: none;
-  --panel-glass:        rgba(15,23,42,0.03);
-  --panel-glass-mid:    rgba(15,23,42,0.05);
-  --panel-glass-strong: rgba(15,23,42,0.07);
-  --panel-glass-soft:   rgba(15,23,42,0.02);
+  --background:  #F1F0F7;
+  --surface-1:   #F7F6FC;
+  --surface-2:   #EBE9F4;
+  --surface-3:   #E2E0EE;
+  --panel:       #FBFAFE;
+  --panel-2:     #F2F1F8;
+  --surface-card-solid:   rgba(255,255,255,0.94);
+  /* KPI em tom violeta suave (nunca branco puro) + tinta de status */
+  --kpi-base:    linear-gradient(158deg, rgba(124,58,237,0.16) 0%, rgba(255,255,255,0.96) 56%, rgba(247,246,253,0.90) 100%);
+  --kpi-tint:    color-mix(in srgb, var(--green) 15%, transparent);
+  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 15%, transparent);
+  --kpi-tint-risk:  color-mix(in srgb, var(--red) 14%, transparent);
+  --panel-glass:        rgba(28,22,52,0.035);
+  --panel-glass-mid:    rgba(28,22,52,0.05);
+  --panel-glass-strong: rgba(28,22,52,0.075);
+  --panel-glass-soft:   rgba(28,22,52,0.02);
 
-  --foreground: #1C202B;
-  --text-1:     #0F172A;
-  --text-2:     #334155;
-  --text-3:     #64748B;
-  --muted:      #94A3B8;
+  --foreground: #1C1A26;
+  --text-1:     #14121C;
+  --text-2:     #3E3B4D;
+  --text-3:     #6B6880;
+  --muted:      #948FA6;
 
-  --line:        rgba(15,23,42,0.10);
-  --border-glass: rgba(15,23,42,0.10);
-  --border-subtle: rgba(15,23,42,0.08);
-  --border-highlight: rgba(15,23,42,0.16);
+  --line:        rgba(28,22,52,0.10);
+  --border-glass: rgba(28,22,52,0.10);
+  --border-subtle: rgba(28,22,52,0.08);
+  --border-highlight: rgba(28,22,52,0.16);
 
-  --green:  #059669;
+  --field-bg:   var(--panel);
+  --field-fg:   var(--text-1);
+  --field-line: var(--line);
+
+  --green:  #00A870;
   --amber:  #E09B0A;
   --red:    #DC2626;
   --blue:   #2563EB;
-  --violet: #8B5CF6;
+  --violet: #7C3AED;
   --cyan:   #0891B2;
+  --purple:  #6D28D9;
+  --magenta: #A21CAF;
 
   --status-normal:  var(--green);
   --status-atencao: var(--amber);
   --status-critico: var(--red);
   --status-neutro:  var(--text-3);
-  --ui-accent:      var(--green);
+  --ui-accent:      var(--violet);
+  --brand-gradient: linear-gradient(135deg, #6D28D9 0%, #9333EA 48%, #C026D3 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(109,40,217,0.14), rgba(162,28,175,0.10));
 
   --chart-normal-stroke:  var(--green);
   --chart-normal-fill:    color-mix(in srgb, var(--green) 12%, transparent);
@@ -168,35 +206,40 @@
   --chart-point-stroke:   rgba(255,255,255,0.6);
   --chart-transparent:    rgba(0,0,0,0);
 
-  --focus-ring:         rgba(5,150,105,0.20);
+  --focus-ring:         rgba(124,58,237,0.22);
   --glow-normal:        rgba(5,150,105,0.08);
   --glow-normal-strong: rgba(5,150,105,0.40);
   --glow-amber:         rgba(224,155,10,0.10);
   --glow-red:           rgba(220,38,38,0.08);
-  --glow-violet:        rgba(139,92,246,0.12);
+  --glow-violet:        rgba(124,58,237,0.14);
   --glow-cyan:          rgba(8,145,178,0.10);
+  --glow-accent:        rgba(124,58,237,0.20);
+  --glow-accent-strong: rgba(162,28,175,0.32);
 
   --glass-border-top:   rgba(255,255,255,0.55);
   --glass-border-bot:   rgba(255,255,255,0.12);
   --glass-inset-top:    rgba(255,255,255,0.50);
   --glass-inset-bot:    rgba(0,0,0,0.04);
 
-  --surface-page:   #E5E7ED;
-  --surface-rail:   rgba(235,237,243,0.84);
-  --surface-header: rgba(229,232,238,0.82);
-  --surface-card:   rgba(239,241,246,0.76);
-  --ambient-emerald: rgba(16,185,129,0.07);
-  --ambient-cyan:    rgba(8,145,178,0.05);
-  --ambient-violet:  rgba(139,92,246,0.045);
-  --ambient-blue:    rgba(37,99,235,0.035);
+  --surface-page:   #F1F0F7;
+  --surface-rail:   rgba(248,247,252,0.86);
+  --surface-header: rgba(241,240,247,0.84);
+  --surface-card:   rgba(255,255,255,0.76);
+  --ambient-glow-1: rgba(139,92,246,0.10);
+  --ambient-glow-2: rgba(124,58,237,0.11);
+  --ambient-glow-3: rgba(168,85,247,0.09);
+  --ambient-glow-4: rgba(192,38,211,0.06);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(255,255,255,0.85);
 
-  --shadow-glass: 0 4px 24px rgba(0,0,0,0.10), inset 0 1px 0 var(--glass-inset-top), inset 0 -1px 0 var(--glass-inset-bot);
-  --shadow-card:  0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.14), inset 0 1px 0 var(--glass-inset-top);
-  --radius-card: 20px;
+  --shadow-glass: 0 16px 40px rgba(31,24,66,0.14), inset 0 1px 0 var(--glass-inset-top);
+  --shadow-card:  0 10px 28px rgba(31,24,66,0.10), inset 0 1px 0 var(--glass-inset-top);
+  --shadow-elevated: 0 26px 60px rgba(31,24,66,0.20), inset 0 1px 0 var(--glass-inset-top);
+  --radius-panel: 28px;
+  --radius-card: 28px;
+  --radius-tile: 18px;
   --radius-pill: 9999px;
+  --radius-rail: 34px;
   --transition-ui: 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -223,6 +266,7 @@
   --color-status-neutro:     var(--status-neutro);
   --color-accent:            var(--ui-accent);
   --font-sans:               var(--font-body);
+  --font-heading:            var(--font-display);
   --font-mono:               ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -252,38 +296,47 @@ h1, h2, h3, h4, h5, h6 {
   box-sizing: border-box;
 }
 
-/* Shared atmospheric layer keeps page framing consistent without blocking UI. */
+/* Shared atmospheric layer keeps page framing consistent without blocking UI.
+   Palco 100% CSS: preto profundo + feixes violeta nos cantos superiores,
+   bloom central no topo e wash inferior — mesmo clima do hero de referência. */
 .app-background {
   position: relative;
   isolation: isolate;
   min-height: 100vh;
   background-color: var(--surface-page);
-  background-image: var(--background-image);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
 }
+/* Feixes e blooms: pinta o brilho sem tingir nem bloquear o conteúdo. */
 .app-background::before {
   content: '';
   position: fixed;
-  inset: -18%;
+  inset: -24% -14% -14%;
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(34% 28% at 0% 0%, color-mix(in srgb, var(--violet) 24%, transparent), transparent 76%),
-    radial-gradient(32% 26% at 100% 0%, color-mix(in srgb, var(--cyan) 20%, transparent), transparent 78%),
-    radial-gradient(30% 25% at 100% 100%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 80%),
-    radial-gradient(28% 24% at 0% 100%, color-mix(in srgb, var(--violet) 16%, transparent), transparent 80%);
-  filter: blur(72px);
+    linear-gradient(104deg, transparent 24%, color-mix(in srgb, var(--ambient-glow-3) 88%, transparent) 41%, transparent 57%),
+    linear-gradient(256deg, transparent 24%, color-mix(in srgb, var(--ambient-glow-2) 88%, transparent) 41%, transparent 57%),
+    radial-gradient(54% 36% at 50% -8%, color-mix(in srgb, var(--ambient-glow-1) 96%, transparent), transparent 72%),
+    radial-gradient(32% 28% at 6% 4%, color-mix(in srgb, var(--ambient-glow-3) 82%, transparent), transparent 76%),
+    radial-gradient(32% 28% at 94% 4%, color-mix(in srgb, var(--ambient-glow-2) 82%, transparent), transparent 76%),
+    radial-gradient(66% 42% at 52% 112%, color-mix(in srgb, var(--ambient-glow-4) 88%, transparent), transparent 78%);
+  filter: blur(66px) saturate(132%);
   animation: ambient-drift 52s ease-in-out infinite alternate;
 }
+/* No modo claro o clima violeta é bem mais discreto: menosWash, mais difuso. */
+.light .app-background::before {
+  filter: blur(84px) saturate(112%);
+  opacity: 0.72;
+}
+/* Véu de leitura: escurece as bordas e a base para manter contraste de texto. */
 .app-background::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--surface-page) 18%, transparent) 0%, color-mix(in srgb, var(--surface-page) 42%, transparent) 48%, color-mix(in srgb, var(--surface-page) 18%, transparent) 100%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-page) 34%, transparent) 0%, transparent 26%, transparent 70%, color-mix(in srgb, var(--surface-page) 64%, transparent) 100%),
+    radial-gradient(118% 92% at 50% 42%, transparent 44%, color-mix(in srgb, var(--surface-page) 52%, transparent) 100%);
 }
 
 .chat-fab,
@@ -294,22 +347,23 @@ h1, h2, h3, h4, h5, h6 {
 .chat-fab {
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border-color: color-mix(in srgb, var(--ui-accent) 70%, var(--border-highlight));
-  background: linear-gradient(135deg, color-mix(in srgb, var(--ui-accent) 18%, var(--surface-rail)), var(--surface-rail)) !important;
-  color: var(--text-1) !important;
-  box-shadow: 0 0 20px var(--glow-normal), 0 16px 36px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.18);
+  border: 0;
+  background-image: var(--brand-gradient);
+  color: #FFFFFF;
+  box-shadow: 0 0 26px var(--glow-accent), 0 16px 36px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.24);
 }
 
-.chat-fab svg { filter: drop-shadow(0 0 7px var(--glow-normal-strong)); }
+.chat-fab svg { filter: drop-shadow(0 1px 6px rgba(255,255,255,0.35)); }
 
 .chat-fab:hover {
   transform: translateY(-2px);
+  box-shadow: 0 0 34px var(--glow-accent-strong), 0 18px 40px rgba(0,0,0,0.46), inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
 .chat-panel {
   backdrop-filter: blur(28px) saturate(170%);
   -webkit-backdrop-filter: blur(28px) saturate(170%);
-  border-color: var(--glass-border-top);
+  border: 0;
   box-shadow: var(--shadow-elevated);
 }
 
@@ -319,16 +373,42 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
-.navigation-rail {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-rail) 94%, transparent), color-mix(in srgb, var(--surface-rail) 78%, transparent));
-  border-color: var(--border-highlight);
-  box-shadow: var(--shadow-elevated);
+/* Barra superior acompanha o rail: mesmo vidro violeta em dark e light.
+   Os tokens locais são reescritos aqui para garantir contraste (texto claro)
+   sobre o fundo escuro — nada do app perde legibilidade. */
+.app-header--brand {
+  --text-1:             #FFFFFF;
+  --text-2:             rgba(255,255,255,0.84);
+  --text-3:             rgba(255,255,255,0.64);
+  --muted:              rgba(255,255,255,0.46);
+  --line:               rgba(255,255,255,0.14);
+  --border-subtle:      rgba(255,255,255,0.12);
+  --border-highlight:   rgba(255,255,255,0.22);
+  --panel-glass-mid:    rgba(255,255,255,0.14);
+  --panel-glass-strong: rgba(255,255,255,0.22);
+  --surface-card:       rgba(255,255,255,0.10);
+  --glass-inset-top:    rgba(255,255,255,0.22);
+  --ui-accent:          #D8B4FE;
+  /* o <select> de máquina mora aqui: precisa de fundo escuro + texto claro
+     mesmo quando o app está no modo claro */
+  --field-bg:           rgba(11,6,24,0.94);
+  --field-fg:           #FFFFFF;
+  --field-line:         rgba(255,255,255,0.20);
+  color-scheme: dark;
+  color: #FFFFFF;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 58%, transparent 100%),
+    linear-gradient(160deg, #2B1C4E 0%, #1A1132 52%, #120C24 100%);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 18px 44px rgba(10,4,28,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
 }
 
+/* A navegação usa .app-nav (definido adiante, depois do vidro). */
+
 .nav-item--active {
-  border-color: color-mix(in srgb, var(--ui-accent) 48%, transparent);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--ui-accent) 28%, transparent), color-mix(in srgb, var(--cyan) 12%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ui-accent) 28%, transparent), inset 0 0 12px color-mix(in srgb, var(--ui-accent) 12%, transparent), 0 0 18px var(--glow-normal);
+  border-color: color-mix(in srgb, var(--ui-accent) 44%, transparent);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--ui-accent) 30%, transparent), color-mix(in srgb, var(--magenta) 16%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ui-accent) 30%, transparent), inset 0 0 12px color-mix(in srgb, var(--ui-accent) 14%, transparent), 0 0 18px var(--glow-accent);
 }
 
 .icon-control,
@@ -358,13 +438,65 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .data-tile {
-  border-radius: 14px;
+  border-radius: var(--radius-tile);
+  border: 0;
+  background: color-mix(in srgb, var(--panel-glass-mid) 82%, var(--surface-card));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-inset-top) 42%, transparent);
 }
 
 .fleet-summary {
   background: linear-gradient(135deg, color-mix(in srgb, var(--surface-card) 92%, transparent), color-mix(in srgb, var(--panel-glass-mid) 84%, transparent));
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
+}
+
+/* ─── MARCA / TIPOGRAFIA NUMÉRICA ─────────────────────────────────────────── */
+
+/* CTA de destaque: gradiente roxo → magenta, texto branco, glow controlado */
+.btn-brand {
+  background-image: var(--brand-gradient);
+  color: #FFFFFF;
+  box-shadow: 0 0 22px var(--glow-accent), 0 12px 28px rgba(0,0,0,0.38);
+  transition: box-shadow var(--transition-ui), transform var(--transition-ui), filter var(--transition-ui);
+}
+.btn-brand:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 30px var(--glow-accent-strong), 0 14px 30px rgba(0,0,0,0.42);
+}
+.btn-brand:active {
+  transform: scale(0.97);
+}
+.btn-brand:disabled {
+  opacity: 0.5;
+  filter: saturate(0.6);
+}
+
+/* Valores numéricos de KPI: fonte display com algarismos tabulares */
+.stat-value {
+  font-family: var(--font-display), sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* Amostra de linha tracejada das referências de limite (legenda da mini-sparkline) */
+.threshold-rule {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  border-top: 1px dashed currentColor;
+  color: var(--status-atencao);
+}
+.threshold-rule--atencao { color: var(--status-atencao); }
+.threshold-rule--critico { color: var(--status-critico); }
+
+/* Amostra da faixa "boa" (área verde de fundo do gráfico de KPI) */
+.threshold-band {
+  display: inline-block;
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--status-normal) 26%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-normal) 46%, transparent);
 }
 
 @media (max-width: 1023px) {
@@ -400,30 +532,25 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── LIQUID GLASS — sistema de camadas ──────────────────────────────────── */
 
-/* Base: vidro com blur + highlight especular de borda */
+/* Base: vidro sem borda — a definição vem de sombra, blur e highlight interno */
 .liquid-glass {
   position: relative;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 90%, var(--panel-glass-strong)), var(--panel-glass-soft));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 92%, var(--panel-glass-strong)), var(--panel-glass-soft));
   backdrop-filter: blur(28px) saturate(160%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   border-radius: var(--radius-card);
+  border: 0;
   box-shadow: var(--shadow-glass);
-  /* Borda com gradiente de luz — highlight no topo, fade na base */
-  border: 1px solid var(--border-subtle);
   background-clip: padding-box;
 }
+/* Highlight especular interno (topo) — substitui a borda de 1px */
 .liquid-glass::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 90%, transparent) 0%, transparent 36%);
 }
 
 /* Elevated: modais e painéis flutuantes — mais blur, sombra mais profunda */
@@ -432,9 +559,9 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, var(--panel-glass-strong), var(--panel-glass-mid));
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 24px;
+  border-radius: var(--radius-panel);
+  border: 0;
   box-shadow: var(--shadow-elevated);
-  border: 1px solid transparent;
   background-clip: padding-box;
 }
 .liquid-glass--elevated::before {
@@ -442,13 +569,8 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 100%, transparent) 0%, transparent 32%);
 }
 
 /* Subtle: overlays que não devem competir com o conteúdo (mapa, tooltips) */
@@ -457,9 +579,9 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, var(--panel-glass-mid), var(--panel-glass));
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.28), inset 0 1px 0 var(--glass-inset-top);
-  border: 1px solid transparent;
+  border-radius: 22px;
+  border: 0;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.34), inset 0 1px 0 var(--glass-inset-top);
   background-clip: padding-box;
 }
 .liquid-glass--subtle::before {
@@ -467,13 +589,8 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 80%, transparent) 0%, transparent 44%);
 }
 
 /* Painel com efeito vidro — alias para compatibilidade */
@@ -482,9 +599,9 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, var(--panel-glass-strong), var(--panel-glass-soft));
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
+  border: 0;
   box-shadow: var(--shadow-glass);
-  border: 1px solid transparent;
   background-clip: padding-box;
 }
 .glass-panel::before {
@@ -492,18 +609,13 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 90%, transparent) 0%, transparent 38%);
 }
 
 /* Superfície sólida — sem blur, mais performática */
 .surface-panel {
-  border: 1px solid var(--line);
+  border: 0;
   background: var(--panel);
   box-shadow: var(--shadow-card);
 }
@@ -512,28 +624,24 @@ h1, h2, h3, h4, h5, h6 {
 .metric-card {
   position: relative;
   isolation: isolate;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 90%, var(--panel-glass-strong)), var(--panel-glass-soft));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 92%, var(--panel-glass-strong)), var(--panel-glass-soft));
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   border-radius: var(--radius-card);
-  padding: 20px 24px;
+  padding: 22px 24px;
+  border: 0;
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-subtle);
   background-clip: padding-box;
-  transition: border-color var(--transition-ui), box-shadow var(--transition-ui), transform var(--transition-ui);
+  transition: box-shadow var(--transition-ui), transform var(--transition-ui);
 }
+/* Highlight interno no lugar da borda removida */
 .metric-card::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 90%, transparent) 0%, transparent 34%);
 }
 .metric-card:hover {
   transform: translateY(-2px);
@@ -613,9 +721,9 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, var(--panel-glass-strong), var(--panel-glass-mid));
   backdrop-filter: blur(28px) saturate(160%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
-  border-radius: 20px;
+  border-radius: 26px;
+  border: 0;
   box-shadow: var(--shadow-glass);
-  border: 1px solid transparent;
   background-clip: padding-box;
 }
 .map-overlay::before {
@@ -623,13 +731,8 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, var(--glass-border-top) 0%, var(--glass-border-bot) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 90%, transparent) 0%, transparent 40%);
 }
 
 /* OSM permanece como fonte de dados; o tratamento cromático acompanha o tema. */
@@ -716,6 +819,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Cabeçalho de seção */
 .section-heading {
+  font-family: var(--font-display), sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: var(--tracking-label);
@@ -765,6 +869,131 @@ h1, h2, h3, h4, h5, h6 {
   animation: critical-pulse 1.2s ease-in-out 2;
 }
 
+/* KPIs da visão principal: base sólida + degradê de status.
+   A tinta vem da saúde operacional (verde/âmbar/vermelho) e some aos poucos,
+   então o número grande continua legível por muito tempo. */
+.metric-card--solid {
+  background:
+    linear-gradient(158deg, var(--kpi-tint) 0%, color-mix(in srgb, var(--kpi-tint) 34%, transparent) 38%, transparent 72%),
+    var(--kpi-base);
+}
+.metric-card--status-atencao {
+  background:
+    linear-gradient(158deg, var(--kpi-tint-warn) 0%, color-mix(in srgb, var(--kpi-tint-warn) 34%, transparent) 38%, transparent 72%),
+    var(--kpi-base);
+}
+.metric-card--status-critico {
+  background:
+    linear-gradient(158deg, var(--kpi-tint-risk) 0%, color-mix(in srgb, var(--kpi-tint-risk) 34%, transparent) 38%, transparent 72%),
+    var(--kpi-base);
+}
+
+/* ─── NAVEGAÇÃO (rail lateral + barra inferior) ──────────────────────────────
+   Identidade única nos dois temas: vidro violeta profundo com ícones brancos.
+   O chrome escuro no modo claro é intencional — é a assinatura da marca. */
+.app-nav {
+  --nav-fg:        rgba(255,255,255,0.70);
+  --nav-fg-strong: #FFFFFF;
+  --nav-line:      rgba(255,255,255,0.12);
+  --nav-accent:    #C4A0FF;
+  /* mantém os controles de formulário legíveis dentro do chrome escuro */
+  --field-bg:      rgba(11,6,24,0.94);
+  --field-fg:      #FFFFFF;
+  --field-line:    rgba(255,255,255,0.20);
+  color-scheme: dark;
+  color: var(--nav-fg-strong);
+  border: 0;
+  /* degrade preto no canto superior esquerdo, descendo para violeta profundo */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 26%),
+    linear-gradient(158deg, #2C1D50 0%, #1B1234 34%, #120C24 68%, #08050F 100%);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  box-shadow:
+    0 26px 60px rgba(10,4,28,0.55),
+    0 0 32px rgba(124,58,237,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+.app-nav__item {
+  color: var(--nav-fg);
+  border-color: transparent;
+}
+.app-nav__item:hover {
+  color: var(--nav-fg-strong);
+  background: rgba(255,255,255,0.09);
+}
+.app-nav .nav-item--active {
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,0.24);
+  background: linear-gradient(145deg, rgba(168,85,247,0.46), rgba(217,70,239,0.24));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 0 18px rgba(168,85,247,0.45);
+}
+.app-nav__indicator {
+  background: #FFFFFF;
+  box-shadow: 0 0 10px rgba(255,255,255,0.65);
+}
+.app-nav__tooltip {
+  background: #1B1130;
+  color: #FFFFFF;
+  box-shadow: 0 14px 30px rgba(8,2,20,0.62);
+}
+.app-nav__divider { border-top-color: var(--nav-line); }
+.app-nav__status-label { color: rgba(255,255,255,0.46); }
+.app-nav :focus-visible { outline-color: rgba(255,255,255,0.82); }
+
+/* ─── RAIL LATERAL ──────────────────────────────────────────────────────────
+   O rail encosta no topo e na base da tela (sem "sobra" no topo/esquerda) e
+   ganha a curva de referência: canto direito totalmente arredondado. */
+.app-nav--rail {
+  border-radius: 0 var(--radius-rail) var(--radius-rail) 0;
+  box-shadow:
+    18px 0 54px rgba(8,2,22,0.52),
+    0 0 34px rgba(124,58,237,0.20),
+    inset -1px 0 0 rgba(255,255,255,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Pílula que agrupa os ícones: eles ficam colados, arredondados, começando
+   no topo logo abaixo da marca e terminando no último ícone. */
+.app-nav__cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 22px;
+  background: rgba(0,0,0,0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.app-nav__cluster .app-nav__item {
+  border-radius: 16px;
+  height: 2.85rem;
+  width: 2.85rem;
+}
+/* item ativo: pílula verde cheia, como na referência */
+.app-nav__cluster .app-nav--active {
+  color: #05120C;
+  background: linear-gradient(150deg, #34F5AE 0%, var(--status-normal) 52%, #06B87A 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    0 0 18px color-mix(in srgb, var(--status-normal) 55%, transparent);
+}
+.app-nav__cluster .app-nav--active .app-nav__indicator { display: none; }
+/* mesma pílula verde na barra inferior, para a identidade não quebrar no mobile */
+.app-nav--bar .app-nav--active {
+  color: #05120C;
+  background: linear-gradient(150deg, #34F5AE 0%, var(--status-normal) 52%, #06B87A 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    0 0 18px color-mix(in srgb, var(--status-normal) 50%, transparent);
+}
+.app-nav__brand {
+  color: #FFFFFF;
+  background: linear-gradient(150deg, #3B2670 0%, #1B1233 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 0 18px rgba(124,58,237,0.38);
+}
+
 /* ─── FOCO ────────────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--ui-accent);
@@ -802,7 +1031,7 @@ button, a, input, select, textarea, [role="button"] {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--line);
+  background: color-mix(in srgb, var(--ui-accent) 26%, var(--line));
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -841,40 +1070,48 @@ button, a, input, select, textarea, [role="button"] {
   background: rgba(244,247,245,0.85) !important;
 }
 
+/* <select> usa --field-* (nunca --panel/--text-1 diretos): o chrome escuro da
+   marca reescreve esses tokens, e usar os globais deixava o seletor de máquina
+   com texto branco sobre fundo branco no modo claro. */
 select {
   color-scheme: dark;
-  background-color: var(--panel) !important;
-  color: var(--text-1) !important;
+  background-color: var(--field-bg) !important;
+  color: var(--field-fg) !important;
+  border-color: var(--field-line) !important;
 }
 select option {
-  background-color: var(--panel);
-  color: var(--text-1);
+  background-color: var(--field-bg);
+  color: var(--field-fg);
+}
+select option:checked {
+  background-color: color-mix(in srgb, var(--field-fg) 14%, var(--field-bg));
+  color: var(--field-fg);
 }
 .light select {
   color-scheme: light;
 }
 .light select option {
-  background-color: var(--panel);
-  color: var(--text-1);
+  background-color: var(--field-bg);
+  color: var(--field-fg);
 }
 
 /* ─── RECHARTS ────────────────────────────────────────────────────────────── */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background: var(--panel) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 10px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
   box-shadow: var(--shadow-glass) !important;
   color: var(--text-1) !important;
   font-size: 12px !important;
 }
 
-/* Popup do Leaflet com liquid glass */
+/* Popup do Leaflet com liquid glass (sem borda) */
 .leaflet-popup-content-wrapper {
   background: linear-gradient(180deg, var(--panel-glass-strong), var(--panel-glass-mid)) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   color: var(--text-1) !important;
-  border: 1px solid var(--glass-border-top) !important;
-  border-radius: 14px !important;
+  border: 0 !important;
+  border-radius: 20px !important;
   box-shadow: var(--shadow-glass) !important;
 }

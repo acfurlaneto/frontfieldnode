@@ -50,7 +50,7 @@ export function EmptyState({
   mensagem,
 }: EmptyStateProps) {
   return (
-    <section className="metric-card border border-dashed border-[var(--line)] py-10 text-center">
+    <section className="metric-card py-10 text-center">
       <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-glass-strong)] text-[var(--text-3)]">
         <Inbox size={18} aria-hidden="true" />
       </div>
@@ -86,7 +86,7 @@ export function ErrorState({
             <button
               type="button"
               onClick={onRetry}
-              className="mt-3 rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-4 py-2 text-xs font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
+              className="mt-3 rounded-xl bg-[var(--panel-glass-mid)] px-4 py-2 text-xs font-semibold text-[var(--text-1)] transition hover:bg-[var(--panel-glass-strong)] active:scale-95"
             >
               Tentar novamente
             </button>

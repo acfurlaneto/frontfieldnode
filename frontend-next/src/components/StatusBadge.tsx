@@ -33,6 +33,7 @@ export function riskTone(risk?: string): StatusTone {
     .toUpperCase();
   if (normalized === 'CRITICO') return 'critical';
   if (normalized === 'ATENCAO') return 'warning';
+  if (normalized === 'ALERTA')  return 'critical';
   if (normalized === 'NORMAL')  return 'normal';
   return 'muted';
 }

@@ -6,7 +6,7 @@ export function SkeletonGrid() {
       aria-busy="true"
     >
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="metric-card animate-pulse border border-[var(--line)]">
+        <div key={i} className="metric-card animate-pulse">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-2">
               <div className="h-2.5 w-16 rounded-full bg-[var(--panel-glass-strong)]" />
