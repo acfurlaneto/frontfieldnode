@@ -52,7 +52,7 @@ function OperatorDetails({ operator, onClose }: { operator: Operator; onClose: (
         role="dialog"
         aria-modal="true"
         aria-labelledby="operator-details-title"
-        className="liquid-glass--elevated w-full max-w-md p-5 shadow-[var(--shadow-elevated)]"
+        className="liquid-glass--elevated max-h-[min(85dvh,44rem)] w-full max-w-[32.5rem] overflow-y-auto p-6 shadow-[var(--shadow-elevated)]"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">

@@ -20,7 +20,30 @@ const selectClass =
   'rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-1)] outline-none transition hover:border-[color:var(--ui-accent)]/40 focus:border-[color:var(--ui-accent)]/60';
 
 const btnClass =
-  'inline-flex items-center gap-1.5 rounded-xl bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95';
+  'inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--panel-glass-mid)] px-3 py-2 text-xs font-semibold text-[var(--text-2)] transition hover:bg-[var(--panel-glass-strong)] hover:text-[var(--text-1)] active:scale-95';
+
+function ExportButton({
+  onClick,
+  label,
+  className,
+}: {
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  label: string;
+  className: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${btnClass} ${className}`}
+      aria-label={label}
+      title={label}
+    >
+      <Download size={13} aria-hidden="true" />
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
 
 export function ReportButton({
   machineId,
@@ -63,11 +86,11 @@ export function ReportButton({
 
   if (!machineId && machineOptions.length > 0) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <select
           value={selectedMachineId}
           onChange={(e) => setSelectedMachineId(e.target.value)}
-          className={selectClass}
+          className={`${selectClass} min-w-0 max-w-[11rem] sm:max-w-none`}
           aria-label="Máquina do relatório"
         >
           {machineOptions.map((m) => (
@@ -76,18 +99,10 @@ export function ReportButton({
             </option>
           ))}
         </select>
-        <button onClick={handleClick} className={`${btnClass} ${className}`}>
-          <Download size={13} aria-hidden="true" />
-          {label}
-        </button>
+        <ExportButton onClick={handleClick} label={label} className={className} />
       </div>
     );
   }
 
-  return (
-    <button onClick={handleClick} className={`${btnClass} ${className}`}>
-      <Download size={13} aria-hidden="true" />
-      {label}
-    </button>
-  );
+  return <ExportButton onClick={handleClick} label={label} className={className} />;
 }

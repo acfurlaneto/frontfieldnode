@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronDown, LoaderCircle, Tractor } from 'lucide-react';
+import { ChevronDown, LoaderCircle } from 'lucide-react';
 import { SparklineCard } from '@/components/SparklineCard';
 import { telemetryService } from '@/services/telemetryService';
 import type { Machine, Telemetry } from '@/types/telemetry';
@@ -73,7 +73,6 @@ export function DashboardMachineData({ machines, initialReadings }: { machines: 
     <section aria-label="Indicadores da máquina selecionada" className="space-y-4">
       <div className="fleet-summary flex flex-col gap-3 rounded-2xl p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <Tractor size={15} className="text-[color:var(--ui-accent)]" aria-hidden="true" />
           <div>
             <p className="section-heading">Máquina selecionada</p>
             <p className="text-sm font-semibold text-[var(--text-1)]">{machine?.maquina_id ?? 'Nenhuma máquina disponível'}</p>

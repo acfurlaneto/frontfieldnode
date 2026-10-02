@@ -117,17 +117,136 @@ function getMarkerStatus(status: MachinePosition["status"]) {
   return { label: "Offline", color: "var(--status-critico)", glow: "var(--glow-red)" };
 }
 
-function createMarkerIcon(L: LeafletModule, machine: MachinePosition, selected = false) {
+function createMarkerIcon(L: LeafletModule, machine: MachinePosition, selected = false, showLabel = true) {
   const status = getMarkerStatus(machine.status);
   const machineId = escapeHtml(machine.maquina_id ?? machine.modelo);
   const markerSize = selected ? 42 : 34;
+  const label = showLabel
+    ? `<span class="map-machine-marker__label" style="border-color:color-mix(in srgb, ${status.color} 45%, transparent);"><span class="map-machine-marker__status-dot" style="background:${status.color};box-shadow:0 0 6px ${status.glow};"></span>${machineId} · ${status.label}</span>`
+    : "";
 
   return L.divIcon({
     className: `leaflet-machine-marker${selected ? " is-selected" : ""}`,
-    html: `<div class="map-machine-marker__content" style="transform:translate(-${markerSize / 2}px,-${markerSize / 2}px)" aria-label="${machineId} — ${status.label}" title="${machineId}"><span class="map-machine-marker__icon" style="width:${markerSize}px;height:${markerSize}px;border-color:${status.color};color:${status.color};box-shadow:0 0 ${selected ? 22 : 12}px ${status.glow}, inset 0 0 0 4px rgba(255,255,255,0.04);"><span style="font-size:${selected ? 16 : 13}px;line-height:1;">🚜</span></span><span class="map-machine-marker__label" style="border-color:color-mix(in srgb, ${status.color} 45%, transparent);"><span class="map-machine-marker__status-dot" style="background:${status.color};box-shadow:0 0 6px ${status.glow};"></span>${machineId} · ${status.label}</span></div>`,
+    html: `<div class="map-machine-marker__content" style="transform:translate(-${markerSize / 2}px,-${markerSize / 2}px)" aria-label="${machineId} — ${status.label}" title="${machineId}"><span class="map-machine-marker__icon" style="width:${markerSize}px;height:${markerSize}px;border-color:${status.color};color:${status.color};box-shadow:0 0 ${selected ? 22 : 12}px ${status.glow}, inset 0 0 0 4px rgba(255,255,255,0.04);"><span style="font-size:${selected ? 16 : 13}px;line-height:1;">🚜</span></span>${label}</div>`,
     iconAnchor: [markerSize / 2, markerSize / 2],
     popupAnchor: [0, selected ? -24 : -20],
   });
+}
+
+type MachineCluster = {
+  machines: MachinePosition[];
+  center: [number, number];
+};
+
+function clusterMachinePositions(
+  L: LeafletModule,
+  map: LeafletMap,
+  machines: MachinePosition[],
+  radius = 52,
+): MachineCluster[] {
+  const projected = machines.map((machine, index) => ({
+    machine,
+    index,
+    point: map.latLngToContainerPoint([machine.lat, machine.lng]),
+  }));
+  const cells = new Map<string, typeof projected>();
+
+  projected.forEach((entry) => {
+    const key = `${Math.floor(entry.point.x / radius)}:${Math.floor(entry.point.y / radius)}`;
+    const cell = cells.get(key) ?? [];
+    cell.push(entry);
+    cells.set(key, cell);
+  });
+
+  const visited = new Set<number>();
+  const groups: MachineCluster[] = [];
+
+  for (const entry of projected) {
+    if (visited.has(entry.index)) continue;
+
+    const cellX = Math.floor(entry.point.x / radius);
+    const cellY = Math.floor(entry.point.y / radius);
+    const candidates: typeof projected = [];
+    for (let x = cellX - 1; x <= cellX + 1; x += 1) {
+      for (let y = cellY - 1; y <= cellY + 1; y += 1) {
+        candidates.push(...(cells.get(`${x}:${y}`) ?? []));
+      }
+    }
+
+    candidates.sort((a, b) => {
+      const aDistance = entry.point.distanceTo(a.point);
+      const bDistance = entry.point.distanceTo(b.point);
+      return aDistance - bDistance;
+    });
+
+    const members = [entry];
+    visited.add(entry.index);
+    for (const candidate of candidates) {
+      if (visited.has(candidate.index)) continue;
+      const isNearEveryMember = members.every(
+        (member) => member.point.distanceTo(candidate.point) <= radius,
+      );
+      if (isNearEveryMember) {
+        members.push(candidate);
+        visited.add(candidate.index);
+      }
+    }
+
+    const centerPoint = L.point(
+      members.reduce((sum, member) => sum + member.point.x, 0) / members.length,
+      members.reduce((sum, member) => sum + member.point.y, 0) / members.length,
+    );
+    const center = map.containerPointToLatLng(centerPoint);
+    groups.push({
+      machines: members.map((member) => member.machine),
+      center: [center.lat, center.lng],
+    });
+  }
+
+  return groups;
+}
+
+function createClusterIcon(L: LeafletModule, count: number) {
+  return L.divIcon({
+    className: "leaflet-machine-cluster",
+    html: `<span class="map-machine-cluster__count" aria-hidden="true">${count}</span>`,
+    iconSize: [46, 46],
+    iconAnchor: [23, 23],
+  });
+}
+
+function createClusterPopup(
+  L: LeafletModule,
+  cluster: MachineCluster,
+  onSelect: (machine: MachinePosition) => void,
+) {
+  const root = L.DomUtil.create("div", "map-cluster-popup");
+  const heading = L.DomUtil.create("p", "map-cluster-popup__title", root);
+  heading.textContent = `${cluster.machines.length} máquinas neste ponto`;
+
+  const list = L.DomUtil.create("div", "map-cluster-popup__list", root);
+  [...cluster.machines]
+    .sort((a, b) => (a.maquina_id ?? a.modelo).localeCompare(b.maquina_id ?? b.modelo))
+    .forEach((machine) => {
+      const machineId = machine.maquina_id ?? String(machine.id);
+      const status = getMarkerStatus(machine.status);
+      const button = L.DomUtil.create("button", "map-cluster-popup__machine", list);
+      button.type = "button";
+      button.setAttribute("aria-label", `Abrir ${machineId}, status ${status.label}`);
+
+      const name = L.DomUtil.create("span", "map-cluster-popup__name", button);
+      name.textContent = machineId;
+      const statusLabel = L.DomUtil.create("span", "map-cluster-popup__status", button);
+      statusLabel.textContent = status.label;
+      button.addEventListener("click", (event) => {
+        L.DomEvent.stopPropagation(event);
+        onSelect(machine);
+      });
+    });
+
+  L.DomEvent.disableClickPropagation(root);
+  L.DomEvent.disableScrollPropagation(list);
+  return root;
 }
 
 function isValidPosition(machine: MachinePosition) {
@@ -162,7 +281,6 @@ export default function MapClient({
   const [estado, setEstado] = useState<EstadoRequisicao<MachinePosition[]>>({ tipo: "carregando" });
   const [retryCount, setRetryCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [mapTheme, setMapTheme] = useState<'dark' | 'light'>(() => (
     typeof document !== "undefined" && document.documentElement.classList.contains("light")
@@ -175,6 +293,8 @@ export default function MapClient({
   const tileLayerRef = useRef<LeafletTileLayer | null>(null);
   const markersRef = useRef<LeafletFeatureGroup | null>(null);
   const markerRefs = useRef(new Map<string, LeafletMarker>());
+  const initialBoundsAppliedRef = useRef(false);
+  const selectedMachineIdRef = useRef<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
 
@@ -192,11 +312,6 @@ export default function MapClient({
   }, []);
 
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  useEffect(() => {
     const root = document.documentElement;
     const syncTheme = () => setMapTheme(root.classList.contains('light') ? 'light' : 'dark');
     syncTheme();
@@ -207,6 +322,7 @@ export default function MapClient({
 
   useEffect(() => {
     let active = true;
+    const machineMarkerRefs = markerRefs.current;
 
     async function createMap() {
       if (!shouldRenderMap) return;
@@ -248,6 +364,9 @@ export default function MapClient({
         map.remove();
         mapRef.current = null;
         tileLayerRef.current = null;
+        markersRef.current = null;
+        markerRefs.current.clear();
+        initialBoundsAppliedRef.current = false;
         setMapReady(false);
       }
     }
@@ -266,6 +385,9 @@ export default function MapClient({
         cleanupLeafletContainer(container);
         mapRef.current = null;
         tileLayerRef.current = null;
+        markersRef.current = null;
+        machineMarkerRefs.clear();
+        initialBoundsAppliedRef.current = false;
         setMapReady(false);
       }
     };
@@ -298,40 +420,118 @@ export default function MapClient({
     markersRef.current = markers;
     const validPositions = positions.filter(isValidPosition);
 
-    markers.clearLayers();
-    markerRefs.current.clear();
+    const renderMarkers = () => {
+      markers.clearLayers();
+      markerRefs.current.clear();
+      const clusters = clusterMachinePositions(L, map, validPositions);
 
-    validPositions.forEach((machine) => {
-      const machineId = machine.maquina_id ?? String(machine.id);
-      const marker = L.marker([machine.lat, machine.lng], {
-        icon: createMarkerIcon(L, machine, machineId === selectedMachineId),
-      })
-        .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
-        .on("click", () => setSelectedMachineId(machineId))
-        .addTo(markers);
-      markerRefs.current.set(machineId, marker);
-    });
+      clusters.forEach((cluster) => {
+        if (cluster.machines.length === 1) {
+          const machine = cluster.machines[0];
+          const machineId = machine.maquina_id ?? String(machine.id);
+          const marker = L.marker([machine.lat, machine.lng], {
+            icon: createMarkerIcon(L, machine, machineId === selectedMachineIdRef.current, map.getZoom() >= 14),
+            keyboard: true,
+            title: `${machineId} — ${getMarkerStatus(machine.status).label}`,
+          })
+            .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
+            .on("click", () => {
+              selectedMachineIdRef.current = machineId;
+              setSelectedMachineId(machineId);
+            })
+            .addTo(markers);
+          markerRefs.current.set(machineId, marker);
+          return;
+        }
 
-    if (validPositions.length === 1) {
-      map.setView([validPositions[0].lat, validPositions[0].lng], 13);
-    } else if (validPositions.length > 1) {
-      const bounds = markers.getBounds();
-      if (bounds.isValid()) {
-        map.fitBounds(bounds.pad(0.2), { maxZoom: 13 });
+        const machineCount = cluster.machines.length;
+        const memberIds = cluster.machines.map((machine) => machine.maquina_id ?? String(machine.id));
+        const clusterMarker = L.marker(cluster.center, {
+          icon: createClusterIcon(L, machineCount),
+          keyboard: true,
+          title: `Abrir grupo com ${machineCount} máquinas`,
+          alt: `Grupo com ${machineCount} máquinas`,
+        }).addTo(markers);
+
+        const openCluster = () => {
+          clusterMarker.bindPopup(createClusterPopup(L, cluster, selectMachine), {
+            closeButton: true,
+            autoPan: true,
+            maxWidth: 300,
+          });
+          clusterMarker.openPopup();
+        };
+        clusterMarker.on("click", openCluster);
+        clusterMarker.on("keypress", (event: import("leaflet").LeafletKeyboardEvent) => {
+          if (event.originalEvent.key === "Enter" || event.originalEvent.key === " ") {
+            L.DomEvent.preventDefault(event.originalEvent);
+            openCluster();
+          }
+        });
+        clusterMarker.getElement()?.setAttribute(
+          "aria-label",
+          `Abrir grupo com ${machineCount} máquinas: ${memberIds.join(", ")}`,
+        );
+      });
+
+      markerRefs.current.forEach((marker, machineId) => {
+        if (machineId === selectedMachineIdRef.current) marker.openPopup();
+      });
+    };
+
+    renderMarkers();
+
+    if (!initialBoundsAppliedRef.current) {
+      if (validPositions.length === 1) {
+        map.setView([validPositions[0].lat, validPositions[0].lng], 13);
+      } else if (validPositions.length > 1) {
+        const bounds = L.latLngBounds(validPositions.map((machine) => [machine.lat, machine.lng]));
+        if (bounds.isValid()) map.fitBounds(bounds.pad(0.2), { maxZoom: 13 });
+      } else {
+        map.setView(DEFAULT_CENTER, 4);
       }
-    } else {
-      map.setView(DEFAULT_CENTER, 4);
+      initialBoundsAppliedRef.current = true;
+      if (validPositions.length > 1) renderMarkers();
     }
 
-    setTimeout(() => map.invalidateSize(), 100);
-  }, [mapReady, positions, selectedMachineId]);
+    map.on("zoomend moveend", renderMarkers);
+    const resizeObserver = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => renderMarkers())
+      : null;
+    if (resizeObserver && containerRef.current) resizeObserver.observe(containerRef.current);
+    const invalidateTimer = window.setTimeout(() => map.invalidateSize(), 100);
+
+    return () => {
+      map.off("zoomend moveend", renderMarkers);
+      resizeObserver?.disconnect();
+      window.clearTimeout(invalidateTimer);
+    };
+  }, [mapReady, positions]);
 
   useEffect(() => {
-    if (!selectedMachineId || !mapRef.current) return;
+    if (!selectedMachineId || !mapRef.current || !leafletRef.current) return;
+    const machine = positions.find((item) => (item.maquina_id ?? String(item.id)) === selectedMachineId);
     const marker = markerRefs.current.get(selectedMachineId);
-    if (!marker) return;
-    marker.openPopup();
-  }, [selectedMachineId, positions]);
+    const L = leafletRef.current;
+    const map = mapRef.current;
+    if (!machine) return;
+
+    markerRefs.current.forEach((currentMarker, machineId) => {
+      const currentMachine = positions.find((item) => (item.maquina_id ?? String(item.id)) === machineId);
+      if (currentMachine) currentMarker.setIcon(createMarkerIcon(L, currentMachine, machineId === selectedMachineId, map.getZoom() >= 14));
+    });
+
+    if (marker) {
+      marker.openPopup();
+      return;
+    }
+
+    map.flyTo([machine.lat, machine.lng], Math.max(map.getZoom() + 3, 16), { duration: 0.6 });
+    L.popup({ closeButton: true, autoPan: true })
+      .setLatLng([machine.lat, machine.lng])
+      .setContent(getPopupHtml(machine))
+      .openOn(map);
+  }, [selectedMachineId, positions, mapReady]);
 
   const validPositions = positions.filter(isValidPosition);
   const filteredPositions = validPositions.filter((machine) => {
@@ -344,6 +544,7 @@ export default function MapClient({
 
   function selectMachine(machine: MachinePosition) {
     const machineId = machine.maquina_id ?? String(machine.id);
+    selectedMachineIdRef.current = machineId;
     setSelectedMachineId(machineId);
     const map = mapRef.current;
     const marker = markerRefs.current.get(machineId);
@@ -430,25 +631,6 @@ export default function MapClient({
       className={`map-surface map-surface--${mapTheme} ${mapTheme === "dark" ? "map-dark-filter" : ""} ${fullBleed ? "h-full min-h-0" : "h-[calc(100vh-5.5rem)] min-h-[28rem] sm:h-[calc(100vh-5rem)]"} relative w-full`}
       data-map-theme={mapTheme}
     >
-      {process.env.NODE_ENV !== "production" && (
-        <div
-          id="map-client-debug"
-          style={{
-            position: "absolute",
-            top: 12,
-            right: 12,
-            zIndex: 9999,
-            background: "var(--overlay-debug)",
-            color: "var(--text-1)",
-            padding: "6px 8px",
-            borderRadius: 6,
-            fontSize: 12,
-          }}
-        >
-          MapClient: {mounted ? "mounted" : "not-mounted"} • positions: {positions.length}
-        </div>
-      )}
-
       <div ref={containerRef} className={`relative z-0 h-full w-full ${fullBleed ? "min-h-0" : "min-h-[28rem]"}`} />
 
       {fullBleed ? (
