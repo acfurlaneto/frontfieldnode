@@ -121,14 +121,14 @@ export function SparklineCard({
   return (
     <article
       aria-label={titulo}
-      className={`metric-card metric-card--solid metric-card--status-${status} ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
+      className={`metric-card metric-card--dark-fixed metric-card--solid metric-card--status-${status} ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
     >
       <p className="text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {titulo}
       </p>
 
       <div className="mt-3 flex flex-col items-center justify-center gap-1">
-        <p className={`stat-value text-center text-4xl font-bold sm:text-5xl ${valueTone}`}>
+<p className={`stat-value stat-value--${status} text-center text-4xl font-bold sm:text-5xl ${valueTone}`}>
           {valor}
           {unidade ? (
             <span className="ml-1 text-base font-normal text-[var(--text-3)] sm:text-lg">

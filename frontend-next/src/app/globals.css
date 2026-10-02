@@ -3,7 +3,7 @@
 /* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
 :root,
 .dark {
-  --background:  #000000;
+--background:  #000000;
   --surface-1:   #050508;
   --surface-2:   #0A0A10;
   --surface-3:   #121019;
@@ -42,8 +42,8 @@
 
   /* primitivos de cor — verde/âmbar/vermelho seguem semânticos (operação) */
   --green:  #12E79C;
-  --amber:  #FBAD14;
-  --red:    #F04F4F;
+  --amber:  #FFC53D;
+  --red:    #FF5C5C;
   --blue:   #60A5FA;
   --violet: #A855F7;
   --cyan:   #22E5FF;
@@ -56,7 +56,7 @@
   --status-critico: var(--red);
   --status-neutro:  var(--text-3);
 
-  /* accent de interface + gradiente de marca (roxo → magenta) */
+/* accent de interface + gradiente de marca (roxo → magenta) */
   --ui-accent: var(--violet);
   --brand-gradient: linear-gradient(135deg, #7C3AED 0%, #B026FF 48%, #E879F9 100%);
   --brand-gradient-soft: linear-gradient(135deg, rgba(124,58,237,0.24), rgba(217,70,239,0.18));
@@ -82,10 +82,10 @@
 
   /* glows — verde segue sendo o brilho operacional; roxo/magenta é a marca */
   --focus-ring:         rgba(168,85,247,0.32);
-  --glow-normal:        rgba(15,212,146,0.15);
-  --glow-normal-strong: rgba(15,212,146,0.60);
-  --glow-amber:         rgba(251,173,20,0.18);
-  --glow-red:           rgba(240,79,79,0.18);
+  --glow-normal:        rgba(18,231,156,0.22);
+  --glow-normal-strong: rgba(18,231,156,0.75);
+  --glow-amber:         rgba(255,197,61,0.24);
+  --glow-red:           rgba(255,92,92,0.24);
   --glow-violet:        rgba(168,85,247,0.24);
   --glow-cyan:          rgba(34,229,255,0.18);
   --glow-accent:        rgba(168,85,247,0.34);
@@ -103,12 +103,13 @@
   --surface-header: rgba(0,0,0,0.72);
   --surface-card:   rgba(18,14,26,0.62);
 
-  /* glow ambiente — feixes violeta nos cantos superiores, bloom central e wash inferior */
-  --ambient-glow-1: rgba(139,92,246,0.54);
-  --ambient-glow-2: rgba(168,85,247,0.48);
-  --ambient-glow-3: rgba(124,58,237,0.46);
-  --ambient-glow-4: rgba(109,40,217,0.42);
-
+  /* glow ambiente — feixes violeta nos cantos superiores, bloom central e wash inferior.
+     Intensidade calibrada para o PRETO continuar sendo a base visível: o roxo entra
+     como luz de canto, não como fundo. */
+  --ambient-glow-1: rgba(139,92,246,0.30);
+  --ambient-glow-2: rgba(168,85,247,0.26);
+  --ambient-glow-3: rgba(124,58,237,0.24);
+  --ambient-glow-4: rgba(109,40,217,0.22);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(0,0,0,0.7);
 
@@ -139,13 +140,15 @@
 
 /* ─── LIGHT THEME ─────────────────────────────────────────────────────────── */
 .light {
-  --background:  #F1F0F7;
+--background:  #F1F0F7;
   --surface-1:   #F7F6FC;
   --surface-2:   #EBE9F4;
   --surface-3:   #E2E0EE;
   --panel:       #FBFAFE;
   --panel-2:     #F2F1F8;
-  --surface-card-solid:   rgba(255,255,255,0.94);
+  --surface-card-solid:   #FFFFFF;
+  /* Superfícies de conteúdo claras ficam sólidas; o chrome de marca permanece escuro. */
+  --surface-card:   #FFFFFF;
   /* KPI em tom violeta suave (nunca branco puro) + tinta de status */
   --kpi-base:    linear-gradient(158deg, rgba(124,58,237,0.16) 0%, rgba(255,255,255,0.96) 56%, rgba(247,246,253,0.90) 100%);
   --kpi-tint:    color-mix(in srgb, var(--green) 15%, transparent);
@@ -159,8 +162,8 @@
   --foreground: #1C1A26;
   --text-1:     #14121C;
   --text-2:     #3E3B4D;
-  --text-3:     #6B6880;
-  --muted:      #948FA6;
+  --text-3:     #4B5563;
+  --muted:      #6B7280;
 
   --line:        rgba(28,22,52,0.10);
   --border-glass: rgba(28,22,52,0.10);
@@ -171,9 +174,9 @@
   --field-fg:   var(--text-1);
   --field-line: var(--line);
 
-  --green:  #00A870;
-  --amber:  #E09B0A;
-  --red:    #DC2626;
+  --green:  #00B86B;
+  --amber:  #D98600;
+  --red:    #E5253A;
   --blue:   #2563EB;
   --violet: #7C3AED;
   --cyan:   #0891B2;
@@ -207,10 +210,10 @@
   --chart-transparent:    rgba(0,0,0,0);
 
   --focus-ring:         rgba(124,58,237,0.22);
-  --glow-normal:        rgba(5,150,105,0.08);
-  --glow-normal-strong: rgba(5,150,105,0.40);
-  --glow-amber:         rgba(224,155,10,0.10);
-  --glow-red:           rgba(220,38,38,0.08);
+  --glow-normal:        rgba(0,184,107,0.14);
+  --glow-normal-strong: rgba(0,184,107,0.52);
+  --glow-amber:         rgba(217,134,0,0.16);
+  --glow-red:           rgba(229,37,58,0.14);
   --glow-violet:        rgba(124,58,237,0.14);
   --glow-cyan:          rgba(8,145,178,0.10);
   --glow-accent:        rgba(124,58,237,0.20);
@@ -221,10 +224,10 @@
   --glass-inset-top:    rgba(255,255,255,0.50);
   --glass-inset-bot:    rgba(0,0,0,0.04);
 
-  --surface-page:   #F1F0F7;
+--surface-page:   #F1F0F7;
   --surface-rail:   rgba(248,247,252,0.86);
   --surface-header: rgba(241,240,247,0.84);
-  --surface-card:   rgba(255,255,255,0.76);
+  --surface-card:   #FFFFFF;
   --ambient-glow-1: rgba(139,92,246,0.10);
   --ambient-glow-2: rgba(124,58,237,0.11);
   --ambient-glow-3: rgba(168,85,247,0.09);
@@ -232,9 +235,9 @@
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(255,255,255,0.85);
 
-  --shadow-glass: 0 16px 40px rgba(31,24,66,0.14), inset 0 1px 0 var(--glass-inset-top);
-  --shadow-card:  0 10px 28px rgba(31,24,66,0.10), inset 0 1px 0 var(--glass-inset-top);
-  --shadow-elevated: 0 26px 60px rgba(31,24,66,0.20), inset 0 1px 0 var(--glass-inset-top);
+  --shadow-glass: 0 12px 30px rgba(31,24,66,0.10);
+  --shadow-card:  0 4px 20px rgba(31,24,66,0.06);
+  --shadow-elevated: 0 20px 48px rgba(31,24,66,0.14);
   --radius-panel: 28px;
   --radius-card: 28px;
   --radius-tile: 18px;
@@ -339,24 +342,86 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(118% 92% at 50% 42%, transparent 44%, color-mix(in srgb, var(--surface-page) 52%, transparent) 100%);
 }
 
+/* ─── CHAT "PERGUNTE À IA" ─────────────────────────────────────────────────
+   Hierarquia de camadas do app (o chat é renderizado por portal em <body>,
+   fora do <main>, justamente para não ficar preso ao stacking context da
+   <section class="z-10"> do AppShell):
+
+     fundo 0 · conteúdo 1 · mapa 10 · header 20 · overlays do mapa 30
+     BackButton 40 · Sidebar (rail + barra mobile) 50
+     ChatFAB 70 · painel do chat 80 · modais 120
+
+   Regra de ouro deste bloco: NENHUMA regra aqui declara `position`.
+   O utilitário `fixed` do Tailwind v4 vive em `@layer utilities`, e este
+   arquivo é CSS não-layerizado — que vence qualquer camada. Declarar
+   `position` aqui sobrescreveria o `fixed` e o painel voltaria a ser
+   renderizado inline (foi exatamente o que sumiu com o chat).
+   Por isso o posicionamento mora em .chat-fab-slot / .chat-panel-slot,
+   que não carregam nenhuma classe de vidro. */
+
+/* O painel se apoia NO botão: a base do painel é a base do FAB + a altura do
+   botão (2.75rem = 44px) + a folga de 0.5rem. Assim eles nunca se sobrepõem,
+   em nenhum breakpoint — o FAB continua clicável para fechar o chat. */
+.chat-panel-slot,
+.chat-fab-slot {
+  --chat-fab-bottom: 1.5rem;
+}
+
+.chat-fab-slot {
+  bottom: calc(var(--chat-fab-bottom) + env(safe-area-inset-bottom));
+  right: 1rem;
+}
+
+.chat-panel-slot {
+  bottom: calc(var(--chat-fab-bottom) + 3.25rem + env(safe-area-inset-bottom));
+  right: 1rem;
+  width: min(26rem, calc(100vw - 2rem));
+  /* reserva o topo para o header da aplicação */
+  max-height: min(32rem, calc(100dvh - 11.75rem));
+  display: flex;
+}
+
+@media (min-width: 640px) {
+  .chat-fab-slot   { right: 1.25rem; }
+  .chat-panel-slot { right: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .chat-fab-slot   { right: 1.5rem; }
+  .chat-panel-slot { right: 1.5rem; }
+}
+
+/* Abaixo de 1024px existe a barra inferior do mobile: o chat sobe acima dela
+   para nunca ficar escondido atrás da navegação. */
+@media (max-width: 1023px) {
+  .chat-panel-slot,
+  .chat-fab-slot {
+    --chat-fab-bottom: 5.25rem;
+  }
+  .chat-panel-slot { max-height: min(30rem, calc(100dvh - 15.5rem)); }
+}
+
 .chat-fab,
 .chat-panel {
-  animation: chat-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: chat-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .chat-fab {
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border: 0;
+  background-color: transparent;
   background-image: var(--brand-gradient);
   color: #FFFFFF;
   box-shadow: 0 0 26px var(--glow-accent), 0 16px 36px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.24);
+  transition: box-shadow var(--transition-ui), transform var(--transition-ui), filter var(--transition-ui);
 }
 
 .chat-fab svg { filter: drop-shadow(0 1px 6px rgba(255,255,255,0.35)); }
 
 .chat-fab:hover {
   transform: translateY(-2px);
+  filter: brightness(1.08);
   box-shadow: 0 0 34px var(--glow-accent-strong), 0 18px 40px rgba(0,0,0,0.46), inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
@@ -365,6 +430,55 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-backdrop-filter: blur(28px) saturate(170%);
   border: 0;
   box-shadow: var(--shadow-elevated);
+  width: 100%;
+}
+
+/* Corpo rolável: header e rodapé ficam fora da área de scroll, então as
+   mensagens nunca desaparecem atrás do campo/CTA. */
+.chat-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ui-accent) 38%, transparent) transparent;
+}
+.chat-scroll::-webkit-scrollbar { width: 6px; }
+.chat-scroll::-webkit-scrollbar-track { background: transparent; }
+.chat-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ui-accent) 34%, transparent);
+}
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--ui-accent) 52%, transparent);
+}
+
+/* Mensagem da assistente — vidro sutil, canto "de cauda" como num chat. */
+.chat-bubble {
+  border-radius: 1.1rem 1.1rem 1.1rem 0.4rem;
+  background: color-mix(in srgb, var(--panel-glass-mid) 88%, transparent);
+  box-shadow: inset 0 1px 0 var(--glass-inset-top);
+  animation: chat-bubble-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Sugestão rápida */
+.chat-chip {
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--panel-glass-mid) 78%, var(--surface-card));
+  transition: border-color var(--transition-ui), background-color var(--transition-ui),
+    color var(--transition-ui), transform var(--transition-ui), box-shadow var(--transition-ui);
+}
+.chat-chip:hover {
+  border-color: color-mix(in srgb, var(--ui-accent) 42%, var(--border-highlight));
+  background: var(--panel-glass-strong);
+  color: var(--text-1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--glow-accent) 62%, transparent);
+}
+.chat-chip:active { transform: translateY(0) scale(0.98); }
+
+/* Rodapé: trava o CTA no fundo do painel em qualquer tema. */
+.chat-footer {
+  border-top: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--panel-glass-soft) 72%, transparent);
 }
 
 .app-header {
@@ -471,11 +585,22 @@ h1, h2, h3, h4, h5, h6 {
   filter: saturate(0.6);
 }
 
-/* Valores numéricos de KPI: fonte display com algarismos tabulares */
+/* Valores numéricos de KPI: fonte display com algarismos tabulares e tipografia limpa em branco */
 .stat-value {
   font-family: var(--font-display), sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
+  color: #FFFFFF;
+  text-shadow: none;
+}
+.stat-value--normal {
+  color: #FFFFFF;
+}
+.stat-value--atencao {
+  color: #FFFFFF;
+}
+.stat-value--critico {
+  color: #FFFFFF;
 }
 
 /* Amostra de linha tracejada das referências de limite (legenda da mini-sparkline) */
@@ -499,16 +624,6 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid color-mix(in srgb, var(--status-normal) 46%, transparent);
 }
 
-@media (max-width: 1023px) {
-  .chat-fab {
-    bottom: calc(5.25rem + env(safe-area-inset-bottom));
-  }
-
-  .chat-panel {
-    bottom: calc(5.75rem + env(safe-area-inset-bottom));
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -526,6 +641,10 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes chat-enter {
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes chat-bubble-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── UTILITÁRIOS ─────────────────────────────────────────────────────────── */
@@ -620,32 +739,25 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-card);
 }
 
-/* Card de KPI — usado em MetricCard e SparklineCard */
+/* Card de KPI — usado em MetricCard e SparklineCard (Dark Matte Glass) */
 .metric-card {
   position: relative;
   isolation: isolate;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-card) 92%, var(--panel-glass-strong)), var(--panel-glass-soft));
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
   padding: 22px 24px;
-  border: 0;
-  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   background-clip: padding-box;
-  transition: box-shadow var(--transition-ui), transform var(--transition-ui);
-}
-/* Highlight interno no lugar da borda removida */
-.metric-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-inset-top) 90%, transparent) 0%, transparent 34%);
+  transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-glass);
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 .metric-card--normal::after,
 .metric-card--atencao::after,
@@ -715,6 +827,27 @@ h1, h2, h3, h4, h5, h6 {
 .metric-chart-card--vibracao::after { background: radial-gradient(ellipse, var(--metric-vibration), transparent 68%); }
 .metric-chart-card--rpm::after { background: radial-gradient(ellipse, var(--metric-rpm), transparent 68%); }
 
+/* Tema claro: superfícies de conteúdo sólidas, com borda e sombra discretas.
+   O seletor do mapa claro abaixo mantém sua camada escura e funcional. */
+.light :is(.liquid-glass, .liquid-glass--elevated, .liquid-glass--subtle, .glass-panel) {
+  background: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+.light :is(.liquid-glass, .liquid-glass--elevated, .liquid-glass--subtle, .glass-panel)::before {
+  background: linear-gradient(180deg, rgba(255,255,255,0.72), transparent 42%);
+}
+.light .metric-card:not(.metric-card--dark-fixed),
+.light .fleet-summary,
+.light .app-content .data-tile,
+.light [role="dialog"] .data-tile {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
 /* Overlay sobre mapa */
 .map-overlay {
   position: relative;
@@ -766,6 +899,78 @@ h1, h2, h3, h4, h5, h6 {
   height: max-content !important;
   border: 0 !important;
   background: transparent !important;
+}
+.leaflet-machine-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--ui-accent) 42%, rgba(255,255,255,0.28));
+  border-radius: 50%;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--ui-accent) 82%, #24173f), #25163d);
+  color: #FFFFFF;
+  box-shadow: 0 8px 20px rgba(11,6,24,0.34), inset 0 1px 0 rgba(255,255,255,0.24);
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.leaflet-machine-cluster:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 24px rgba(11,6,24,0.4), 0 0 18px var(--glow-accent);
+}
+.leaflet-machine-cluster:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent) 72%, #FFFFFF);
+  outline-offset: 3px;
+}
+.map-machine-cluster__count {
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.map-cluster-popup {
+  min-width: 204px;
+  color: var(--text-1);
+}
+.map-cluster-popup__title {
+  margin: 0 0 8px;
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 700;
+}
+.map-cluster-popup__list {
+  display: grid;
+  max-height: min(16rem, 45vh);
+  gap: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.map-cluster-popup__machine {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 9px;
+  padding: 7px 9px;
+  background: color-mix(in srgb, var(--panel-glass-mid) 78%, var(--surface-card));
+  color: var(--text-1);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.map-cluster-popup__machine:hover,
+.map-cluster-popup__machine:focus-visible {
+  background: color-mix(in srgb, var(--ui-accent) 13%, var(--panel));
+}
+.map-cluster-popup__machine:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 1px;
+}
+.map-cluster-popup__name {
+  font-size: 12px;
+  font-weight: 700;
+}
+.map-cluster-popup__status {
+  color: var(--text-3);
+  font-size: 11px;
 }
 .map-machine-marker__content {
   display: flex;
@@ -888,6 +1093,51 @@ h1, h2, h3, h4, h5, h6 {
     var(--kpi-base);
 }
 
+/* ─── KPI DE FUNDO ESCURO FIXO ──────────────────────────────────────────────
+   Os 3 cards de KPIs (RPM / Temperatura / Vibração) são componentes escuros
+   em AMBOS os temas — mesma assinatura do rail e do header. Sobem o fundo para
+   o vidro violeta profundo e reescrevem os tokens de texto/painel localmente,
+   então título, unidade e legendas ficam claros sobre o card escuro.
+   A cor do número NÃO é fixa: continua vindo de --status-*, que aqui aponta
+   para a paleta neon (a mesma do dark mode) para garantir o mesmo destaque. */
+.metric-card--dark-fixed {
+  --text-1:             #FFFFFF;
+  --text-2:             rgba(255,255,255,0.88);
+  --text-3:             rgba(255,255,255,0.66);
+  --muted:              rgba(255,255,255,0.50);
+  --line:               rgba(255,255,255,0.08);
+  --border-subtle:      rgba(255,255,255,0.08);
+  --border-highlight:   rgba(255,255,255,0.16);
+  --background:         #000000;
+  --panel:              #0A0A0E;
+  --green:  #12E79C;
+  --amber:  #FFC53D;
+  --red:    #FF5C5C;
+  --status-normal:  var(--green);
+  --status-atencao: var(--amber);
+  --status-critico: var(--red);
+  color-scheme: dark;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.metric-card--dark-fixed.metric-card--status-atencao {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 197, 61, 0.25);
+}
+.metric-card--dark-fixed.metric-card--status-critico {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 92, 92, 0.25);
+}
+.metric-card--dark-fixed:hover {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
 /* ─── NAVEGAÇÃO (rail lateral + barra inferior) ──────────────────────────────
    Identidade única nos dois temas: vidro violeta profundo com ícones brancos.
    O chrome escuro no modo claro é intencional — é a assinatura da marca. */
@@ -943,14 +1193,13 @@ h1, h2, h3, h4, h5, h6 {
 .app-nav :focus-visible { outline-color: rgba(255,255,255,0.82); }
 
 /* ─── RAIL LATERAL ──────────────────────────────────────────────────────────
-   O rail encosta no topo e na base da tela (sem "sobra" no topo/esquerda) e
-   ganha a curva de referência: canto direito totalmente arredondado. */
+   A aresta direita reta e seu divisor evitam a colisão visual com o header. */
 .app-nav--rail {
-  border-radius: 0 var(--radius-rail) var(--radius-rail) 0;
+  border-radius: 0;
+  border-right: 1px solid rgba(255,255,255,0.14);
   box-shadow:
-    18px 0 54px rgba(8,2,22,0.52),
-    0 0 34px rgba(124,58,237,0.20),
-    inset -1px 0 0 rgba(255,255,255,0.10),
+    12px 0 32px rgba(8,2,22,0.34),
+    0 0 24px rgba(124,58,237,0.14),
     inset 0 1px 0 rgba(255,255,255,0.12);
 }
 
@@ -971,22 +1220,24 @@ h1, h2, h3, h4, h5, h6 {
   height: 2.85rem;
   width: 2.85rem;
 }
-/* item ativo: pílula verde cheia, como na referência */
+/* item ativo: pílula violeta translúcida, integrada ao vidro do rail.
+   Antes era uma pílula verde cheia: verde é reservado para operação/status,
+   e o chrome de navegação é violeta — a pílula verde destoava do rail. */
 .app-nav__cluster .app-nav--active {
-  color: #05120C;
-  background: linear-gradient(150deg, #34F5AE 0%, var(--status-normal) 52%, #06B87A 100%);
+  color: #FFFFFF;
+  background: linear-gradient(150deg, rgba(168,85,247,0.50) 0%, rgba(124,58,237,0.34) 52%, rgba(217,70,239,0.26) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.45),
-    0 0 18px color-mix(in srgb, var(--status-normal) 55%, transparent);
+    inset 0 1px 0 rgba(255,255,255,0.30),
+    0 0 18px rgba(168,85,247,0.40);
 }
 .app-nav__cluster .app-nav--active .app-nav__indicator { display: none; }
-/* mesma pílula verde na barra inferior, para a identidade não quebrar no mobile */
+/* mesma pílula violeta na barra inferior, para a identidade não quebrar no mobile */
 .app-nav--bar .app-nav--active {
-  color: #05120C;
-  background: linear-gradient(150deg, #34F5AE 0%, var(--status-normal) 52%, #06B87A 100%);
+  color: #FFFFFF;
+  background: linear-gradient(150deg, rgba(168,85,247,0.50) 0%, rgba(124,58,237,0.34) 52%, rgba(217,70,239,0.26) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.45),
-    0 0 18px color-mix(in srgb, var(--status-normal) 50%, transparent);
+    inset 0 1px 0 rgba(255,255,255,0.30),
+    0 0 16px rgba(168,85,247,0.36);
 }
 .app-nav__brand {
   color: #FFFFFF;
@@ -1013,6 +1264,12 @@ button, a, input, select, textarea, [role="button"] {
 @media (max-width: 1023px) {
   button, a, input, select, textarea, [role="button"] {
     min-height: 44px;
+  }
+  /* O Safari iOS dá zoom automático ao focar um campo cujo texto seja
+     menor que 16px — por isso o piso vale aqui. Ele NÃO vale para <a> nem
+     <button>: aplicá-los forçaria 16px em todo rótulo e, por estar fora de
+     @layer, ainda venceria as utilities text-[…] do Tailwind v4. */
+  input, select, textarea {
     font-size: 16px;
   }
   .leaflet-container {
