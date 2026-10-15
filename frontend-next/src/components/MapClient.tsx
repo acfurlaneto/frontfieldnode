@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { Activity, Search, Tractor, X } from "lucide-react";
 import { resolveApiUrl } from "@/services/telemetryService";
+import { METRIC_THRESHOLDS, type MetricKey } from "@/lib/metricThresholds";
 import { ListaPosicoesMaquinasSchema } from "@/schemas";
 import type { MachinePosition } from "@/types/telemetry";
 import type { EstadoRequisicao } from "@/types/api";
@@ -63,35 +64,70 @@ function parsePositions(data: UnknownRecord[]) {
   return parseResult.data;
 }
 
+type MetricTone = "normal" | "atencao" | "critico";
+
+function metricTone(key: MetricKey, value: number): MetricTone {
+  const thresholds = METRIC_THRESHOLDS[key];
+  if (thresholds.higherIsWorse) {
+    if (value >= thresholds.critical) return "critico";
+    if (value >= thresholds.alert) return "atencao";
+    return "normal";
+  }
+  if (value <= thresholds.critical) return "critico";
+  if (value <= thresholds.alert) return "atencao";
+  return "normal";
+}
+
+const toneColor: Record<MetricTone, string> = {
+  normal: "var(--status-normal)",
+  atencao: "var(--status-atencao)",
+  critico: "var(--status-critico)",
+};
+
+function naturalStatusTone(status: MachinePosition["status"]): MetricTone {
+  if (status === "operando") return "normal";
+  if (status === "parada") return "atencao";
+  return "critico";
+}
+
+function metricCell(label: string, value: string, tone: MetricTone) {
+  return `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:10px;background:color-mix(in srgb, ${toneColor[tone]} 8%, transparent);">
+      <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);">${label}</span>
+      <span style="font-size:15px;font-weight:800;line-height:1.15;color:${toneColor[tone]};font-variant-numeric:tabular-nums;">${value}</span>
+    </div>
+  `;
+}
+
 function getPopupHtml(machine: MachinePosition) {
+  const natural = naturalStatusTone(machine.status);
   const statusLabel =
     machine.status === "operando"
       ? "Operando"
       : machine.status === "parada"
         ? "Parada"
         : "Offline";
+  const statusColor = toneColor[natural];
 
-  const statusColor =
-    machine.status === "operando"
-      ? "var(--status-normal)"
-      : machine.status === "parada"
-        ? "var(--status-atencao)"
-        : "var(--status-critico)";
+  const rpm = Number(machine.telemetria.rpm);
+  const temperatura = Number(machine.telemetria.temperatura);
 
   return `
-    <div style="font-size:13px;line-height:1.5;color:var(--text-1);background:linear-gradient(180deg,var(--panel-glass-strong),var(--panel-glass-mid));backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid transparent;border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-glass);min-width:220px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div style="font-size:13px;line-height:1.5;color:var(--text-1);min-width:236px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
         <strong style="font-size:13px;color:var(--text-1);">${escapeHtml(machine.maquina_id ?? machine.modelo)}</strong>
-        <span style="display:inline-flex;align-items:center;gap:6px;border-radius:9999px;border:1px solid color-mix(in srgb, ${statusColor} 20%, transparent);background:color-mix(in srgb, ${statusColor} 12%, transparent);padding:2px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${statusColor};">
-          <span style="width:6px;height:6px;border-radius:50%;background:${statusColor};box-shadow:0 0 6px color-mix(in srgb, ${statusColor} 55%, transparent);"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;border-radius:9999px;border:1px solid color-mix(in srgb, ${statusColor} 24%, transparent);background:color-mix(in srgb, ${statusColor} 12%, transparent);padding:2px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${statusColor};">
+          <span style="width:6px;height:6px;border-radius:50%;background:${statusColor};"></span>
           ${statusLabel}
         </span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12px;color:var(--text-2);">
-        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Ao vivo agora</span><div style="margin-top:2px;font-weight:700;color:${statusColor};">${escapeHtml(String(machine.telemetria.rpm))} RPM</div></div>
-        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Temperatura</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.temperatura))}°C</div></div>
-        <div><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">RPM</span><div style="margin-top:2px;font-weight:700;color:var(--text-1);">${escapeHtml(String(machine.telemetria.rpm))}</div></div>
-        <div style="grid-column:1/-1;"><span style="color:var(--text-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Última atualização</span><div style="margin-top:2px;font-weight:600;color:var(--text-1);">${escapeHtml(new Date(machine.telemetria.timestamp).toLocaleString())}</div></div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;">
+        ${metricCell("RPM", escapeHtml(String(machine.telemetria.rpm)), Number.isFinite(rpm) ? metricTone("rpm", rpm) : natural)}
+        ${metricCell("Temp", `${escapeHtml(String(machine.telemetria.temperatura))}°C`, Number.isFinite(temperatura) ? metricTone("temperatura", temperatura) : natural)}
+      </div>
+      <div style="margin-top:10px;text-align:center;">
+        <span style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);">Última atualização</span>
+        <div style="margin-top:2px;font-size:11px;font-weight:600;color:var(--text-2);">${escapeHtml(new Date(machine.telemetria.timestamp).toLocaleString())}</div>
       </div>
     </div>
   `;
@@ -131,122 +167,6 @@ function createMarkerIcon(L: LeafletModule, machine: MachinePosition, selected =
     iconAnchor: [markerSize / 2, markerSize / 2],
     popupAnchor: [0, selected ? -24 : -20],
   });
-}
-
-type MachineCluster = {
-  machines: MachinePosition[];
-  center: [number, number];
-};
-
-function clusterMachinePositions(
-  L: LeafletModule,
-  map: LeafletMap,
-  machines: MachinePosition[],
-  radius = 52,
-): MachineCluster[] {
-  const projected = machines.map((machine, index) => ({
-    machine,
-    index,
-    point: map.latLngToContainerPoint([machine.lat, machine.lng]),
-  }));
-  const cells = new Map<string, typeof projected>();
-
-  projected.forEach((entry) => {
-    const key = `${Math.floor(entry.point.x / radius)}:${Math.floor(entry.point.y / radius)}`;
-    const cell = cells.get(key) ?? [];
-    cell.push(entry);
-    cells.set(key, cell);
-  });
-
-  const visited = new Set<number>();
-  const groups: MachineCluster[] = [];
-
-  for (const entry of projected) {
-    if (visited.has(entry.index)) continue;
-
-    const cellX = Math.floor(entry.point.x / radius);
-    const cellY = Math.floor(entry.point.y / radius);
-    const candidates: typeof projected = [];
-    for (let x = cellX - 1; x <= cellX + 1; x += 1) {
-      for (let y = cellY - 1; y <= cellY + 1; y += 1) {
-        candidates.push(...(cells.get(`${x}:${y}`) ?? []));
-      }
-    }
-
-    candidates.sort((a, b) => {
-      const aDistance = entry.point.distanceTo(a.point);
-      const bDistance = entry.point.distanceTo(b.point);
-      return aDistance - bDistance;
-    });
-
-    const members = [entry];
-    visited.add(entry.index);
-    for (const candidate of candidates) {
-      if (visited.has(candidate.index)) continue;
-      const isNearEveryMember = members.every(
-        (member) => member.point.distanceTo(candidate.point) <= radius,
-      );
-      if (isNearEveryMember) {
-        members.push(candidate);
-        visited.add(candidate.index);
-      }
-    }
-
-    const centerPoint = L.point(
-      members.reduce((sum, member) => sum + member.point.x, 0) / members.length,
-      members.reduce((sum, member) => sum + member.point.y, 0) / members.length,
-    );
-    const center = map.containerPointToLatLng(centerPoint);
-    groups.push({
-      machines: members.map((member) => member.machine),
-      center: [center.lat, center.lng],
-    });
-  }
-
-  return groups;
-}
-
-function createClusterIcon(L: LeafletModule, count: number) {
-  return L.divIcon({
-    className: "leaflet-machine-cluster",
-    html: `<span class="map-machine-cluster__count" aria-hidden="true">${count}</span>`,
-    iconSize: [46, 46],
-    iconAnchor: [23, 23],
-  });
-}
-
-function createClusterPopup(
-  L: LeafletModule,
-  cluster: MachineCluster,
-  onSelect: (machine: MachinePosition) => void,
-) {
-  const root = L.DomUtil.create("div", "map-cluster-popup");
-  const heading = L.DomUtil.create("p", "map-cluster-popup__title", root);
-  heading.textContent = `${cluster.machines.length} máquinas neste ponto`;
-
-  const list = L.DomUtil.create("div", "map-cluster-popup__list", root);
-  [...cluster.machines]
-    .sort((a, b) => (a.maquina_id ?? a.modelo).localeCompare(b.maquina_id ?? b.modelo))
-    .forEach((machine) => {
-      const machineId = machine.maquina_id ?? String(machine.id);
-      const status = getMarkerStatus(machine.status);
-      const button = L.DomUtil.create("button", "map-cluster-popup__machine", list);
-      button.type = "button";
-      button.setAttribute("aria-label", `Abrir ${machineId}, status ${status.label}`);
-
-      const name = L.DomUtil.create("span", "map-cluster-popup__name", button);
-      name.textContent = machineId;
-      const statusLabel = L.DomUtil.create("span", "map-cluster-popup__status", button);
-      statusLabel.textContent = status.label;
-      button.addEventListener("click", (event) => {
-        L.DomEvent.stopPropagation(event);
-        onSelect(machine);
-      });
-    });
-
-  L.DomEvent.disableClickPropagation(root);
-  L.DomEvent.disableScrollPropagation(list);
-  return root;
 }
 
 function isValidPosition(machine: MachinePosition) {
@@ -423,55 +343,54 @@ export default function MapClient({
     const renderMarkers = () => {
       markers.clearLayers();
       markerRefs.current.clear();
-      const clusters = clusterMachinePositions(L, map, validPositions);
 
-      clusters.forEach((cluster) => {
-        if (cluster.machines.length === 1) {
-          const machine = cluster.machines[0];
-          const machineId = machine.maquina_id ?? String(machine.id);
-          const marker = L.marker([machine.lat, machine.lng], {
-            icon: createMarkerIcon(L, machine, machineId === selectedMachineIdRef.current, map.getZoom() >= 14),
-            keyboard: true,
-            title: `${machineId} — ${getMarkerStatus(machine.status).label}`,
-          })
-            .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
-            .on("click", () => {
-              selectedMachineIdRef.current = machineId;
-              setSelectedMachineId(machineId);
-            })
-            .addTo(markers);
-          markerRefs.current.set(machineId, marker);
+      // Sem agrupamento: cada máquina é um marcador individual. Máquinas que
+      // compartilham exatamente as mesmas coordenadas são distribuídas em
+      // leque (spiderfy) para não formarem um "bolo" sobreposto no mapa.
+      const machineKey = (machine: MachinePosition) => machine.maquina_id ?? String(machine.id);
+      const displayLatLngs = new Map<string, [number, number]>();
+      const buckets = new Map<string, MachinePosition[]>();
+
+      validPositions.forEach((machine) => {
+        const key = `${machine.lat.toFixed(4)}:${machine.lng.toFixed(4)}`;
+        buckets.set(key, [...(buckets.get(key) ?? []), machine]);
+      });
+
+      buckets.forEach((group) => {
+        if (group.length === 1) {
+          const only = group[0];
+          displayLatLngs.set(machineKey(only), [only.lat, only.lng]);
           return;
         }
-
-        const machineCount = cluster.machines.length;
-        const memberIds = cluster.machines.map((machine) => machine.maquina_id ?? String(machine.id));
-        const clusterMarker = L.marker(cluster.center, {
-          icon: createClusterIcon(L, machineCount),
-          keyboard: true,
-          title: `Abrir grupo com ${machineCount} máquinas`,
-          alt: `Grupo com ${machineCount} máquinas`,
-        }).addTo(markers);
-
-        const openCluster = () => {
-          clusterMarker.bindPopup(createClusterPopup(L, cluster, selectMachine), {
-            closeButton: true,
-            autoPan: true,
-            maxWidth: 300,
-          });
-          clusterMarker.openPopup();
-        };
-        clusterMarker.on("click", openCluster);
-        clusterMarker.on("keypress", (event: import("leaflet").LeafletKeyboardEvent) => {
-          if (event.originalEvent.key === "Enter" || event.originalEvent.key === " ") {
-            L.DomEvent.preventDefault(event.originalEvent);
-            openCluster();
-          }
+        const center = map.latLngToContainerPoint([group[0].lat, group[0].lng]);
+        const radius = 26 + Math.min(group.length, 12) * 2.4;
+        group.forEach((machine, index) => {
+          const angle = (2 * Math.PI * index) / group.length - Math.PI / 2;
+          const point = L.point(
+            center.x + Math.cos(angle) * radius,
+            center.y + Math.sin(angle) * radius,
+          );
+          const latLng = map.containerPointToLatLng(point);
+          displayLatLngs.set(machineKey(machine), [latLng.lat, latLng.lng]);
         });
-        clusterMarker.getElement()?.setAttribute(
-          "aria-label",
-          `Abrir grupo com ${machineCount} máquinas: ${memberIds.join(", ")}`,
-        );
+      });
+
+      validPositions.forEach((machine) => {
+        const machineId = machine.maquina_id ?? String(machine.id);
+        const position = displayLatLngs.get(machineId) ?? [machine.lat, machine.lng];
+        const marker = L.marker(position, {
+          icon: createMarkerIcon(L, machine, machineId === selectedMachineIdRef.current, map.getZoom() >= 14),
+          keyboard: true,
+          title: `${machineId} — ${getMarkerStatus(machine.status).label}`,
+          alt: `${machineId}, status ${getMarkerStatus(machine.status).label}`,
+        })
+          .bindPopup(getPopupHtml(machine), { closeButton: true, autoPan: true })
+          .on("click", () => {
+            selectedMachineIdRef.current = machineId;
+            setSelectedMachineId(machineId);
+          })
+          .addTo(markers);
+        markerRefs.current.set(machineId, marker);
       });
 
       markerRefs.current.forEach((marker, machineId) => {

@@ -6,13 +6,23 @@ import { AppShell } from '@/components/AppShell';
 import { EmptyState, ErrorState } from '@/components/EmptyState';
 import { LoadingState } from '@/components/ui/FeedbackStates';
 import { HistoryChart } from '@/components/HistoryChart';
+import { MetricColumnChart } from '@/components/MetricColumnChart';
 import { MetricCard } from '@/components/MetricCard';
+import { METRIC_META, METRIC_ORDER } from '@/lib/metrics';
+import type { MetricKey } from '@/lib/metricThresholds';
 import { riskTone, StatusBadge } from '@/components/StatusBadge';
 import { PrescricaoModal } from '@/components/PrescricaoModal';
 import { telemetryService } from '@/services/telemetryService';
 import { ReportButton } from '@/components/ReportButton';
 import type { EstadoRequisicao } from '@/types/api';
 import type { Telemetry } from '@/types/telemetry';
+
+/** Tom do card de linha por métrica — o mesmo vocabulário de risco que a API usa. */
+const CHART_TONE: Record<MetricKey, 'red' | 'amber' | 'emerald'> = {
+  temperatura: 'red',
+  vibracao: 'amber',
+  rpm: 'emerald',
+};
 
 export default function DetailsPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
   const [machineId, setMachineId]       = useState<string | null>(null);
@@ -117,11 +127,32 @@ export default function DetailsPage({ searchParams }: { searchParams: Promise<{ 
             </article>
           </section>
 
-          <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <HistoryChart title="Histórico de temperatura" readings={readings} field="temperatura" suffix="°C" tone="red" />
-            <HistoryChart title="Histórico de vibração"    readings={readings} field="vibracao"    suffix="g"  tone="amber" />
-            <HistoryChart title="Histórico de RPM"         readings={readings} field="rpm"                     tone="emerald" />
-          </section>
+          {/* Cada métrica aparece duas vezes, lado a lado e com a MESMA série:
+              a linha conta como a grandeza evoluiu; as colunas mostram quais
+              leituras ficaram fora da faixa. Dois ângulos, um dado só. */}
+          {METRIC_ORDER.map((metric) => {
+            const meta = METRIC_META[metric];
+            return (
+              <section
+                key={metric}
+                aria-label={`Histórico de ${meta.label}`}
+                className="grid grid-cols-1 gap-4 lg:grid-cols-2"
+              >
+                <HistoryChart
+                  title={`Histórico de ${meta.short.toLowerCase()}`}
+                  readings={readings}
+                  field={metric}
+                  suffix={meta.unit}
+                  tone={CHART_TONE[metric]}
+                />
+                <MetricColumnChart
+                  title={`Leituras de ${meta.short.toLowerCase()}`}
+                  readings={readings}
+                  field={metric}
+                />
+              </section>
+            );
+          })}
         </div>
       </AppShell>
 

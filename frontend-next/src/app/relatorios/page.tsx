@@ -29,7 +29,7 @@ function downloadBlob(blob: Blob, machineId: string) {
 }
 
 const selectClass =
-  'min-h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-4 text-sm font-medium text-[var(--text-1)] outline-none transition hover:border-[rgba(255,255,255,0.18)] focus:border-[color:var(--ui-accent)]/60 disabled:cursor-not-allowed disabled:opacity-50';
+  'min-h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--panel-glass-mid)] px-4 text-sm font-medium text-[var(--text-1)] outline-none transition hover:border-[var(--border-highlight)] focus:border-[color:var(--ui-accent)]/60 disabled:cursor-not-allowed disabled:opacity-50';
 
 export default function RelatoriosPage() {
   const [estadoMaquinas,  setEstadoMaquinas]  = useState<EstadoRequisicao<MachineOption[]>>({ tipo: 'carregando' });

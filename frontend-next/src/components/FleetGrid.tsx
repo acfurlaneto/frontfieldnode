@@ -36,9 +36,9 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
             </StatusBadge>
           </div>
 
-          {/* Dados */}
+          {/* Dados — centralizados, com valores legíveis nos dois temas */}
           <dl className="mt-5 grid grid-cols-2 gap-2 text-xs">
-            <div className="data-tile p-3">
+            <div className="data-tile p-3 text-center">
               <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 ID
               </dt>
@@ -46,7 +46,7 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
                 {machine.maquina_id || machine.id}
               </dd>
             </div>
-            <div className="data-tile p-3">
+            <div className="data-tile p-3 text-center">
               <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 Operário
               </dt>
@@ -54,16 +54,16 @@ export function FleetGrid({ machines }: { machines: Machine[] }) {
                 {machine.operario.nome}
               </dd>
             </div>
-            <div className="data-tile p-3">
-              <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+            <div className="data-tile p-3 text-center">
+              <dt className="flex items-center justify-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 <Gauge size={9} aria-hidden="true" /> Velocidade
               </dt>
               <dd className="mt-1 font-semibold text-[var(--text-1)]">
                 {machine.estado_de_movimento.velocidade} km/h
               </dd>
             </div>
-            <div className="data-tile p-3">
-              <dt className="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+            <div className="data-tile p-3 text-center">
+              <dt className="flex items-center justify-center gap-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
                 <Clock size={9} aria-hidden="true" /> Horas
               </dt>
               <dd className="mt-1 font-semibold text-[var(--text-1)]">

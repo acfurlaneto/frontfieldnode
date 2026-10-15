@@ -1,31 +1,34 @@
 @import "tailwindcss";
 
-/* ─── DARK THEME (padrão) ─────────────────────────────────────────────────── */
+/* ─── DARK THEME (padrão) ───────────────────────────────────────────────────
+   Paleta FieldNode: verde-lima (#A7FF2C) + preto + cinza-claro (#EFEFEF).
+   A MARCA vive no lima; o STATUS continua em esmeralda/âmbar/vermelho para
+   que "normal" nunca se confunda com o logo ou com os CTAs. */
 :root,
 .dark {
---background:  #000000;
-  --surface-1:   #050508;
-  --surface-2:   #0A0A10;
-  --surface-3:   #121019;
-  --panel:       #07070B;
-  --panel-2:     #0D0C15;
+  --background:  #050505;
+  --surface-1:   #080808;
+  --surface-2:   #0E0E0E;
+  --surface-3:   #161616;
+  --panel:       #0A0A0A;
+  --panel-2:     #111111;
   /* atmosfera do palco: construída 100% em CSS (ver .app-background) */
-  --surface-card-solid:   rgba(18,14,28,0.88);
+  --surface-card-solid:   rgba(16,18,15,0.88);
   /* base e tinta dos containers de KPI — a base fica atrás, a tinta dá o degradê */
   --kpi-base:    var(--surface-card-solid);
-  --kpi-tint:    color-mix(in srgb, var(--green) 17%, transparent);
-  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 15%, transparent);
-  --kpi-tint-risk:  color-mix(in srgb, var(--red) 15%, transparent);
+  --kpi-tint:    color-mix(in srgb, var(--green) 15%, transparent);
+  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 14%, transparent);
+  --kpi-tint-risk:  color-mix(in srgb, var(--red) 14%, transparent);
   --panel-glass:        rgba(255,255,255,0.035);
   --panel-glass-mid:    rgba(255,255,255,0.055);
   --panel-glass-strong: rgba(255,255,255,0.09);
   --panel-glass-soft:   rgba(255,255,255,0.02);
 
-  --foreground: #EDEDF3;
-  --text-1:     #F7F7FA;
-  --text-2:     #C6C5D4;
-  --text-3:     #8B8AA0;
-  --muted:      #5C5B70;
+  --foreground: #EDEDED;
+  --text-1:     #F7F7F7;
+  --text-2:     #C4C9BF;
+  --text-3:     #8D948A;
+  --muted:      #5D635B;
 
   --line:        rgba(255,255,255,0.08);
   --border-glass: rgba(255,255,255,0.08);
@@ -40,15 +43,20 @@
   --field-fg:   var(--text-1);
   --field-line: var(--line);
 
-  /* primitivos de cor — verde/âmbar/vermelho seguem semânticos (operação) */
-  --green:  #12E79C;
+  /* primitivos de cor. Marca = lima; status = esmeralda/âmbar/vermelho. */
+  --lime:      #A7FF2C;
+  --lime-deep: #7BE021;
+  --lime-ink:  #3F8F0C;
+  --green:  #2FD98B;
   --amber:  #FFC53D;
   --red:    #FF5C5C;
-  --blue:   #60A5FA;
-  --violet: #A855F7;
+  --blue:   #4FC3F7;
   --cyan:   #22E5FF;
-  --purple:  #7C3AED;
-  --magenta: #D946EF;
+  /* legado: estes três eram roxo/magenta e agora acompanham a marca, para
+     nenhuma superfície sobrar arroxeada depois da troca de paleta. */
+  --violet:  var(--lime);
+  --purple:  var(--lime-deep);
+  --magenta: var(--lime-ink);
 
   /* status semântico */
   --status-normal:  var(--green);
@@ -56,10 +64,16 @@
   --status-critico: var(--red);
   --status-neutro:  var(--text-3);
 
-/* accent de interface + gradiente de marca (roxo → magenta) */
-  --ui-accent: var(--violet);
-  --brand-gradient: linear-gradient(135deg, #7C3AED 0%, #B026FF 48%, #E879F9 100%);
-  --brand-gradient-soft: linear-gradient(135deg, rgba(124,58,237,0.24), rgba(217,70,239,0.18));
+  /* accent de interface + gradiente de marca.
+     O degradê fica TODO na faixa clara do lima de propósito: quando ele
+     terminava em verde profundo (#3F8F0C), o fim escuro dominava a área do
+     botão e o CTA deixava de ler como lima, virando um verde azeitona. */
+  --ui-accent: var(--lime);
+  --brand-gradient: linear-gradient(135deg, #BBFF5C 0%, #A7FF2C 48%, #7FE01C 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(167,255,44,0.22), rgba(63,143,12,0.16));
+  /* Texto sobre o lima: o lima é claro nos DOIS temas, então a tinta é
+     sempre escura (é o que o CTA de referência faz). */
+  --brand-on-accent: #0A0A0A;
 
   /* gráficos */
   --chart-normal-stroke:  var(--green);
@@ -70,26 +84,28 @@
   --chart-critico-fill:   color-mix(in srgb, var(--red) 18%, transparent);
   --chart-blue-stroke:    var(--blue);
   --chart-blue-fill:      color-mix(in srgb, var(--blue) 18%, transparent);
-  --chart-violet-stroke:  var(--violet);
-  --chart-violet-fill:    color-mix(in srgb, var(--violet) 18%, transparent);
-  --metric-temperature:   #F472B6;
-  --metric-vibration:     #60A5FA;
-  --metric-rpm:           #A855F7;
-  --chart-grid:           rgba(255,255,255,0.05);
-  --chart-surface:        rgba(255,255,255,0.02);
+  --chart-violet-stroke:  var(--lime);
+  --chart-violet-fill:    color-mix(in srgb, var(--lime) 18%, transparent);
+  /* Série por métrica: toda na família verde/ciano para não competir com as
+     linhas de limite (âmbar/vermelho), que são o único "aviso" do gráfico. */
+  --metric-temperature:   #2FD98B;
+  --metric-vibration:     #22D3EE;
+  --metric-rpm:           #A7FF2C;
+  --chart-grid:           rgba(255,255,255,0.06);
+  --chart-surface:        rgba(255,255,255,0.025);
   --chart-point-stroke:   rgba(0,0,0,0.5);
   --chart-transparent:    rgba(0,0,0,0);
 
-  /* glows — verde segue sendo o brilho operacional; roxo/magenta é a marca */
-  --focus-ring:         rgba(168,85,247,0.32);
-  --glow-normal:        rgba(18,231,156,0.22);
-  --glow-normal-strong: rgba(18,231,156,0.75);
+  /* glows — o lima é a marca; verde-esmeralda segue como brilho operacional */
+  --focus-ring:         rgba(167,255,44,0.32);
+  --glow-normal:        rgba(47,217,139,0.22);
+  --glow-normal-strong: rgba(47,217,139,0.72);
   --glow-amber:         rgba(255,197,61,0.24);
   --glow-red:           rgba(255,92,92,0.24);
-  --glow-violet:        rgba(168,85,247,0.24);
+  --glow-violet:        rgba(167,255,44,0.24);
   --glow-cyan:          rgba(34,229,255,0.18);
-  --glow-accent:        rgba(168,85,247,0.34);
-  --glow-accent-strong: rgba(217,70,239,0.55);
+  --glow-accent:        rgba(167,255,44,0.32);
+  --glow-accent-strong: rgba(167,255,44,0.55);
 
   /* liquid glass — highlight especular interno (sem borda) */
   --glass-border-top:   rgba(255,255,255,0.14);
@@ -98,18 +114,18 @@
   --glass-inset-bot:    rgba(0,0,0,0.16);
 
   /* superfícies compostas */
-  --surface-page:   #000000;
-  --surface-rail:   rgba(8,6,12,0.78);
-  --surface-header: rgba(0,0,0,0.72);
-  --surface-card:   rgba(18,14,26,0.62);
+  --surface-page:   #050505;
+  --surface-rail:   rgba(10,10,10,0.78);
+  --surface-header: rgba(5,5,5,0.72);
+  --surface-card:   rgba(16,18,15,0.62);
 
-  /* glow ambiente — feixes violeta nos cantos superiores, bloom central e wash inferior.
-     Intensidade calibrada para o PRETO continuar sendo a base visível: o roxo entra
-     como luz de canto, não como fundo. */
-  --ambient-glow-1: rgba(139,92,246,0.30);
-  --ambient-glow-2: rgba(168,85,247,0.26);
-  --ambient-glow-3: rgba(124,58,237,0.24);
-  --ambient-glow-4: rgba(109,40,217,0.22);
+  /* glow ambiente — feixes de luz lima/verde nos cantos superiores, bloom
+     central no topo e wash inferior. Intensidade calibrada para o PRETO
+     continuar sendo a base visível: o lima entra como luz, não como fundo. */
+  --ambient-glow-1: rgba(167,255,44,0.26);
+  --ambient-glow-2: rgba(123,224,33,0.24);
+  --ambient-glow-3: rgba(63,143,12,0.26);
+  --ambient-glow-4: rgba(47,217,139,0.20);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(0,0,0,0.7);
 
@@ -140,56 +156,63 @@
 
 /* ─── LIGHT THEME ─────────────────────────────────────────────────────────── */
 .light {
---background:  #F1F0F7;
-  --surface-1:   #F7F6FC;
-  --surface-2:   #EBE9F4;
-  --surface-3:   #E2E0EE;
-  --panel:       #FBFAFE;
-  --panel-2:     #F2F1F8;
+  --background:  #EFEFEF;
+  --surface-1:   #F7F7F7;
+  --surface-2:   #EDEDED;
+  --surface-3:   #E3E3E3;
+  --panel:       #FBFBFB;
+  --panel-2:     #F2F2F2;
   --surface-card-solid:   #FFFFFF;
   /* Superfícies de conteúdo claras ficam sólidas; o chrome de marca permanece escuro. */
   --surface-card:   #FFFFFF;
-  /* KPI em tom violeta suave (nunca branco puro) + tinta de status */
-  --kpi-base:    linear-gradient(158deg, rgba(124,58,237,0.16) 0%, rgba(255,255,255,0.96) 56%, rgba(247,246,253,0.90) 100%);
-  --kpi-tint:    color-mix(in srgb, var(--green) 15%, transparent);
-  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 15%, transparent);
-  --kpi-tint-risk:  color-mix(in srgb, var(--red) 14%, transparent);
-  --panel-glass:        rgba(28,22,52,0.035);
-  --panel-glass-mid:    rgba(28,22,52,0.05);
-  --panel-glass-strong: rgba(28,22,52,0.075);
-  --panel-glass-soft:   rgba(28,22,52,0.02);
+  /* KPI com um leve véu de lima (nunca branco puro) + tinta de status */
+  --kpi-base:    linear-gradient(158deg, rgba(167,255,44,0.20) 0%, rgba(255,255,255,0.97) 56%, rgba(243,244,241,0.90) 100%);
+  --kpi-tint:    color-mix(in srgb, var(--green) 14%, transparent);
+  --kpi-tint-warn:  color-mix(in srgb, var(--amber) 14%, transparent);
+  --kpi-tint-risk:  color-mix(in srgb, var(--red) 13%, transparent);
+  --panel-glass:        rgba(33,33,33,0.035);
+  --panel-glass-mid:    rgba(33,33,33,0.05);
+  --panel-glass-strong: rgba(33,33,33,0.075);
+  --panel-glass-soft:   rgba(33,33,33,0.02);
 
-  --foreground: #1C1A26;
-  --text-1:     #14121C;
-  --text-2:     #3E3B4D;
-  --text-3:     #4B5563;
-  --muted:      #6B7280;
+  --foreground: #1F1F1F;
+  --text-1:     #1A1A1A;
+  --text-2:     #3D3D3D;
+  --text-3:     #4A4A4A;
+  --muted:      #6E6E6E;
 
-  --line:        rgba(28,22,52,0.10);
-  --border-glass: rgba(28,22,52,0.10);
-  --border-subtle: rgba(28,22,52,0.08);
-  --border-highlight: rgba(28,22,52,0.16);
+  --line:        rgba(33,33,33,0.11);
+  --border-glass: rgba(33,33,33,0.11);
+  --border-subtle: rgba(33,33,33,0.09);
+  --border-highlight: rgba(33,33,33,0.18);
 
   --field-bg:   var(--panel);
   --field-fg:   var(--text-1);
   --field-line: var(--line);
 
-  --green:  #00B86B;
-  --amber:  #D98600;
-  --red:    #E5253A;
-  --blue:   #2563EB;
-  --violet: #7C3AED;
-  --cyan:   #0891B2;
-  --purple:  #6D28D9;
-  --magenta: #A21CAF;
+  /* No claro o lima não tem contraste para TEXTO, então a marca aparece em
+     duas formas: `--lime` para preenchimentos/brilho e `--lime-ink` para
+     texto/ícones. Os status seguem esmeralda/âmbar/vermelho. */
+  --lime:      #A7FF2C;
+  --lime-deep: #7BE021;
+  --lime-ink:  #4D7C0F;
+  --green:  #059669;
+  --amber:  #C2740A;
+  --red:    #DC2626;
+  --blue:   #0E7490;
+  --cyan:   #0E7490;
+  --violet:  var(--lime-ink);
+  --purple:  var(--lime-ink);
+  --magenta: var(--lime-ink);
 
   --status-normal:  var(--green);
   --status-atencao: var(--amber);
   --status-critico: var(--red);
   --status-neutro:  var(--text-3);
-  --ui-accent:      var(--violet);
-  --brand-gradient: linear-gradient(135deg, #6D28D9 0%, #9333EA 48%, #C026D3 100%);
-  --brand-gradient-soft: linear-gradient(135deg, rgba(109,40,217,0.14), rgba(162,28,175,0.10));
+  --ui-accent:      var(--lime-ink);
+  --brand-gradient: linear-gradient(135deg, #B4FF52 0%, #A7FF2C 50%, #85D81B 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(167,255,44,0.20), rgba(63,143,12,0.12));
+  --brand-on-accent: #0A0A0A;
 
   --chart-normal-stroke:  var(--green);
   --chart-normal-fill:    color-mix(in srgb, var(--green) 12%, transparent);
@@ -199,45 +222,45 @@
   --chart-critico-fill:   color-mix(in srgb, var(--red) 12%, transparent);
   --chart-blue-stroke:    var(--blue);
   --chart-blue-fill:      color-mix(in srgb, var(--blue) 12%, transparent);
-  --chart-violet-stroke:  var(--violet);
-  --chart-violet-fill:    color-mix(in srgb, var(--violet) 12%, transparent);
-  --metric-temperature:   #DB2777;
-  --metric-vibration:     #2563EB;
-  --metric-rpm:           #7C3AED;
-  --chart-grid:           rgba(15,23,42,0.08);
-  --chart-surface:        rgba(15,23,42,0.02);
+  --chart-violet-stroke:  var(--lime-ink);
+  --chart-violet-fill:    color-mix(in srgb, var(--lime-ink) 12%, transparent);
+  --metric-temperature:   #047857;
+  --metric-vibration:     #0E7490;
+  --metric-rpm:           #4D7C0F;
+  --chart-grid:           rgba(33,33,33,0.09);
+  --chart-surface:        rgba(33,33,33,0.025);
   --chart-point-stroke:   rgba(255,255,255,0.6);
   --chart-transparent:    rgba(0,0,0,0);
 
-  --focus-ring:         rgba(124,58,237,0.22);
-  --glow-normal:        rgba(0,184,107,0.14);
-  --glow-normal-strong: rgba(0,184,107,0.52);
-  --glow-amber:         rgba(217,134,0,0.16);
-  --glow-red:           rgba(229,37,58,0.14);
-  --glow-violet:        rgba(124,58,237,0.14);
-  --glow-cyan:          rgba(8,145,178,0.10);
-  --glow-accent:        rgba(124,58,237,0.20);
-  --glow-accent-strong: rgba(162,28,175,0.32);
+  --focus-ring:         rgba(77,124,15,0.24);
+  --glow-normal:        rgba(5,150,105,0.16);
+  --glow-normal-strong: rgba(5,150,105,0.50);
+  --glow-amber:         rgba(194,116,10,0.16);
+  --glow-red:           rgba(220,38,38,0.14);
+  --glow-violet:        rgba(77,124,15,0.16);
+  --glow-cyan:          rgba(14,116,144,0.12);
+  --glow-accent:        rgba(123,195,24,0.24);
+  --glow-accent-strong: rgba(63,143,12,0.34);
 
   --glass-border-top:   rgba(255,255,255,0.55);
   --glass-border-bot:   rgba(255,255,255,0.12);
   --glass-inset-top:    rgba(255,255,255,0.50);
   --glass-inset-bot:    rgba(0,0,0,0.04);
 
---surface-page:   #F1F0F7;
-  --surface-rail:   rgba(248,247,252,0.86);
-  --surface-header: rgba(241,240,247,0.84);
+  --surface-page:   #EFEFEF;
+  --surface-rail:   rgba(250,250,250,0.86);
+  --surface-header: rgba(239,239,239,0.84);
   --surface-card:   #FFFFFF;
-  --ambient-glow-1: rgba(139,92,246,0.10);
-  --ambient-glow-2: rgba(124,58,237,0.11);
-  --ambient-glow-3: rgba(168,85,247,0.09);
-  --ambient-glow-4: rgba(192,38,211,0.06);
+  --ambient-glow-1: rgba(167,255,44,0.18);
+  --ambient-glow-2: rgba(123,224,33,0.14);
+  --ambient-glow-3: rgba(63,143,12,0.10);
+  --ambient-glow-4: rgba(47,217,139,0.08);
   --surface-glass:  linear-gradient(160deg, var(--panel-glass-strong), var(--panel-glass-soft)), var(--panel);
   --overlay-debug:  rgba(255,255,255,0.85);
 
-  --shadow-glass: 0 12px 30px rgba(31,24,66,0.10);
-  --shadow-card:  0 4px 20px rgba(31,24,66,0.06);
-  --shadow-elevated: 0 20px 48px rgba(31,24,66,0.14);
+  --shadow-glass: 0 12px 30px rgba(20,24,16,0.10);
+  --shadow-card:  0 4px 20px rgba(20,24,16,0.06);
+  --shadow-elevated: 0 20px 48px rgba(20,24,16,0.14);
   --radius-panel: 28px;
   --radius-card: 28px;
   --radius-tile: 18px;
@@ -308,7 +331,8 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
   background-color: var(--surface-page);
 }
-/* Feixes e blooms: pinta o brilho sem tingir nem bloquear o conteúdo. */
+/* Feixes e blooms: pinta o brilho sem tingir nem bloquear o conteúdo.
+   Spotlights de luz LIMA com foco principal no topo superior do fundo. */
 .app-background::before {
   content: '';
   position: fixed;
@@ -316,17 +340,31 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(104deg, transparent 24%, color-mix(in srgb, var(--ambient-glow-3) 88%, transparent) 41%, transparent 57%),
-    linear-gradient(256deg, transparent 24%, color-mix(in srgb, var(--ambient-glow-2) 88%, transparent) 41%, transparent 57%),
-    radial-gradient(54% 36% at 50% -8%, color-mix(in srgb, var(--ambient-glow-1) 96%, transparent), transparent 72%),
-    radial-gradient(32% 28% at 6% 4%, color-mix(in srgb, var(--ambient-glow-3) 82%, transparent), transparent 76%),
-    radial-gradient(32% 28% at 94% 4%, color-mix(in srgb, var(--ambient-glow-2) 82%, transparent), transparent 76%),
-    radial-gradient(66% 42% at 52% 112%, color-mix(in srgb, var(--ambient-glow-4) 88%, transparent), transparent 78%);
-  filter: blur(66px) saturate(132%);
+    /* luz lima bem marcante no CANTO SUPERIOR ESQUERDO (atrás do título/logo) */
+    radial-gradient(38% 34% at 0% 0%, rgba(167,255,44,0.62), rgba(123,224,33,0.30) 40%, transparent 72%),
+    radial-gradient(24% 22% at 6% 4%, rgba(47,217,139,0.42), transparent 74%),
+    /* spotlight forte e concentrado no topo superior do fundo */
+    radial-gradient(66% 48% at 50% -8%, rgba(123,224,33,0.42), rgba(63,143,12,0.26) 44%, transparent 74%),
+    /* focos nas laterais superiores */
+    radial-gradient(36% 32% at 6% 0%, rgba(167,255,44,0.34), transparent 76%),
+    radial-gradient(36% 32% at 94% 0%, rgba(63,143,12,0.40), transparent 76%),
+    /* feixes diagonais suaves */
+    linear-gradient(104deg, transparent 26%, rgba(123,224,33,0.16) 42%, transparent 58%),
+    linear-gradient(256deg, transparent 26%, rgba(47,217,139,0.14) 42%, transparent 58%),
+    /* wash inferior discreto */
+    radial-gradient(66% 42% at 52% 112%, rgba(63,143,12,0.26), transparent 78%);
+  filter: blur(72px) saturate(150%);
   animation: ambient-drift 52s ease-in-out infinite alternate;
 }
-/* No modo claro o clima violeta é bem mais discreto: menosWash, mais difuso. */
+
+/* No modo claro a iluminação lima é bem mais discreta. */
 .light .app-background::before {
+  background:
+    radial-gradient(58% 38% at 50% -8%, rgba(167,255,44,0.26), transparent 72%),
+    radial-gradient(30% 26% at 8% 2%, rgba(123,224,33,0.18), transparent 76%),
+    radial-gradient(30% 26% at 92% 2%, rgba(63,143,12,0.12), transparent 76%),
+    radial-gradient(66% 42% at 52% 112%, rgba(47,217,139,0.12), transparent 78%);
+  /* No modo claro o clima é mais difuso: menos wash, mais luz ambiente. */
   filter: blur(84px) saturate(112%);
   opacity: 0.72;
 }
@@ -338,8 +376,8 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-page) 34%, transparent) 0%, transparent 26%, transparent 70%, color-mix(in srgb, var(--surface-page) 64%, transparent) 100%),
-    radial-gradient(118% 92% at 50% 42%, transparent 44%, color-mix(in srgb, var(--surface-page) 52%, transparent) 100%);
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-page) 14%, transparent) 0%, transparent 30%, transparent 72%, color-mix(in srgb, var(--surface-page) 62%, transparent) 100%),
+    radial-gradient(122% 96% at 50% 44%, transparent 48%, color-mix(in srgb, var(--surface-page) 48%, transparent) 100%);
 }
 
 /* ─── CHAT "PERGUNTE À IA" ─────────────────────────────────────────────────
@@ -487,7 +525,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
-/* Barra superior acompanha o rail: mesmo vidro violeta em dark e light.
+/* Barra superior acompanha o rail: mesmo chrome escuro em dark e light.
    Os tokens locais são reescritos aqui para garantir contraste (texto claro)
    sobre o fundo escuro — nada do app perde legibilidade. */
 .app-header--brand {
@@ -502,19 +540,19 @@ h1, h2, h3, h4, h5, h6 {
   --panel-glass-strong: rgba(255,255,255,0.22);
   --surface-card:       rgba(255,255,255,0.10);
   --glass-inset-top:    rgba(255,255,255,0.22);
-  --ui-accent:          #D8B4FE;
+  --ui-accent:          #A7FF2C;
   /* o <select> de máquina mora aqui: precisa de fundo escuro + texto claro
      mesmo quando o app está no modo claro */
-  --field-bg:           rgba(11,6,24,0.94);
+  --field-bg:           rgba(8,10,7,0.94);
   --field-fg:           #FFFFFF;
   --field-line:         rgba(255,255,255,0.20);
   color-scheme: dark;
   color: #FFFFFF;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 58%, transparent 100%),
-    linear-gradient(160deg, #2B1C4E 0%, #1A1132 52%, #120C24 100%);
+    linear-gradient(160deg, #1E2A12 0%, #131A0C 52%, #0A0D07 100%);
   border-color: rgba(255,255,255,0.12);
-  box-shadow: 0 18px 44px rgba(10,4,28,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
+  box-shadow: 0 18px 44px rgba(4,10,2,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
 }
 
 /* A navegação usa .app-nav (definido adiante, depois do vidro). */
@@ -566,10 +604,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── MARCA / TIPOGRAFIA NUMÉRICA ─────────────────────────────────────────── */
 
-/* CTA de destaque: gradiente roxo → magenta, texto branco, glow controlado */
+/* CTA de destaque: gradiente lima → verde profundo com TINTA ESCURA.
+   O lima é claro nos dois temas, então texto branco sobre ele perderia
+   contraste — a referência de estilo usa exatamente essa combinação. */
 .btn-brand {
   background-image: var(--brand-gradient);
-  color: #FFFFFF;
+  color: var(--brand-on-accent);
   box-shadow: 0 0 22px var(--glow-accent), 0 12px 28px rgba(0,0,0,0.38);
   transition: box-shadow var(--transition-ui), transform var(--transition-ui), filter var(--transition-ui);
 }
@@ -585,23 +625,30 @@ h1, h2, h3, h4, h5, h6 {
   filter: saturate(0.6);
 }
 
-/* Valores numéricos de KPI: fonte display com algarismos tabulares e tipografia limpa em branco */
+/* Valores numéricos de KPI: fonte display com algarismos tabulares e tipografia limpa.
+   A cor NÃO pode ser fixa em branco: este arquivo é CSS não-layerizado, então
+   `.stat-value` vence as utilities de cor do Tailwind e o branco fixo deixava o
+   número invisível nos cards claros do modo claro (texto branco + glow branco
+   sobre fundo branco = mancha fantasma). A cor agora vem dos tokens locais:
+   `--text-1` (que `.metric-card--dark-fixed` eleva para #FFFFFF) e `--status-*`,
+   que já são recalibrados por tema. */
 .stat-value {
   font-family: var(--font-display), sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
-  color: #FFFFFF;
+  color: var(--text-1);
   text-shadow: none;
 }
-.stat-value--normal {
-  color: #FFFFFF;
-}
-.stat-value--atencao {
-  color: #FFFFFF;
-}
-.stat-value--critico {
-  color: #FFFFFF;
-}
+.stat-value--normal  { color: var(--status-normal); }
+.stat-value--atencao { color: var(--status-atencao); }
+.stat-value--critico { color: var(--status-critico); }
+
+/* O glow neon só faz sentido com o número sobre superfície escura — ou seja,
+   no dark mode. No modo claro o grupo de KPIs é branco, e um glow atrás do
+   número viraria uma mancha fantasma (a cor já vem de --status-*). */
+.dark .stat-value--normal  { text-shadow: 0 0 20px rgba(18,231,156,0.45); }
+.dark .stat-value--atencao { text-shadow: 0 0 20px rgba(255,197,61,0.42); }
+.dark .stat-value--critico { text-shadow: 0 0 22px rgba(255,92,92,0.50); }
 
 /* Amostra de linha tracejada das referências de limite (legenda da mini-sparkline) */
 .threshold-rule {
@@ -614,14 +661,16 @@ h1, h2, h3, h4, h5, h6 {
 .threshold-rule--atencao { color: var(--status-atencao); }
 .threshold-rule--critico { color: var(--status-critico); }
 
-/* Amostra da faixa "boa" (área verde de fundo do gráfico de KPI) */
+/* Amostra da faixa "boa" (área verde de fundo do gráfico de KPI).
+   Verde limpo e brilhante para destacar o status normal sem poluir o card. */
 .threshold-band {
   display: inline-block;
   width: 14px;
   height: 8px;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--status-normal) 26%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-normal) 46%, transparent);
+  background: color-mix(in srgb, var(--status-normal) 48%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-normal) 72%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-normal) 40%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -791,8 +840,8 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(45% 60% at 18% 20%, rgba(168,85,247,0.22), transparent 72%),
-    radial-gradient(42% 55% at 78% 65%, rgba(34,211,238,0.16), transparent 72%);
+    radial-gradient(45% 60% at 18% 20%, rgba(167,255,44,0.20), transparent 72%),
+    radial-gradient(42% 55% at 78% 65%, rgba(34,229,255,0.14), transparent 72%);
   filter: blur(58px);
 }
 .ambient-glow-card {
@@ -836,8 +885,11 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
 }
+/* No modo claro as superfícies são sólidas: o brilho especular interno era
+   pintado ACIMA do conteúdo (pseudo-elemento posicionado) e lavava textos,
+   rótulos e o próprio botão. Ele é desativado por completo aqui. */
 .light :is(.liquid-glass, .liquid-glass--elevated, .liquid-glass--subtle, .glass-panel)::before {
-  background: linear-gradient(180deg, rgba(255,255,255,0.72), transparent 42%);
+  display: none;
 }
 .light .metric-card:not(.metric-card--dark-fixed),
 .light .fleet-summary,
@@ -881,17 +933,34 @@ h1, h2, h3, h4, h5, h6 {
 .map-dark-filter .leaflet-control-attribution {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
+/* Containers de informação sobre o mapa: fundo SÓLIDO, sem glassmorphism. */
 .map-surface--light .liquid-glass--subtle {
-  --text-1: #f1f5f9;
-  --text-2: #cbd5e1;
-  --text-3: #cbd5e1;
-  --line: rgba(255,255,255,0.18);
-  background: linear-gradient(180deg, rgba(8,12,18,0.88), rgba(14,21,32,0.78));
-  box-shadow: 0 12px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.14);
+  --text-1: #1F2937;
+  --text-2: #374151;
+  --text-3: #6B7280;
+  --line: rgba(15,23,42,0.12);
+  --border-subtle: rgba(15,23,42,0.10);
+  --border-highlight: rgba(15,23,42,0.18);
+  --panel-glass-mid: rgba(15,23,42,0.05);
+  --panel-glass-strong: rgba(15,23,42,0.08);
+  color: #1F2937;
+  background: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(15,23,42,0.10);
+  box-shadow: 0 10px 28px rgba(15,23,42,0.14);
 }
 .map-surface--dark .liquid-glass--subtle {
-  background: linear-gradient(180deg, rgba(26,38,54,0.92), rgba(14,21,32,0.86));
-  box-shadow: 0 12px 32px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.16);
+  --text-1: #F7F7FA;
+  --text-2: #C6C5D4;
+  --text-3: #8B8AA0;
+  --line: rgba(255,255,255,0.10);
+  color: #F7F7FA;
+  background: #121218;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.44);
 }
 
 .leaflet-machine-marker {
@@ -899,78 +968,6 @@ h1, h2, h3, h4, h5, h6 {
   height: max-content !important;
   border: 0 !important;
   background: transparent !important;
-}
-.leaflet-machine-cluster {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--ui-accent) 42%, rgba(255,255,255,0.28));
-  border-radius: 50%;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--ui-accent) 82%, #24173f), #25163d);
-  color: #FFFFFF;
-  box-shadow: 0 8px 20px rgba(11,6,24,0.34), inset 0 1px 0 rgba(255,255,255,0.24);
-  cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-.leaflet-machine-cluster:hover {
-  transform: scale(1.06);
-  box-shadow: 0 10px 24px rgba(11,6,24,0.4), 0 0 18px var(--glow-accent);
-}
-.leaflet-machine-cluster:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--ui-accent) 72%, #FFFFFF);
-  outline-offset: 3px;
-}
-.map-machine-cluster__count {
-  font-size: 14px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-.map-cluster-popup {
-  min-width: 204px;
-  color: var(--text-1);
-}
-.map-cluster-popup__title {
-  margin: 0 0 8px;
-  color: var(--text-1);
-  font-size: 12px;
-  font-weight: 700;
-}
-.map-cluster-popup__list {
-  display: grid;
-  max-height: min(16rem, 45vh);
-  gap: 4px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-.map-cluster-popup__machine {
-  display: flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-radius: 9px;
-  padding: 7px 9px;
-  background: color-mix(in srgb, var(--panel-glass-mid) 78%, var(--surface-card));
-  color: var(--text-1);
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 160ms ease, color 160ms ease;
-}
-.map-cluster-popup__machine:hover,
-.map-cluster-popup__machine:focus-visible {
-  background: color-mix(in srgb, var(--ui-accent) 13%, var(--panel));
-}
-.map-cluster-popup__machine:focus-visible {
-  outline: 2px solid var(--ui-accent);
-  outline-offset: 1px;
-}
-.map-cluster-popup__name {
-  font-size: 12px;
-  font-weight: 700;
-}
-.map-cluster-popup__status {
-  color: var(--text-3);
-  font-size: 11px;
 }
 .map-machine-marker__content {
   display: flex;
@@ -1093,75 +1090,177 @@ h1, h2, h3, h4, h5, h6 {
     var(--kpi-base);
 }
 
-/* ─── KPI DE FUNDO ESCURO FIXO ──────────────────────────────────────────────
-   Os 3 cards de KPIs (RPM / Temperatura / Vibração) são componentes escuros
-   em AMBOS os temas — mesma assinatura do rail e do header. Sobem o fundo para
-   o vidro violeta profundo e reescrevem os tokens de texto/painel localmente,
-   então título, unidade e legendas ficam claros sobre o card escuro.
-   A cor do número NÃO é fixa: continua vindo de --status-*, que aqui aponta
-   para a paleta neon (a mesma do dark mode) para garantir o mesmo destaque. */
-.metric-card--dark-fixed {
-  --text-1:             #FFFFFF;
-  --text-2:             rgba(255,255,255,0.88);
-  --text-3:             rgba(255,255,255,0.66);
-  --muted:              rgba(255,255,255,0.50);
-  --line:               rgba(255,255,255,0.08);
-  --border-subtle:      rgba(255,255,255,0.08);
-  --border-highlight:   rgba(255,255,255,0.16);
-  --background:         #000000;
-  --panel:              #0A0A0E;
-  --green:  #12E79C;
-  --amber:  #FFC53D;
-  --red:    #FF5C5C;
-  --status-normal:  var(--green);
+/* ─── GRUPO DE KPIs — "valores médios" ───────────────────────────────────────
+   Os três indicadores (RPM / Temperatura / Vibração) deixam de ser três cards
+   soltos e passam a ser UM painel com três colunas divididas por fios de 1px.
+   Lê-se como um bloco só — que é o que os números SÃO, médias da mesma
+   máquina — mas cada métrica mantém o seu espaço e a sua cor de status.
+
+   O painel define os tokens de texto localmente porque ele é ESCURO no tema
+   escuro e BRANCO no tema claro. Antes os cards eram escuros FIXOS nos dois
+   temas: sobre a página clara viravam três retângulos pretos flutuando, que é
+   exatamente o contraste que o modo claro precisava corrigir. */
+.kpi-group {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-card);
+  padding: 14px;
+
+  /* Superfície escura (tema escuro) — mesmo grafite do resto do app. */
+  background: linear-gradient(160deg, #171A14 0%, #10120E 55%, #0A0B09 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --text-1: #FFFFFF;
+  --text-2: rgba(255, 255, 255, 0.88);
+  --text-3: rgba(255, 255, 255, 0.74);
+  --muted: rgba(255, 255, 255, 0.52);
+  --line: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.10);
+  --panel-glass: rgba(255, 255, 255, 0.05);
+  --panel-glass-mid: rgba(255, 255, 255, 0.07);
+  --panel-glass-strong: rgba(255, 255, 255, 0.11);
+  --green: #2FD98B;
+  --amber: #FFC53D;
+  --red: #FF5C5C;
+  --status-normal: var(--green);
   --status-atencao: var(--amber);
   --status-critico: var(--red);
   color-scheme: dark;
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-.metric-card--dark-fixed.metric-card--status-atencao {
-  background: rgba(255, 255, 255, 0.035);
-  border-color: rgba(255, 197, 61, 0.25);
-}
-.metric-card--dark-fixed.metric-card--status-critico {
-  background: rgba(255, 255, 255, 0.035);
-  border-color: rgba(255, 92, 92, 0.25);
-}
-.metric-card--dark-fixed:hover {
-  background: rgba(255, 255, 255, 0.055);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 
+.kpi-group__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 2px 4px 12px;
+}
+.kpi-group__title {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-1);
+}
+.kpi-group__sub {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.kpi-group__badge {
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--amber) 34%, transparent);
+  color: var(--amber);
+  padding: 3px 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* A tira: cards encostados, separados por um fio. */
+.kpi-group .kpi-group__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-radius: var(--radius-tile);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.028);
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .kpi-group .kpi-group__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* Especificidade de 3 classes e declarado DEPOIS de `.metric-card` /
+   `.metric-card--solid`: os cards internos abrem mão do próprio chrome para o
+   grupo ser a única superfície. */
+.kpi-group .kpi-group__grid > .metric-card {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 18px 14px;
+  transition: background 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kpi-group .kpi-group__grid > .metric-card:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+.kpi-group .kpi-group__grid > .metric-card + .metric-card { border-top: 1px solid var(--border-subtle); }
+@media (min-width: 640px) {
+  .kpi-group .kpi-group__grid > .metric-card + .metric-card {
+    border-top: 0;
+    border-left: 1px solid var(--border-subtle);
+  }
+}
+
+/* Modo claro: superfície branca, tinta grafite e status recalibrado para
+   contraste sobre branco. É aqui que vive o "contraste dos KPIs no modo claro". */
+.light .kpi-group {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  --text-1: #141414;
+  --text-2: #333333;
+  --text-3: #4A4A4A;
+  --muted: #6E6E6E;
+  --line: rgba(33, 33, 33, 0.12);
+  --border-subtle: rgba(33, 33, 33, 0.11);
+  --panel-glass: rgba(33, 33, 33, 0.04);
+  --panel-glass-mid: rgba(33, 33, 33, 0.05);
+  --panel-glass-strong: rgba(33, 33, 33, 0.08);
+  --green: #047857;
+  --amber: #B45309;
+  --red: #DC2626;
+  --status-normal: var(--green);
+  --status-atencao: var(--amber);
+  --status-critico: var(--red);
+  color-scheme: light;
+  color: #141414;
+}
+.light .kpi-group .kpi-group__grid {
+  background: #FFFFFF;
+  border-color: rgba(33, 33, 33, 0.10);
+}
+/* Reset explícito (4 classes) para vencer `.light .metric-card:not(...)`, que
+   daria a cada card branco com borda e sombra próprias dentro do grupo. */
+.light .kpi-group .kpi-group__grid > .metric-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.light .kpi-group .kpi-group__grid > .metric-card:hover { background: rgba(33, 33, 33, 0.03); }
+
 /* ─── NAVEGAÇÃO (rail lateral + barra inferior) ──────────────────────────────
-   Identidade única nos dois temas: vidro violeta profundo com ícones brancos.
-   O chrome escuro no modo claro é intencional — é a assinatura da marca. */
+   Identidade única nos dois temas: chrome PRETO com ícones brancos e destaque
+   em lima. O rail ser escuro no modo claro é intencional e foi pedido
+   explicitamente — é a assinatura da marca. */
 .app-nav {
   --nav-fg:        rgba(255,255,255,0.70);
   --nav-fg-strong: #FFFFFF;
   --nav-line:      rgba(255,255,255,0.12);
-  --nav-accent:    #C4A0FF;
+  --nav-accent:    #A7FF2C;
   /* mantém os controles de formulário legíveis dentro do chrome escuro */
-  --field-bg:      rgba(11,6,24,0.94);
+  --field-bg:      rgba(8,10,7,0.94);
   --field-fg:      #FFFFFF;
   --field-line:    rgba(255,255,255,0.20);
   color-scheme: dark;
   color: var(--nav-fg-strong);
   border: 0;
-  /* degrade preto no canto superior esquerdo, descendo para violeta profundo */
+  /* preto profundo no topo descendo para um verde muito fechado */
   background:
     linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 26%),
-    linear-gradient(158deg, #2C1D50 0%, #1B1234 34%, #120C24 68%, #08050F 100%);
+    linear-gradient(158deg, #1E2A12 0%, #141C0D 34%, #0B0E08 68%, #050704 100%);
   backdrop-filter: blur(26px) saturate(160%);
   -webkit-backdrop-filter: blur(26px) saturate(160%);
   box-shadow:
-    0 26px 60px rgba(10,4,28,0.55),
-    0 0 32px rgba(124,58,237,0.24),
+    0 26px 60px rgba(4,10,2,0.55),
+    0 0 32px rgba(123,224,33,0.22),
     inset 0 1px 0 rgba(255,255,255,0.14);
 }
 
@@ -1176,73 +1275,75 @@ h1, h2, h3, h4, h5, h6 {
 .app-nav .nav-item--active {
   color: #FFFFFF;
   border-color: rgba(255,255,255,0.24);
-  background: linear-gradient(145deg, rgba(168,85,247,0.46), rgba(217,70,239,0.24));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 0 18px rgba(168,85,247,0.45);
+  background: linear-gradient(145deg, rgba(167,255,44,0.42), rgba(63,143,12,0.28));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 0 18px rgba(167,255,44,0.45);
 }
 .app-nav__indicator {
-  background: #FFFFFF;
-  box-shadow: 0 0 10px rgba(255,255,255,0.65);
+  background: #A7FF2C;
+  box-shadow: 0 0 10px rgba(167,255,44,0.70);
 }
 .app-nav__tooltip {
-  background: #1B1130;
+  background: #14180F;
   color: #FFFFFF;
-  box-shadow: 0 14px 30px rgba(8,2,20,0.62);
+  box-shadow: 0 14px 30px rgba(3,6,1,0.62);
 }
 .app-nav__divider { border-top-color: var(--nav-line); }
 .app-nav__status-label { color: rgba(255,255,255,0.46); }
 .app-nav :focus-visible { outline-color: rgba(255,255,255,0.82); }
 
-/* ─── RAIL LATERAL ──────────────────────────────────────────────────────────
-   A aresta direita reta e seu divisor evitam a colisão visual com o header. */
+/* ─── RAIL LATERAL FLUTUANTE ─────────────────────────────────────────────────
+   Pílula preta sólida, descolada da tela (margem 16px), com os 4 cantos
+   arredondados. Fundo 100% opaco para destacar do fundo do app. */
 .app-nav--rail {
-  border-radius: 0;
-  border-right: 1px solid rgba(255,255,255,0.14);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  /* Preto sólido nos DOIS temas: no claro ele continua escuro de propósito. */
+  background: #0A0A0A;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
-    12px 0 32px rgba(8,2,22,0.34),
-    0 0 24px rgba(124,58,237,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.12);
+    0 24px 60px rgba(0,0,0,0.62),
+    0 0 32px rgba(123,224,33,0.20);
 }
 
-/* Pílula que agrupa os ícones: eles ficam colados, arredondados, começando
-   no topo logo abaixo da marca e terminando no último ícone. */
+/* Grupo de ícones: sem container próprio. Os ícones ficam soltos,
+   centralizados diretamente dentro da pílula do rail. */
 .app-nav__cluster {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 6px;
-  border-radius: 22px;
-  background: rgba(0,0,0,0.34);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  gap: 6px;
 }
 .app-nav__cluster .app-nav__item {
-  border-radius: 16px;
+  border-radius: 14px;
   height: 2.85rem;
   width: 2.85rem;
 }
-/* item ativo: pílula violeta translúcida, integrada ao vidro do rail.
-   Antes era uma pílula verde cheia: verde é reservado para operação/status,
-   e o chrome de navegação é violeta — a pílula verde destoava do rail. */
+/* Item ativo: apenas um realce sutil no próprio ícone (cor + glow leve),
+   sem criar um segundo card dentro da sidebar. */
 .app-nav__cluster .app-nav--active {
-  color: #FFFFFF;
-  background: linear-gradient(150deg, rgba(168,85,247,0.50) 0%, rgba(124,58,237,0.34) 52%, rgba(217,70,239,0.26) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.30),
-    0 0 18px rgba(168,85,247,0.40);
+  color: #A7FF2C;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 0 10px rgba(167,255,44,0.55));
+}
+.app-nav__cluster .app-nav--active svg {
+  color: #A7FF2C;
+  filter: drop-shadow(0 0 8px rgba(167,255,44,0.70));
 }
 .app-nav__cluster .app-nav--active .app-nav__indicator { display: none; }
-/* mesma pílula violeta na barra inferior, para a identidade não quebrar no mobile */
+/* mesma pílula lima na barra inferior, para a identidade não quebrar no mobile */
 .app-nav--bar .app-nav--active {
   color: #FFFFFF;
-  background: linear-gradient(150deg, rgba(168,85,247,0.50) 0%, rgba(124,58,237,0.34) 52%, rgba(217,70,239,0.26) 100%);
+  background: linear-gradient(150deg, rgba(167,255,44,0.44) 0%, rgba(123,224,33,0.30) 52%, rgba(63,143,12,0.28) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.30),
-    0 0 16px rgba(168,85,247,0.36);
+    0 0 16px rgba(167,255,44,0.36);
 }
 .app-nav__brand {
   color: #FFFFFF;
-  background: linear-gradient(150deg, #3B2670 0%, #1B1233 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 0 18px rgba(124,58,237,0.38);
+  background: linear-gradient(150deg, #2A3A16 0%, #131A0C 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 0 18px rgba(123,224,33,0.38);
 }
 
 /* ─── FOCO ────────────────────────────────────────────────────────────────── */
@@ -1362,13 +1463,581 @@ select option:checked {
   font-size: 12px !important;
 }
 
-/* Popup do Leaflet com liquid glass (sem borda) */
+/* Popup do Leaflet com fundo SÓLIDO (sem glassmorphism) */
 .leaflet-popup-content-wrapper {
-  background: linear-gradient(180deg, var(--panel-glass-strong), var(--panel-glass-mid)) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  color: var(--text-1) !important;
-  border: 0 !important;
-  border-radius: 20px !important;
-  box-shadow: var(--shadow-glass) !important;
+  background: #FFFFFF !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #1F2937 !important;
+  border: 1px solid rgba(15,23,42,0.10) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgba(15,23,42,0.16) !important;
+}
+.map-surface--dark .leaflet-popup-content-wrapper {
+  background: #121218 !important;
+  color: #F7F7FA !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.46) !important;
+}
+.map-surface--dark .leaflet-popup-tip { background: #121218 !important; }
+.light .leaflet-popup-tip { background: #FFFFFF !important; }
+
+/* ─── RELATÓRIO EXECUTIVO ───────────────────────────────────────────────────
+   O container do relatório gerado se comporta como uma folha executiva:
+   sólido (nunca vidro), com borda e sombra discretas. No modo claro é branco
+   puro; no escuro acompanha o tom do app. */
+.report-sheet {
+  border-radius: var(--radius-card);
+  background: #121218;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.48);
+  overflow: hidden;
+}
+.light .report-sheet {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Botão de exportação no modo claro: o lima salta do fundo #EFEFEF sozinho,
+   então basta um degradê levemente mais fechado e uma sombra contida —
+   sem precisar trocar a tinta (que continua escura, para alto contraste). */
+.light .btn-brand {
+  background-image: linear-gradient(135deg, #9BEE22 0%, #7BC318 100%);
+  color: var(--brand-on-accent);
+  box-shadow: 0 8px 20px rgba(77,124,15,0.26);
+}
+.light .btn-brand:hover {
+  background-image: linear-gradient(135deg, #8FE01A 0%, #6CB013 100%);
+  box-shadow: 0 10px 24px rgba(77,124,15,0.32);
+}
+
+/* Tabela do relatório: cabeçalho sólido e escuro, linhas alternadas e
+   respiro interno confortável (12px 16px) — legível nos dois temas. */
+.report-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.report-table thead th {
+  background: #1F2937;
+  color: #F9FAFB;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+.report-table thead th:first-child { border-top-left-radius: 12px; }
+.report-table thead th:last-child  { border-top-right-radius: 12px; text-align: right; }
+.report-table tbody td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.report-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--panel-glass-mid) 60%, transparent); }
+.report-table tbody tr:hover { background: var(--panel-glass-mid); }
+.report-table tbody tr:last-child td { font-weight: 700; }
+.light .report-table thead th { background: #1F2937; color: #FFFFFF; }
+.light .report-table tbody td { color: #374151; border-bottom-color: #E5E7EB; }
+.light .report-table tbody tr:nth-child(even) { background: #F9FAFB; }
+.light .report-table tbody tr:hover { background: #F3F4F6; }
+
+/* Cards de resumo do relatório: altura automática e padding folgado para
+   nenhum número ser cortado pela borda. */
+.report-metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 7.5rem;
+  height: auto;
+  padding: 1.125rem 1.25rem;
+  overflow: visible;
+}
+.report-metric__value {
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+
+/* ─── LOGO FIELDNODE ─────────────────────────────────────────────────────────
+   Composição tipográfica: FIELD em Snippet (geométrica, com os terminais
+   curvos do 'l' e do 'd' que assinam a versão atual) + NODE em Staatliches,
+   chapado em lima.
+   Duas variantes: empilhada (navigation rail) e horizontal com assinatura
+   (título do dashboard e tela de login). O componente vive em
+   components/FieldNodeLogo.tsx; aqui mora só o desenho. */
+
+/* As variáveis --font-brand-field / --font-brand-node são geradas pelo
+   `next/font` no layout.tsx e chegam ao <html> junto com as classes do React.
+
+   NÃO redeclare essas variáveis aqui usando var(--mesmo-nome, ...): uma custom
+   property definida em termos de si mesma é um ciclo, o CSS a trata como
+   inválida e a regra de `font-family` morre inteira — a logo passa a herdar o
+   Inter do body. Já aconteceu exatamente isso: "Field" e "NODE" apareciam em
+   Inter nos dois lugares (rail e header).
+
+   As declarações de `font-family` abaixo já trazem o fallback
+   ('Tulpen One' / 'Staatliches'), que é o único lugar onde ele é necessário. */
+
+/* Container do logotipo — variante empilhada (FIELD sobre NODE), usada no rail.
+   O rail é escuro nos dois temas, então aqui a tinta do FIELD é sempre clara.
+
+   SEM CHIP: a marca se apoia direto no preto do rail. O card escuro com borda
+   lima e glow que existia aqui emoldurava a logo dentro de um segundo card
+   escuro — e era justamente essa borda + neon extra que competia com os ícones
+   de navegação. O logo de referência não tem moldura. */
+.fieldnode-logo {
+  --logo-field-color: #FFFFFF;
+  --logo-glow: 0 0 5px rgba(167, 255, 44, 0.16);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* 62px de largura: "NODE" em Staatliches a 21px é a linha mais larga da
+     composição e precisa de folga para não encostar nas laterais. */
+  width: 62px;
+  height: 58px;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  text-decoration: none;
+  overflow: visible;
+  transition: filter 180ms ease, transform 180ms ease;
+}
+
+.fieldnode-logo:hover { filter: brightness(1.08); }
+.fieldnode-logo:active { transform: scale(0.97); }
+
+/* Variante HORIZONTAL (FIELD NODE lado a lado) — usada no topo do dashboard e
+   na tela de login. Não tem chrome próprio: ela se apoia direto no fundo da
+   página, então a tinta do FIELD segue o tema (clara no escuro, grafite no
+   claro) e o NODE continua lima, como nas versões do logo enviadas. É a
+   variante que carrega a assinatura sob o NODE. */
+.fieldnode-logo--horizontal {
+  --logo-field-color: var(--text-1);
+  --logo-glow: 0 0 7px rgba(167, 255, 44, 0.18);
+  flex-direction: row;
+  align-items: baseline;
+  width: auto;
+  height: auto;
+}
+.fieldnode-logo--horizontal:hover { filter: brightness(1.04); transform: none; }
+
+/* Wrapper interno do logotipo: linha quando horizontal, coluna quando
+   empilhada. A direção é o único eixo que muda entre as duas variantes. */
+.fieldnode-logo__mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  gap: 1px;
+  user-select: none;
+}
+.fieldnode-logo--horizontal .fieldnode-logo__mark {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.08em;
+}
+
+/* Coluna do NODE: a assinatura fica ancorada à esquerda, na largura do próprio
+   NODE. Como o texto é maior que o NODE, ele avança um pouco para a direita da
+   marca — é exatamente o recorte do logo de referência. */
+.fieldnode-logo__nodecol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* FIELD — Snippet: geometria limpa, com os terminais curvos característicos */
+.fieldnode-logo__field {
+  font-family: var(--font-brand-field), 'Snippet', sans-serif;
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--logo-field-color);
+  line-height: 0.95;
+  margin-bottom: -1px;
+}
+.fieldnode-logo--horizontal .fieldnode-logo__field {
+  font-size: 2.375rem;
+  letter-spacing: 0;
+  margin-bottom: 0;
+}
+
+/* NODE — Staatliches CHAPADO em lima. A marca atual é sólida: saiu a máscara de
+   ruído e o glow virou um halo quase imperceptível, para o NODE ler como
+   tipografia e não como neon (o pedido foi justamente diminuir o neon). */
+.fieldnode-logo__node {
+  font-family: var(--font-brand-node), 'Staatliches', sans-serif;
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: var(--lime);
+  filter: drop-shadow(var(--logo-glow));
+}
+.fieldnode-logo--horizontal .fieldnode-logo__node {
+  font-size: 2.75rem;
+  letter-spacing: 0.04em;
+}
+
+/* Assinatura da marca, sob o NODE. Existe só na variante horizontal. */
+.fieldnode-logo__tagline {
+  font-family: var(--font-body), sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.055em;
+  line-height: 1;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* Em telas estreitas o lockup horizontal do header encolhe para não empurrar
+   o indicador de API e o toggle de tema. */
+@media (max-width: 640px) {
+  .fieldnode-logo--horizontal .fieldnode-logo__field   { font-size: 1.75rem; }
+  .fieldnode-logo--horizontal .fieldnode-logo__node    { font-size: 2rem; }
+  .fieldnode-logo--horizontal .fieldnode-logo__tagline { font-size: 7.5px; }
+}
+
+/* ─── TELA DE AUTENTICAÇÃO (card de vidro sobre a foto de marca) ─────────────
+   A foto enviada pelo cliente ocupa a tela inteira e o formulário é um único
+   card de VIDRO FOSCO centralizado. Não existe mais painel de marca à parte:
+   a identidade vem do próprio card (lockup + assinatura), que fica escuro nos
+   dois temas — ele vive sobre uma foto escura, e clarear o card no modo claro
+   só faria o vidro perder a leitura. */
+
+.auth-stage {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+  background-color: #04060a;
+}
+
+/* Foto de fundo + véu. O véu é o que garante contraste do card em qualquer
+   recorte da foto: sem ele, as nuvens claras do canto superior comem a borda. */
+.auth-stage__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-image: url('/brand/auth-backdrop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.04);
+}
+
+.auth-stage__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(110% 80% at 78% 8%, rgba(18, 40, 22, 0.30) 0%, rgba(4, 6, 10, 0.66) 52%, rgba(4, 6, 10, 0.88) 100%),
+    linear-gradient(180deg, rgba(8, 16, 10, 0.42) 0%, rgba(3, 5, 7, 0.80) 100%);
+}
+
+/* Frase de marca: virou legenda de canto, já que o palco separado saiu. */
+.auth-stage__caption {
+  position: absolute;
+  left: 2.5rem;
+  bottom: 2rem;
+  z-index: 1;
+  max-width: 30ch;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.58);
+  display: none;
+}
+@media (min-width: 1024px) {
+  .auth-stage__caption { display: block; }
+}
+.auth-stage__caption em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--lime);
+}
+
+/* ── Painel do formulário: apenas centra o card sobre a foto ── */
+.auth-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Card de vidro fosco. Redefine os tokens de texto/formulário LOCALMENTE porque
+   o vidro é escuro nos dois temas: sem isso, no modo claro o título herdaria
+   grafite (#1A1A1A) e ficaria ilegível sobre a foto. */
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  border-radius: 28px;
+  padding: 2.5rem 2.25rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(8, 12, 8, 0.72) 42%, rgba(6, 9, 7, 0.82) 100%);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  background-clip: padding-box;
+
+  --text-1: #FFFFFF;
+  --text-2: rgba(255, 255, 255, 0.88);
+  --text-3: rgba(255, 255, 255, 0.68);
+  --muted: rgba(255, 255, 255, 0.46);
+  --line: rgba(255, 255, 255, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.13);
+  --border-glass: rgba(255, 255, 255, 0.15);
+  --surface-1: rgba(255, 255, 255, 0.07);
+  --surface-2: rgba(4, 8, 5, 0.52);
+  --field-bg: rgba(4, 8, 5, 0.52);
+  --field-fg: #FFFFFF;
+  --field-line: rgba(255, 255, 255, 0.18);
+  /* O lima como accent de TEXTO: no modo claro --ui-accent vira --lime-ink
+     (#3F8F0C), que desaparece sobre o vidro escuro. Aqui o accent é o lima
+     cheio, o mesmo dos dois temas. */
+  --ui-accent: #A7FF2C;
+  --focus-ring: rgba(167, 255, 44, 0.30);
+
+  color: #FFFFFF;
+  color-scheme: dark;
+}
+
+/* Campo de formulário de autenticação */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border-glass);
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-size: 15px;
+  font-family: var(--font-primary);
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  -webkit-appearance: none;
+}
+
+.auth-input::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.auth-input:focus {
+  border-color: color-mix(in srgb, var(--ui-accent) 60%, transparent);
+  background: var(--surface-1);
+  box-shadow:
+    0 0 0 3px var(--focus-ring),
+    0 0 14px color-mix(in srgb, var(--glow-accent) 40%, transparent);
+}
+
+.auth-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mensagem de erro de campo */
+.auth-field-error {
+  font-size: 11px;
+  color: var(--status-critico);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Bloco de erro global */
+.auth-error-block {
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--status-critico) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-critico) 28%, transparent);
+  color: var(--status-critico);
+  font-size: 12px;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Bloco de sucesso */
+.auth-success-block {
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--status-normal) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-normal) 28%, transparent);
+  color: var(--status-normal);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Aviso de configuração ausente (backend não apontado) */
+.auth-notice {
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--status-atencao) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-atencao) 30%, transparent);
+  color: var(--status-atencao);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Botão principal: lima com tinta escura — o CTA do modelo de referência. */
+.auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: 14px;
+  background-image: var(--brand-gradient);
+  color: var(--brand-on-accent);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 0 22px var(--glow-accent), 0 12px 26px rgba(0,0,0,0.28);
+  transition: box-shadow 180ms ease, transform 140ms ease, filter 180ms ease;
+}
+.auth-submit:hover:not(:disabled) {
+  filter: brightness(1.06);
+  box-shadow: 0 0 30px var(--glow-accent-strong), 0 14px 30px rgba(0,0,0,0.32);
+}
+.auth-submit:active:not(:disabled) { transform: scale(0.98); }
+.auth-submit:disabled { opacity: 0.5; filter: saturate(0.6); cursor: not-allowed; }
+
+/* Link de navegação entre login e cadastro */
+.auth-link {
+  color: var(--ui-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.auth-link:hover { color: color-mix(in srgb, var(--ui-accent) 78%, #000); }
+
+/* Divisória */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-3);
+  font-size: 11px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-submit, .auth-input, .auth-link { transition: none !important; }
+}
+
+/* ─── PERFIL DO USUÁRIO (cabeçalho) ───────────────────────────────────────────
+   Chip com avatar de iniciais + primeiro nome, e um menu flutuante com os dados
+   da sessão. Reaproveita `.icon-control` (mesmo chrome dos outros controles do
+   cabeçalho) e `.liquid-glass--elevated` (mesmo nível dos overlays). */
+
+.profile-chip {
+  min-width: 0;
+  color: var(--text-2);
+}
+
+.profile-avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.6rem;
+  /* Lima com tinta escura: é o ponto de marca do cabeçalho. */
+  background-image: var(--brand-gradient);
+  color: var(--brand-on-accent);
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  user-select: none;
+}
+
+.profile-avatar--lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.85rem;
+  font-size: 0.8125rem;
+}
+
+/* Vidro próprio, e NÃO `.liquid-glass--elevated`.
+   Aquela classe declara `position: relative` em CSS não-layerizado, e no
+   Tailwind v4 os utilities vivem dentro de `@layer utilities` — ou seja, o
+   `absolute` do Tailwind PERDIA e o menu caía no fluxo do documento, esticando
+   256px a partir da borda do chip e estourando a viewport no mobile. Aqui
+   posicionamento e vidro são declarados juntos, na mesma regra. */
+.profile-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 16rem;
+  padding: 12px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(26, 30, 20, 0.96), rgba(10, 12, 8, 0.98));
+  backdrop-filter: blur(34px) saturate(150%);
+  -webkit-backdrop-filter: blur(34px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-elevated);
+}
+/* No claro o menu vira superfície sólida, como os outros overlays do app. */
+.light .profile-menu {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.profile-menu__action {
+  border-color: color-mix(in srgb, var(--status-critico) 26%, transparent);
+  background: color-mix(in srgb, var(--status-critico) 10%, transparent);
+  color: var(--status-critico);
+}
+.profile-menu__action:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--status-critico) 42%, transparent);
+  background: color-mix(in srgb, var(--status-critico) 18%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-chip, .profile-menu__action, .profile-chip svg { transition: none !important; }
 }

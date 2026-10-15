@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from api_tcc.api import viewsets
+from api_tcc.api.views_auth import LoginView, RegisterView, LogoutView, MeView
 from api_tcc.api.views_ingestao import (
     AnomaliaView,
     IngestaoLoteView,
@@ -37,6 +38,12 @@ router.register(r'colheitadeira', viewsets.ColheitadeiraViewSet, basename='colhe
 
 urlpatterns = [
     path("", include(router.urls)),
+    # ── Autenticação ──────────────────────────────────────────────────────────
+    path("auth/login/",    LoginView.as_view(),    name="auth-login"),
+    path("auth/register/", RegisterView.as_view(), name="auth-register"),
+    path("auth/logout/",   LogoutView.as_view(),   name="auth-logout"),
+    path("auth/me/",       MeView.as_view(),       name="auth-me"),
+    # ── Telemetria e demais endpoints ─────────────────────────────────────────
     path("telemetria/", IngestaoTelemetriaView.as_view(), name="ingestao-telemetria"),
     path("telemetria/lote/", IngestaoLoteView.as_view(), name="ingestao-telemetria-lote"),
     path("anomalias/", AnomaliaView.as_view(), name="anomalias"),

@@ -49,7 +49,9 @@ interface SparklineCardProps {
   status: SparklineStatus;
   metric?: MetricKind;
   tendencia?: string;
-  isDemoData?: boolean;
+  /** Versão enxuta do KPI: número e sparkline menores, para o dashboard, onde
+   *  o gráfico principal passou a carregar o destaque visual. */
+  compact?: boolean;
 }
 
 function ChartTooltip({
@@ -81,7 +83,7 @@ export function SparklineCard({
   status,
   metric,
   tendencia,
-  isDemoData,
+  compact = false,
 }: SparklineCardProps) {
   const stroke = metric ? metricStroke[metric] : strokeHex[status];
   // Valor sem leitura fica neutro; com leitura, segue o status (bom/alerta/risco).
@@ -121,14 +123,18 @@ export function SparklineCard({
   return (
     <article
       aria-label={titulo}
-      className={`metric-card metric-card--dark-fixed metric-card--solid metric-card--status-${status} ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
+      className={`metric-card metric-card--status-${status} ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
     >
       <p className="text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {titulo}
       </p>
 
       <div className="mt-3 flex flex-col items-center justify-center gap-1">
-<p className={`stat-value stat-value--${status} text-center text-4xl font-bold sm:text-5xl ${valueTone}`}>
+<p
+          className={`stat-value stat-value--${status} text-center font-bold ${valueTone} ${
+            compact ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl'
+          }`}
+        >
           {valor}
           {unidade ? (
             <span className="ml-1 text-base font-normal text-[var(--text-3)] sm:text-lg">
@@ -136,21 +142,12 @@ export function SparklineCard({
             </span>
           ) : null}
         </p>
-        {tendencia || isDemoData ? (
-          <div className="flex flex-col items-center gap-0.5">
-            {tendencia ? (
-              <p className="text-xs text-[var(--text-3)]">{tendencia}</p>
-            ) : null}
-            {isDemoData ? (
-              <p className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)] opacity-50">
-                demonstrativo
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+        {/* O selo "demonstrativo" de cada card saiu: o grupo de KPIs tem um
+            selo só, no cabeçalho, que diz a mesma coisa sem repetir três vezes. */}
+        {tendencia ? <p className="text-xs text-[var(--text-3)]">{tendencia}</p> : null}
       </div>
 
-      <div className="mt-4 h-16" aria-hidden="true">
+      <div className={`w-full ${compact ? 'mt-3 h-12' : 'mt-4 h-16'}`} aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={dados} margin={{ top: 6, right: 4, left: 4, bottom: 0 }}>
             <defs>
@@ -160,7 +157,7 @@ export function SparklineCard({
                 <stop offset="100%" stopColor="rgba(0,0,0,0)" />
               </linearGradient>
               <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feGaussianBlur stdDeviation="3.5" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
                   <feMergeNode in="SourceGraphic" />
@@ -185,18 +182,18 @@ export function SparklineCard({
               <ReferenceLine
                 y={alertRef}
                 stroke="var(--status-atencao)"
-                strokeWidth={1.2}
-                strokeDasharray="4 3"
-                strokeOpacity={0.9}
+                strokeWidth={1}
+                strokeDasharray="3 4"
+                strokeOpacity={0.5}
               />
             ) : null}
             {criticalRef !== null ? (
               <ReferenceLine
                 y={criticalRef}
                 stroke="var(--status-critico)"
-                strokeWidth={1.2}
-                strokeDasharray="4 3"
-                strokeOpacity={0.9}
+                strokeWidth={1}
+                strokeDasharray="3 4"
+                strokeOpacity={0.5}
               />
             ) : null}
 
@@ -209,7 +206,7 @@ export function SparklineCard({
               type="monotone"
               dataKey="valor"
               stroke={stroke}
-              strokeWidth={2.5}
+              strokeWidth={2}
               fill={`url(#${gradId})`}
               filter={`url(#${glowId})`}
               isAnimationActive

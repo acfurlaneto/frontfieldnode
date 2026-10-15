@@ -86,7 +86,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
 
   return (
     <section
-      className="liquid-glass overflow-hidden"
+      className="report-sheet"
       aria-labelledby="report-preview-title"
     >
       {/* Header */}
@@ -124,7 +124,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
           {metrics.map(({ label, value, context, tone, icon: Icon }) => (
             <article
               key={label}
-              className={`rounded-xl border p-4 ${metricCardClass(tone)}`}
+              className={`report-metric rounded-xl border ${metricCardClass(tone)}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
@@ -132,7 +132,7 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
                 </p>
                 <Icon size={14} strokeWidth={1.8} className="text-[var(--text-3)]" aria-hidden="true" />
               </div>
-              <p className={`mt-3 text-2xl font-bold tracking-tight ${metricValueClass(tone)}`}>
+              <p className={`report-metric__value mt-3 text-2xl font-bold tracking-tight ${metricValueClass(tone)}`}>
                 {value}
               </p>
               <p className="mt-0.5 text-[10px] text-[var(--text-3)]">{context}</p>
@@ -163,15 +163,15 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
             </div>
           </div>
 
-          <div className="rounded-xl bg-[var(--panel-glass-mid)] p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
+          <div className="report-metric rounded-xl bg-[var(--panel-glass-mid)]">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
                 <p className={fieldLabel}>Eficiência operacional</p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-[var(--text-1)]">
+                <p className="report-metric__value mt-2 text-3xl font-bold tracking-tight text-[var(--text-1)]">
                   {relatorio.eficiencia_operacional.toFixed(1)}%
                 </p>
               </div>
-              <Leaf size={20} strokeWidth={1.8} className="text-[color:var(--status-normal)]" aria-hidden="true" />
+              <Leaf size={20} strokeWidth={1.8} className="shrink-0 text-[color:var(--status-normal)]" aria-hidden="true" />
             </div>
             <div
               className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--panel-glass-strong)]"
@@ -197,23 +197,23 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
             </div>
           </div>
 
-          <div className="hidden overflow-hidden rounded-xl md:block">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-[var(--line)] bg-[var(--panel-glass-mid)] text-[10px] uppercase tracking-[0.1em] text-[var(--text-3)]">
+          <div className="hidden md:block">
+            <table className="report-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 font-semibold">Métrica</th>
-                  <th className="px-4 py-3 font-semibold">Valor</th>
-                  <th className="px-4 py-3 font-semibold">Contexto</th>
-                  <th className="px-4 py-3 text-right font-semibold">Status</th>
+                  <th>Métrica</th>
+                  <th>Valor</th>
+                  <th>Contexto</th>
+                  <th>Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--line)] text-[var(--text-2)]">
+              <tbody>
                 {metrics.map(({ label, value, context, tone }) => (
-                  <tr key={label} className="transition hover:bg-[var(--panel-glass-mid)]">
-                    <td className="px-4 py-3 font-semibold text-[var(--text-1)]">{label}</td>
-                    <td className={`px-4 py-3 font-bold ${metricValueClass(tone)}`}>{value}</td>
-                    <td className="px-4 py-3 text-xs">{context}</td>
-                    <td className="px-4 py-3 text-right">
+                  <tr key={label}>
+                    <td className="font-semibold text-[var(--text-1)]">{label}</td>
+                    <td className={`font-bold ${metricValueClass(tone)}`}>{value}</td>
+                    <td className="text-xs">{context}</td>
+                    <td className="text-right">
                       <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${
                         tone === 'warning'
                           ? 'border-[color:var(--status-atencao)]/20 bg-[color:var(--status-atencao)]/8 text-[color:var(--status-atencao)]'
@@ -224,11 +224,11 @@ export function ReportPreview({ relatorio, machineLabel, onExport, exporting }: 
                     </td>
                   </tr>
                 ))}
-                <tr className="bg-[var(--panel-glass-mid)] transition hover:bg-[var(--panel-glass-strong)]">
-                  <td className="px-4 py-3 font-semibold text-[var(--text-1)]">Eficiência operacional</td>
-                  <td className="px-4 py-3 font-bold text-[color:var(--status-normal)]">{relatorio.eficiencia_operacional.toFixed(1)}%</td>
-                  <td className="px-4 py-3 text-xs">índice operacional consolidado</td>
-                  <td className="px-4 py-3 text-right">
+                <tr>
+                  <td className="font-semibold text-[var(--text-1)]">Eficiência operacional</td>
+                  <td className="font-bold text-[color:var(--status-normal)]">{relatorio.eficiencia_operacional.toFixed(1)}%</td>
+                  <td className="text-xs">índice operacional consolidado</td>
+                  <td className="text-right">
                     <span className="inline-flex rounded-full border border-[color:var(--status-normal)]/20 bg-[color:var(--status-normal)]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[color:var(--status-normal)]">
                       consolidado
                     </span>

@@ -6,6 +6,7 @@ import { FleetGrid } from '@/components/FleetGrid';
 import { FleetMap } from '@/components/FleetMap';
 import { ReportButton } from '@/components/ReportButton';
 import { DashboardMachineData } from '@/components/DashboardMachineData';
+import { FieldNodeLogo } from '@/components/FieldNodeLogo';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -71,7 +72,11 @@ export default async function DashboardPage() {
 
   if (reportError) {
     return (
-      <AppShell active="/dashboard" eyebrow="FieldNode" title="Central de Operações">
+      <AppShell
+        active="/dashboard"
+        title="Central de Operações"
+        titleSlot={<FieldNodeLogo variant="horizontal" asLink={false} />}
+      >
         <ErrorState title="Dashboard indisponível" message={reportError} />
         <ChatFAB machines={machines} />
       </AppShell>
@@ -81,9 +86,8 @@ export default async function DashboardPage() {
   return (
     <AppShell
       active="/dashboard"
-      eyebrow="FieldNode"
       title="Central de Operações"
-      description="Monitoramento da frota em tempo real"
+      titleSlot={<FieldNodeLogo variant="horizontal" asLink={false} />}
       actions={
         <div className="flex items-center gap-2">
           <ReportButton machines={machines} />

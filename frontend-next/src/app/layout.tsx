@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Snippet, Staatliches } from "next/font/google";
 import { ServiceWorkerBridge } from "@/components/ServiceWorkerBridge";
 import "./globals.css";
 
@@ -14,6 +14,21 @@ const inter = Inter({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+// Marca FieldNode: FIELD usa Snippet (geométrica, com os terminais curvos do
+// 'l' e do 'd' que assinam a marca na versão atual). Peso único (400).
+const snippet = Snippet({
+  variable: "--font-brand-field",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+// Marca FieldNode: NODE usa Staatliches (monumental, ampla, com textura aplicada via CSS).
+const staatliches = Staatliches({
+  variable: "--font-brand-node",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${snippet.variable} ${staatliches.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

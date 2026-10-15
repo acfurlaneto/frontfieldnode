@@ -1,10 +1,15 @@
 import type { ReactNode } from 'react';
 
-const toneClass = {
-  emerald: 'text-[color:var(--status-normal)]',
-  amber:   'text-[color:var(--status-atencao)]',
-  red:     'text-[color:var(--status-critico)]',
-  slate:   'text-[var(--text-1)]',
+// A cor do valor vem do modificador `.stat-value--*`, e não de uma utility do
+// Tailwind: `.stat-value` mora em CSS não-layerizado, que vence qualquer
+// `@layer utilities`. Utilities de cor como as de status eram, por isso,
+// ignoradas, e todos os números saíam brancos — invisíveis nos cards claros.
+// `.metric-card--*` continua sendo aplicado porque carrega o glow de tom.
+const toneValueClass = {
+  emerald: 'stat-value--normal',
+  amber:   'stat-value--atencao',
+  red:     'stat-value--critico',
+  slate:   '',
 } as const;
 
 export function MetricCard({
@@ -16,7 +21,7 @@ export function MetricCard({
   label: string;
   value: ReactNode;
   helper?: string;
-  tone?: keyof typeof toneClass;
+  tone?: keyof typeof toneValueClass;
 }) {
   return (
     <article
@@ -27,7 +32,7 @@ export function MetricCard({
       <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {label}
       </p>
-      <div className={`stat-value mt-3 text-2xl font-bold sm:text-3xl ${toneClass[tone]}`}>
+      <div className={`stat-value mt-3 text-2xl font-bold sm:text-3xl ${toneValueClass[tone]}`}>
         {value}
       </div>
       {helper ? (

@@ -80,10 +80,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',  # Token-based auth para o frontend
     'drf_yasg',
     'corsheaders',
     'api_tcc',
-
 ]
 
 MIDDLEWARE = [
