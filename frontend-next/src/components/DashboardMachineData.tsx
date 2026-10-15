@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, LoaderCircle } from 'lucide-react';
 import {
-  Bar,
-  BarChart,
+  Area,
+  AreaChart,
   CartesianGrid,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -43,128 +42,252 @@ const DEMO_SERIES: Record<string, { valor: number; label: string }[]> = {
   vibracao: mockVibracaoSeries,
 };
 
-/** Classifica cada leitura e conta quantas ficaram em cada faixa operacional.
- *  Retorna dados prontos para o BarChart: uma barra por métrica, empilhada por faixa. */
-function buildOperationalBands(readings: Telemetry[]) {
-  const bands = METRIC_ORDER.map((metric) => {
-    const counts = { metrica: METRIC_META[metric].short, normal: 0, atencao: 0, critico: 0 };
-    for (const point of buildPoints(readings, metric)) {
-      counts[point.status] += 1;
-    }
-    return counts;
-  });
-  return bands;
+/** Constrói série temporal de "score operacional" para o AreaChart.
+ *  Cada ponto = uma leitura. O valor é 0 (crítico), 50 (atenção) ou 100 (normal),
+ *  tornando visível a evolução do estado da máquina no tempo — é exatamente o que
+ *  o AreaChart estilo MetricTrendChart comunica melhor que barras empilhadas. */
+function buildHealthSeries(readings: Telemetry[]) {
+  return [...readings]
+    .reverse()
+    .flatMap((r) => {
+      const points = METRIC_ORDER.map((m) => buildPoints([r], m)[0]).filter(Boolean);
+      if (!points.length) return [];
+      // Score: mínimo dos três status neste timestamp
+      const scores = points.map((p) => (p.status === 'normal' ? 100 : p.status === 'atencao' ? 50 : 0));
+      const score = Math.min(...scores);
+      const raw = r.timestamp ? new Date(r.timestamp) : null;
+      const valid = raw !== null && !Number.isNaN(raw.getTime());
+      return [{
+        label: valid ? raw.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '',
+        full: valid ? raw.toLocaleString('pt-BR') : 'sem data',
+        score,
+        status: score === 100 ? 'normal' : score === 50 ? 'atencao' : 'critico',
+      }];
+    });
 }
 
-function BandTooltip({
+/** As três faixas, mantido para compatibilidade com buildOperationalBands abaixo. */
+const BAND_SERIES = [
+  { key: 'normal', label: 'Normal', color: 'var(--chart-normal-stroke)' },
+  { key: 'atencao', label: 'Atenção', color: 'var(--chart-atencao-stroke)' },
+  { key: 'critico', label: 'Crítico', color: 'var(--chart-critico-stroke)' },
+] as const;
+
+/** Mantido para o tooltip de contagens */
+function buildOperationalBands(readings: Telemetry[]) {
+  return METRIC_ORDER.map((metric) => {
+    const counts = { metrica: METRIC_META[metric].short, normal: 0, atencao: 0, critico: 0 };
+    for (const point of buildPoints(readings, metric)) counts[point.status] += 1;
+    return counts;
+  });
+}
+
+type HealthPoint = { label: string; full: string; score: number; status: string };
+
+function HealthTooltip({
   active,
   payload,
-  label,
 }: {
   active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
-  label?: string;
+  payload?: Array<{ payload?: HealthPoint }>;
 }) {
-  if (!active || !payload?.length) return null;
-  const total = payload.reduce((sum, item) => sum + (item.value ?? 0), 0);
-
+  const pt = payload?.[0]?.payload;
+  if (!active || !pt) return null;
+  const color =
+    pt.status === 'normal' ? 'var(--status-normal)'
+    : pt.status === 'atencao' ? 'var(--status-atencao)'
+    : 'var(--status-critico)';
+  const label =
+    pt.status === 'normal' ? 'Normal'
+    : pt.status === 'atencao' ? 'Atenção'
+    : 'Crítico';
   return (
-    <div className="liquid-glass--subtle min-w-32 rounded-xl px-3 py-2 text-[var(--text-1)] shadow-xl">
-      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">
-        {label}
-      </p>
-      {payload.map((item) => (
-        <div key={item.name} className="flex items-center justify-between gap-4 text-xs">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: item.color }} />
-            <span className="capitalize">{item.name}</span>
-          </span>
-          <span className="font-semibold">{item.value}</span>
-        </div>
-      ))}
-      <div className="mt-1.5 flex justify-between border-t border-[var(--border-subtle)] pt-1.5 text-[10px] text-[var(--text-3)]">
-        <span>Total</span>
-        <span className="font-semibold text-[var(--text-2)]">{total}</span>
-      </div>
+    <div className="liquid-glass--subtle min-w-32 rounded-xl px-3 py-2 text-[var(--text-1)]">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">{pt.full}</p>
+      <p className="mt-1 text-sm font-bold" style={{ color }}>{label}</p>
+      <p className="text-[10px] text-[var(--text-3)]">score {pt.score}/100</p>
     </div>
   );
 }
 
-/** Gráfico de colunas empilhadas: distribuição de leituras por faixa operacional.
- *  Responde a: "quantas leituras ficaram dentro/fora do limite em cada métrica?" */
-function OperationalBandsChart({ readings }: { readings: Telemetry[] }) {
-  const data = useMemo(() => buildOperationalBands(readings), [readings]);
-  const hasData = readings.length > 0;
+/** Gráfico de saúde operacional — AreaChart no estilo do MetricTrendChart.
+ *  Mostra a evolução do estado da máquina no tempo (normal → atenção → crítico)
+ *  como uma área suavizada, com glow na linha e zona de risco destacada. */
+function OperationalHealthChart({ readings }: { readings: Telemetry[] }) {
+  const series = useMemo(() => buildHealthSeries(readings), [readings]);
+  const bands = useMemo(() => buildOperationalBands(readings), [readings]);
+  const total = bands.reduce((s, b) => s + b.normal + b.atencao + b.critico, 0);
+  const foraDaFaixa = bands.reduce((s, b) => s + b.atencao + b.critico, 0);
+
+  // Cor da linha acompanha o último status
+  const lastPt = series[series.length - 1];
+  const currentStatus = lastPt?.status ?? 'normal';
+  const lineColor =
+    currentStatus === 'normal' ? 'var(--status-normal)'
+    : currentStatus === 'atencao' ? 'var(--status-atencao)'
+    : 'var(--status-critico)';
+
+  const gradId = 'health-grad';
+  const glowId = 'health-glow';
 
   return (
-    <section aria-label="Distribuição operacional por faixa" className="data-tile">
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div>
+    <section
+      aria-label="Saúde operacional ao longo do tempo"
+      className="metric-card flex flex-col"
+      style={{ minHeight: '100%' }}
+    >
+      {/* Cabeçalho */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ui-accent)]">
-            Distribuição operacional
+            Saúde operacional
           </p>
-          <p className="mt-0.5 text-xs text-[var(--text-3)]">
-            Leituras por faixa — normal · atenção · crítico
-          </p>
+          <h2 className="mt-0.5 text-sm font-semibold text-[var(--text-1)]">
+            Evolução no tempo
+          </h2>
         </div>
+        {total > 0 && (
+          <p className="shrink-0 text-right text-[11px] text-[var(--text-3)]">
+            {total} leituras · {foraDaFaixa > 0
+              ? <span style={{ color: 'var(--status-atencao)' }}>{foraDaFaixa} fora</span>
+              : 'todas normais'}
+          </p>
+        )}
       </div>
 
-      {!hasData ? (
-        <p className="flex h-28 items-center justify-center text-xs text-[var(--text-3)]">
+      {/* Valor atual */}
+      {lastPt ? (
+        <div className="mt-3 flex items-baseline gap-2">
+          <p
+            className="stat-value text-3xl font-bold"
+            style={{ color: lineColor }}
+          >
+            {lastPt.score}
+            <span className="ml-1 text-base font-normal text-[var(--text-3)]">/100</span>
+          </p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: lineColor }}>
+            {currentStatus === 'normal' ? 'Normal' : currentStatus === 'atencao' ? 'Atenção' : 'Crítico'}
+          </p>
+        </div>
+      ) : null}
+
+      {/* Área */}
+      {series.length === 0 ? (
+        <p className="flex flex-1 items-center justify-center py-8 text-xs text-[var(--text-3)]">
           Sem leituras disponíveis para esta máquina.
         </p>
       ) : (
-        <ResponsiveContainer width="100%" height={140}>
-          <BarChart data={data} barSize={26} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
-            <XAxis
-              dataKey="metrica"
-              tick={{ fill: 'var(--text-3)', fontSize: 10, fontWeight: 600, letterSpacing: '0.06em' }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <YAxis
-              allowDecimals={false}
-              tick={{ fill: 'var(--text-3)', fontSize: 9 }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip content={<BandTooltip />} cursor={{ fill: 'var(--chart-surface)', radius: 6 }} />
-            <Bar dataKey="normal" name="Normal" stackId="a">
-              {data.map((_, index) => (
-                <Cell key={index} fill="var(--chart-normal-stroke)" fillOpacity={0.82} />
-              ))}
-            </Bar>
-            <Bar dataKey="atencao" name="Atenção" stackId="a">
-              {data.map((_, index) => (
-                <Cell key={index} fill="var(--chart-atencao-stroke)" fillOpacity={0.82} />
-              ))}
-            </Bar>
-            <Bar dataKey="critico" name="Crítico" stackId="a" radius={[4, 4, 0, 0]}>
-              {data.map((_, index) => (
-                <Cell key={index} fill="var(--chart-critico-stroke)" fillOpacity={0.82} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        <div key={`health-${readings.length}`} className="chart-swap mt-3 flex-1" style={{ minHeight: '140px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={series} margin={{ top: 6, right: 6, left: -24, bottom: 0 }}>
+              <defs>
+                <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={lineColor} stopOpacity={0.40} />
+                  <stop offset="60%" stopColor={lineColor} stopOpacity={0.10} />
+                  <stop offset="100%" stopColor="transparent" />
+                </linearGradient>
+                <filter id={glowId} x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <CartesianGrid strokeDasharray="3 5" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis
+                dataKey="label"
+                tick={{ fill: 'var(--text-3)', fontSize: 10 }}
+                axisLine={false}
+                tickLine={false}
+                minTickGap={28}
+              />
+              <YAxis
+                domain={[0, 100]}
+                ticks={[0, 50, 100]}
+                tick={{ fill: 'var(--text-3)', fontSize: 9 }}
+                axisLine={false}
+                tickLine={false}
+                width={36}
+              />
+              <Tooltip content={<HealthTooltip />} cursor={{ stroke: lineColor, strokeDasharray: '3 3', opacity: 0.35 }} />
+              <Area
+                type="monotone"
+                dataKey="score"
+                stroke={lineColor}
+                strokeWidth={2.2}
+                fill={`url(#${gradId})`}
+                filter={`url(#${glowId})`}
+                dot={false}
+                activeDot={{ r: 4, stroke: 'var(--background)', strokeWidth: 1.5 }}
+                animationDuration={700}
+                animationEasing="ease-out"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       )}
 
-      <div className="mt-2 flex flex-wrap gap-3" aria-label="Legenda do gráfico">
-        {[
-          { label: 'Normal', color: 'var(--chart-normal-stroke)' },
-          { label: 'Atenção', color: 'var(--chart-atencao-stroke)' },
-          { label: 'Crítico', color: 'var(--chart-critico-stroke)' },
-        ].map(({ label, color }) => (
-          <span key={label} className="flex items-center gap-1.5 text-[10px] text-[var(--text-3)]">
-            <span
-              className="h-2 w-2 flex-shrink-0 rounded-full"
-              style={{ background: color }}
-              aria-hidden="true"
-            />
-            {label}
-          </span>
-        ))}
-      </div>
+      {/* Legenda de contagens */}
+      {total > 0 && (
+        <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+          {BAND_SERIES.map(({ key, label, color }) => {
+            const qty = bands.reduce((s, b) => s + b[key], 0);
+            return (
+              <li key={key} className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">
+                <span className="h-2 w-2 shrink-0 rounded-sm" style={{ background: color }} aria-hidden="true" />
+                {label}
+                <span className="tabular-nums text-[var(--text-2)]">{qty}</span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/** Card compacto de horário da operação — clean, sem o mostrador SVG grande. */
+function OperationTimeCard() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const hora = now
+    ? now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    : '--:--';
+  const segundos = now ? now.toLocaleTimeString('pt-BR', { second: '2-digit' }) : '--';
+  const data = now
+    ? now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })
+    : '';
+
+  return (
+    <section
+      aria-label="Horário da operação"
+      className="metric-card flex flex-col items-center justify-center gap-2 text-center"
+      style={{ minHeight: '100%' }}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--ui-accent)]">
+        Operação agora
+      </p>
+
+      {/* Hora grande */}
+      <p className="stat-value mt-1 text-5xl font-bold tracking-tight text-[var(--text-1)] sm:text-6xl">
+        {hora}
+      </p>
+      <p className="text-sm text-[var(--text-3)] tabular-nums">:{segundos}</p>
+
+      {/* Data */}
+      {now ? (
+        <time dateTime={now.toISOString()} className="mt-1 text-[11px] capitalize text-[var(--text-3)]">
+          {data}
+        </time>
+      ) : (
+        <p className="mt-1 text-[11px] text-[var(--text-3)]">—</p>
+      )}
     </section>
   );
 }
@@ -326,8 +449,11 @@ export function DashboardMachineData({
         </div>
       </section>
 
-      {/* Distribuição por faixa */}
-      <OperationalBandsChart readings={readings} />
+      {/* Saúde operacional (AreaChart) + horário clean, lado a lado. */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-stretch">
+        <OperationalHealthChart readings={readings} />
+        <OperationTimeCard />
+      </div>
     </section>
   );
 }

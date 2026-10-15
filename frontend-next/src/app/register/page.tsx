@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/AuthLayout";
-import { BRAND_TAGLINE, FieldNodeLogo } from "@/components/FieldNodeLogo";
+import { FieldNodeLogo } from "@/components/FieldNodeLogo";
 import { register, isAuthenticated, isAuthAvailable, type AuthError } from "@/services/authService";
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -106,14 +106,14 @@ export default function RegisterPage() {
         {/* ── Cabeçalho do card ──
             Mesmo tratamento do login: sem selo de conexão, com o lockup
             horizontal e a assinatura da marca. */}
-        <header className="flex flex-col items-center gap-4 text-center">
-          <FieldNodeLogo variant="horizontal" tagline={BRAND_TAGLINE} className="mx-auto" />
+        <header className="flex flex-col items-center gap-3 text-center">
+          <FieldNodeLogo variant="horizontal" className="mx-auto" />
 
           <div>
-            <h1 className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text-1)]">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-1)]">
               Criar conta
             </h1>
-            <p className="mt-1 text-xs text-[var(--text-3)]">
+            <p className="mt-1.5 text-[13px] text-[var(--text-3)]">
               Acesso restrito à equipe de operação
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function RegisterPage() {
           )}
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="auth-field">
+            <div className="auth-field auth-field--pill">
               <label htmlFor="fn-first">Nome</label>
               <input
                 ref={fieldRef}
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                 placeholder="João"
               />
             </div>
-            <div className="auth-field">
+            <div className="auth-field auth-field--pill">
               <label htmlFor="fn-last">Sobrenome</label>
               <input
                 id="fn-last"
@@ -157,98 +157,104 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="auth-field">
-            <label htmlFor="fn-username">
-              Nome de usuário <span className="text-[color:var(--status-critico)]">*</span>
-            </label>
-            <input
-              id="fn-username"
-              type="text"
-              autoComplete="username"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                setError(null);
-              }}
-              disabled={isLoading || !HAS_BACKEND}
-              aria-required="true"
-              aria-describedby={error?.field === "username" ? "fn-username-err" : undefined}
-              aria-invalid={error?.field === "username"}
-              className="auth-input"
-              placeholder="joao_silva"
-            />
-            {error?.field === "username" && (
-              <span id="fn-username-err" className="auth-field-error" role="alert">
-                {error.message}
-              </span>
-            )}
-          </div>
-
-          <div className="auth-field">
-            <label htmlFor="fn-email">
-              E-mail <span className="font-normal normal-case opacity-60">(opcional)</span>
-            </label>
-            <input
-              id="fn-email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError(null);
-              }}
-              disabled={isLoading || !HAS_BACKEND}
-              aria-describedby={error?.field === "email" ? "fn-email-err" : undefined}
-              aria-invalid={error?.field === "email"}
-              className="auth-input"
-              placeholder="joao@empresa.com.br"
-            />
-            {error?.field === "email" && (
-              <span id="fn-email-err" className="auth-field-error" role="alert">
-                {error.message}
-              </span>
-            )}
-          </div>
-
-          <div className="auth-field">
-            <label htmlFor="fn-password">
-              Senha <span className="text-[color:var(--status-critico)]">*</span>
-            </label>
-            <div className="relative flex">
+          <div className="flex flex-col gap-1.5">
+            <div className="auth-field auth-field--pill">
+              <label htmlFor="fn-username">
+                Nome de usuário <span className="text-[color:var(--status-critico)]">*</span>
+              </label>
               <input
-                id="fn-password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={password}
+                id="fn-username"
+                type="text"
+                autoComplete="username"
+                value={username}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setUsername(e.target.value);
                   setError(null);
                 }}
                 disabled={isLoading || !HAS_BACKEND}
                 aria-required="true"
-                aria-describedby={
-                  error?.field === "password" ? "fn-password-err" : "fn-password-hint"
-                }
-                aria-invalid={error?.field === "password"}
-                className="auth-input pr-12"
-                placeholder="Mínimo 8 caracteres"
+                aria-describedby={error?.field === "username" ? "fn-username-err" : undefined}
+                aria-invalid={error?.field === "username"}
+                className="auth-input"
+                placeholder="joao_silva"
               />
-              <button
-                type="button"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                onClick={() => setShowPassword((v) => !v)}
-                disabled={isLoading}
-                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md p-1.5 text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              >
-                {showPassword ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
-              </button>
+            </div>
+            {error?.field === "username" && (
+              <span id="fn-username-err" className="auth-field-error pl-4" role="alert">
+                {error.message}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="auth-field auth-field--pill">
+              <label htmlFor="fn-email">
+                E-mail <span className="opacity-60">(opcional)</span>
+              </label>
+              <input
+                id="fn-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
+                disabled={isLoading || !HAS_BACKEND}
+                aria-describedby={error?.field === "email" ? "fn-email-err" : undefined}
+                aria-invalid={error?.field === "email"}
+                className="auth-input"
+                placeholder="joao@empresa.com.br"
+              />
+            </div>
+            {error?.field === "email" && (
+              <span id="fn-email-err" className="auth-field-error pl-4" role="alert">
+                {error.message}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="auth-field auth-field--pill">
+              <label htmlFor="fn-password">
+                Senha <span className="text-[color:var(--status-critico)]">*</span>
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  id="fn-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
+                  disabled={isLoading || !HAS_BACKEND}
+                  aria-required="true"
+                  aria-describedby={
+                    error?.field === "password" ? "fn-password-err" : "fn-password-hint"
+                  }
+                  aria-invalid={error?.field === "password"}
+                  className="auth-input w-full pr-9"
+                  placeholder="Mínimo 8 caracteres"
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowPassword((v) => !v)}
+                  disabled={isLoading}
+                  className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  {showPassword ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+                </button>
+              </div>
             </div>
             {error?.field === "password" ? (
-              <span id="fn-password-err" className="auth-field-error" role="alert">
+              <span id="fn-password-err" className="auth-field-error pl-4" role="alert">
                 {error.message}
               </span>
             ) : (
-              <span id="fn-password-hint" className="text-[11px] text-[var(--text-3)]">
+              <span id="fn-password-hint" className="pl-4 text-[11px] text-[var(--text-3)]">
                 Use letras, números e símbolos para uma senha mais segura.
               </span>
             )}

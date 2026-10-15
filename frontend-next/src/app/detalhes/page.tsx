@@ -118,12 +118,15 @@ export default function DetailsPage({ searchParams }: { searchParams: Promise<{ 
             <MetricCard label="Temperatura" value={`${latest.temperatura}°C`} tone={tempTone} helper="última leitura" />
             <MetricCard label="Vibração"    value={`${latest.vibracao}g`}     tone={vibTone}  helper="última leitura" />
             <MetricCard label="RPM"         value={latest.rpm}                tone={rpmTone}  helper="rotação atual" />
-            <article className="metric-card transition-all duration-200">
+            {/* Mesmo miolo centrado e mesma altura mínima das MetricCard ao
+                lado: este card é escrito à mão (carrega um selo, não um número),
+                mas precisa alinhar na mesma linha de base dos outros três. */}
+            <article className="metric-card flex min-h-[8.75rem] flex-col items-center justify-center text-center transition-all duration-200">
               <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">Status</p>
               <div className="mt-3">
                 <StatusBadge tone={riskTone(risk)}>{risk ?? 'Indisponível'}</StatusBadge>
               </div>
-              <p className="mt-3 text-xs text-[var(--text-3)]">informado pela API</p>
+              <p className="mt-2 text-xs text-[var(--text-3)]">informado pela API</p>
             </article>
           </section>
 

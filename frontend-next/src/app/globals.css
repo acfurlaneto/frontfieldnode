@@ -650,6 +650,17 @@ h1, h2, h3, h4, h5, h6 {
 .dark .stat-value--atencao { text-shadow: 0 0 20px rgba(255,197,61,0.42); }
 .dark .stat-value--critico { text-shadow: 0 0 22px rgba(255,92,92,0.50); }
 
+/* Troca de série no gráfico: a curva entra de baixo com um fade curto, na mesma
+   duração da animação de traçado do Recharts — juntas leem como uma transição
+   só, em vez de o desenho aparecer "seco" depois de reescalar o eixo. */
+@keyframes chart-swap {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.chart-swap {
+  animation: chart-swap 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* Amostra de linha tracejada das referências de limite (legenda da mini-sparkline) */
 .threshold-rule {
   display: inline-block;
@@ -1702,12 +1713,11 @@ select option:checked {
   .fieldnode-logo--horizontal .fieldnode-logo__tagline { font-size: 7.5px; }
 }
 
-/* ─── TELA DE AUTENTICAÇÃO (card de vidro sobre a foto de marca) ─────────────
-   A foto enviada pelo cliente ocupa a tela inteira e o formulário é um único
-   card de VIDRO FOSCO centralizado. Não existe mais painel de marca à parte:
-   a identidade vem do próprio card (lockup + assinatura), que fica escuro nos
-   dois temas — ele vive sobre uma foto escura, e clarear o card no modo claro
-   só faria o vidro perder a leitura. */
+/* ─── TELA DE AUTENTICAÇÃO (vidro fosco sobre a lavoura) ─────────────────────
+   Fundo: foto de lavoura em luz baixa. O formulário é um card de VIDRO FOSCO
+   centralizado. Não existe degradê em lugar nenhum desta tela — nem no card,
+   nem no botão: o vidro aqui é UMA cor translúcida somada ao desfoque do
+   fundo, e não uma rampa de cor. O relevo vem da borda de 1px. */
 
 .auth-stage {
   position: relative;
@@ -1717,29 +1727,40 @@ select option:checked {
   place-items: center;
   padding: 1.5rem 1rem;
   overflow: hidden;
-  background-color: #04060a;
+  background-color: #070d08;
 }
 
-/* Foto de fundo + véu. O véu é o que garante contraste do card em qualquer
-   recorte da foto: sem ele, as nuvens claras do canto superior comem a borda. */
+/* Foto de fundo: campo verde, escuro, sem brilho. O foco fica abaixo do centro
+   para a linha do horizonte cair atrás do card em vez de cortá-lo. */
 .auth-stage__photo {
   position: absolute;
   inset: 0;
   z-index: -3;
-  background-image: url('/brand/auth-backdrop.jpg');
+  background-image: url('/brand/field-backdrop.jpg');
   background-size: cover;
-  background-position: center;
+  /* Enquadra a LAVOURA, não o céu: a faixa de terra com as fileiras verdes é o
+     que precisa aparecer atrás do card. */
+  background-position: center 74%;
   background-repeat: no-repeat;
-  transform: scale(1.04);
+  transform: scale(1.05);
+  /* Um empurrão no verde e na saturação: a foto é de fim de tarde e chega
+     dessaturada, então sem isso o fundo lê como cinza. */
+  filter: saturate(1.22) brightness(1.04) contrast(1.02);
 }
 
+/* Véu VERDE e LEVE — só o suficiente para o vidro destacar. A primeira versão
+   era escura demais (0,76 no rodapé) e o resultado lia como painel preto, não
+   como campo: o pedido era verde, ainda que sem brilho. */
 .auth-stage__veil {
   position: absolute;
   inset: 0;
   z-index: -2;
+  /* O topo (céu) é o ponto MAIS escuro do véu, e o meio — onde está a lavoura —
+     é o mais claro. O céu da foto é uma névoa clara; sem escurecê-lo ele viraria
+     um branco chapado e a tela perderia o "sem muito brilho" do pedido. */
   background:
-    radial-gradient(110% 80% at 78% 8%, rgba(18, 40, 22, 0.30) 0%, rgba(4, 6, 10, 0.66) 52%, rgba(4, 6, 10, 0.88) 100%),
-    linear-gradient(180deg, rgba(8, 16, 10, 0.42) 0%, rgba(3, 5, 7, 0.80) 100%);
+    radial-gradient(92% 72% at 50% 46%, rgba(6, 16, 9, 0.06) 0%, rgba(5, 11, 7, 0.26) 58%, rgba(3, 8, 5, 0.58) 100%),
+    linear-gradient(180deg, rgba(4, 12, 7, 0.46) 0%, rgba(5, 11, 7, 0.20) 55%, rgba(4, 10, 6, 0.40) 100%);
 }
 
 /* Frase de marca: virou legenda de canto, já que o palco separado saiu. */
@@ -1780,16 +1801,17 @@ select option:checked {
 .auth-card {
   position: relative;
   width: 100%;
-  max-width: 26rem;
-  border-radius: 28px;
-  padding: 2.5rem 2.25rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(8, 12, 8, 0.72) 42%, rgba(6, 9, 7, 0.82) 100%);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  max-width: 25rem;
+  border-radius: 30px;
+  padding: 2.25rem 2rem 2rem;
+  /* Vidro CHAPADO — uma cor translúcida só, sem rampa. O desfoque faz o resto. */
+  background: rgba(9, 15, 10, 0.62);
+  backdrop-filter: blur(34px) saturate(132%);
+  -webkit-backdrop-filter: blur(34px) saturate(132%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 32px 80px rgba(0, 0, 0, 0.58),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    0 34px 84px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   background-clip: padding-box;
 
   --text-1: #FFFFFF;
@@ -1813,6 +1835,166 @@ select option:checked {
   color: #FFFFFF;
   color-scheme: dark;
 }
+
+/* ─── NOVO LOGIN — sem degradê, blur puro ─────────────────────────────────── */
+
+/* Palco do login: foto de campo ocupa 100dvh. */
+.login-stage {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+  background-color: #04100a;
+}
+
+/* Fundo fotográfico: campo verde, empurrado para baixo para a lavoura aparecer. */
+.login-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url('/brand/field-backdrop.jpg');
+  background-size: cover;
+  background-position: center 65%;
+  background-repeat: no-repeat;
+  /* Pequena saturação para o verde ficar real, sem exagero de brilho. */
+  filter: saturate(1.18) brightness(0.96);
+}
+
+/* Véu minimal: só escurece levemente os cantos para o card flutuar.
+   Sem gradiente colorido — o campo que fala. */
+.login-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(2, 8, 4, 0.30);
+}
+
+/* Centro: coloca o card no meio da tela. */
+.login-center {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card: blur REAL (backdrop-filter), sem degradê, cor sólida translúcida.
+   É exatamente o que a referência mostra: um painel escuro que deixa ver
+   o campo atrás, mas não tem borda brilhante nem gradiente. */
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  border-radius: 24px;
+  padding: 2rem 1.75rem 1.75rem;
+  background: rgba(5, 12, 7, 0.72);
+  backdrop-filter: blur(40px) saturate(120%);
+  -webkit-backdrop-filter: blur(40px) saturate(120%);
+  /* Borda única, fina, sem brilho — só relevo. */
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.48);
+  background-clip: padding-box;
+  /* Tokens locais: este card é sempre escuro. */
+  --text-1: #FFFFFF;
+  --text-2: rgba(255, 255, 255, 0.86);
+  --text-3: rgba(255, 255, 255, 0.56);
+  --muted: rgba(255, 255, 255, 0.40);
+  --line: rgba(255, 255, 255, 0.12);
+  --ui-accent: #A7FF2C;
+  --focus-ring: rgba(167, 255, 44, 0.28);
+  --status-critico: #FF5C5C;
+  color: #FFFFFF;
+  color-scheme: dark;
+}
+
+/* Título e subtítulo do card de login */
+.login-title {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  text-align: center;
+  margin: 0;
+}
+.login-sub {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.54);
+  text-align: center;
+}
+
+/* Rótulo do campo */
+.login-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+/* Input flat, sem arredondamento exagerado — linha do campo, estilo clean. */
+.login-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-family: var(--font-primary);
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  -webkit-appearance: none;
+}
+.login-input::placeholder { color: rgba(255, 255, 255, 0.32); }
+.login-input:focus {
+  border-color: rgba(167, 255, 44, 0.50);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 3px rgba(167, 255, 44, 0.14);
+}
+.login-input:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Botão de submit: lima chapado, sem gradiente. */
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: 12px;
+  background: #A7FF2C;
+  color: #0A0A0A;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: filter 160ms ease, box-shadow 160ms ease, transform 140ms ease;
+}
+.login-btn:hover:not(:disabled) {
+  filter: brightness(1.07);
+  box-shadow: 0 0 22px rgba(167, 255, 44, 0.38), 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+.login-btn:active:not(:disabled) { transform: scale(0.98); }
+.login-btn:disabled { opacity: 0.45; filter: saturate(0.5); cursor: not-allowed; }
+
+/* Logo do FieldNode dentro do card de login fica menor. */
+.login-card .fieldnode-logo {
+  width: 52px;
+  height: 48px;
+}
+.login-card .fieldnode-logo__field { font-size: 15px; }
+.login-card .fieldnode-logo__node  { font-size: 17px; }
 
 /* Campo de formulário de autenticação */
 .auth-field {
@@ -1861,6 +2043,47 @@ select option:checked {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Campo em PÍLULA (desenho da referência do formulário) ──
+   O rótulo vive DENTRO da pílula, pequeno e discreto, com o valor logo abaixo:
+   é o que a referência faz e evita a linha de rótulo solta acima de cada campo.
+   Quem desenha o campo é a pílula; o input perde o chrome próprio. */
+.auth-field--pill {
+  gap: 1px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-glass);
+  background: rgba(4, 9, 5, 0.42);
+  padding: 0.5rem 1.125rem 0.6rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.auth-field--pill:focus-within {
+  border-color: color-mix(in srgb, var(--lime) 52%, transparent);
+  background: rgba(6, 12, 7, 0.56);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.auth-field--pill > label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--text-3);
+}
+.auth-field--pill .auth-input {
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 15px;
+}
+/* Mais específico que `.auth-input:focus`, então o anel de foco fica na pílula
+   (via :focus-within) e o input não abre uma segunda caixa dentro dela. */
+.auth-field--pill .auth-input:focus {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.auth-field--pill .auth-input:disabled { opacity: 0.55; }
 
 /* Mensagem de erro de campo */
 .auth-field-error {
@@ -1917,20 +2140,22 @@ select option:checked {
   min-height: 48px;
   padding: 0 1.5rem;
   border: 0;
-  border-radius: 14px;
-  background-image: var(--brand-gradient);
+  border-radius: 9999px;
+  /* Lima CHAPADO, sem gradiente — o pedido foi não ter degradê nesta tela. */
+  background-image: none;
+  background-color: var(--lime);
   color: var(--brand-on-accent);
   font-size: 0.9375rem;
   font-weight: 700;
   font-family: inherit;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 0 22px var(--glow-accent), 0 12px 26px rgba(0,0,0,0.28);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
   transition: box-shadow 180ms ease, transform 140ms ease, filter 180ms ease;
 }
 .auth-submit:hover:not(:disabled) {
   filter: brightness(1.06);
-  box-shadow: 0 0 30px var(--glow-accent-strong), 0 14px 30px rgba(0,0,0,0.32);
+  box-shadow: 0 0 26px var(--glow-accent), 0 16px 34px rgba(0, 0, 0, 0.36);
 }
 .auth-submit:active:not(:disabled) { transform: scale(0.98); }
 .auth-submit:disabled { opacity: 0.5; filter: saturate(0.6); cursor: not-allowed; }
@@ -1960,8 +2185,139 @@ select option:checked {
   background: var(--border-subtle);
 }
 
+/* No card de autenticação a marca entra MENOR: o protagonista desta tela é o
+   formulário, não o logotipo. */
+.auth-card .fieldnode-logo--horizontal .fieldnode-logo__field { font-size: 1.625rem; }
+.auth-card .fieldnode-logo--horizontal .fieldnode-logo__node  { font-size: 1.875rem; }
+
 @media (prefers-reduced-motion: reduce) {
   .auth-submit, .auth-input, .auth-link { transition: none !important; }
+}
+
+/* ─── OPERÁRIOS ───────────────────────────────────────────────────────────────
+   Card da lista de operários: estrutura de tabela limpa (cabeçalho + linhas
+   divididas por fios), sem bordas extras que competiam com o chrome do card. */
+
+.op-list-card {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--panel-glass-mid) 80%, var(--surface-card));
+  overflow: hidden;
+}
+
+.op-list-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.5rem 5rem;
+  gap: 8px;
+  padding: 8px 16px;
+  background: color-mix(in srgb, var(--panel-glass-strong) 60%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.op-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.5rem 5rem;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  transition: background-color 140ms ease;
+}
+.op-list-row:hover { background: var(--panel-glass-mid); }
+.op-list-row--active { background: var(--panel-glass-strong); }
+.op-list-row:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: -2px; }
+
+/* Card de detalhe do operário */
+.op-detail-card {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--panel-glass-mid) 80%, var(--surface-card));
+  padding: 22px 24px;
+}
+
+/* Banner de status dentro do detalhe */
+.op-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.op-status-banner--active {
+  background: color-mix(in srgb, var(--status-normal) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-normal) 26%, transparent);
+  color: var(--status-normal);
+}
+.op-status-banner--inactive {
+  background: color-mix(in srgb, var(--status-atencao) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-atencao) 26%, transparent);
+  color: var(--status-atencao);
+}
+
+/* Tile de dado dentro do detalhe */
+.op-tile {
+  border-radius: var(--radius-tile);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--panel-glass-mid) 60%, var(--surface-card));
+  padding: 10px 14px;
+}
+.op-tile__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.op-tile__value {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+/* Ícone dos KPIs de operários */
+.op-kpi-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.85rem;
+}
+.op-kpi-icon--accent {
+  background: color-mix(in srgb, var(--ui-accent) 14%, var(--panel-glass-strong));
+  color: var(--ui-accent);
+}
+.op-kpi-icon--green {
+  background: color-mix(in srgb, var(--status-normal) 12%, var(--panel-glass-strong));
+  color: var(--status-normal);
+}
+.op-kpi-icon--amber {
+  background: color-mix(in srgb, var(--status-atencao) 12%, var(--panel-glass-strong));
+  color: var(--status-atencao);
+}
+
+/* Modo claro: superfícies sólidas nos cards de operários */
+.light .op-list-card,
+.light .op-detail-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+.light .op-list-header { background: rgba(33,33,33,0.04); }
+.light .op-list-row:hover { background: rgba(33,33,33,0.04); }
+.light .op-list-row--active { background: rgba(33,33,33,0.07); }
+.light .op-tile {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
 }
 
 /* ─── PERFIL DO USUÁRIO (cabeçalho) ───────────────────────────────────────────
@@ -1974,7 +2330,10 @@ select option:checked {
   color: var(--text-2);
 }
 
-.profile-avatar {
+/* Tile de iniciais — primitivo COMPARTILHADO: o chip de perfil do cabeçalho e
+   as linhas do diretório de operários usam o mesmo. Lima com tinta escura, que
+   é o ponto de marca do app; nada de degradê de arco-íris por pessoa. */
+.avatar-tile {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -1982,7 +2341,6 @@ select option:checked {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 0.6rem;
-  /* Lima com tinta escura: é o ponto de marca do cabeçalho. */
   background-image: var(--brand-gradient);
   color: var(--brand-on-accent);
   font-family: var(--font-display), sans-serif;
@@ -1993,7 +2351,7 @@ select option:checked {
   user-select: none;
 }
 
-.profile-avatar--lg {
+.avatar-tile--lg {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.85rem;

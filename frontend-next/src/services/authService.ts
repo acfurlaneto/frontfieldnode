@@ -161,8 +161,33 @@ async function parseError(res: Response): Promise<AuthError> {
 // ── API ────────────────────────────────────────────────────────────────────
 
 /**
+ * Executa requisição com suporte a caminhos alternativos se o endpoint padrão retornar 404.
+ */
+async function fetchWithFallback(
+  primaryPath: string,
+  fallbackPaths: string[],
+  init: RequestInit
+): Promise<Response> {
+  const res = await fetch(authUrl(primaryPath), init);
+  if (res.status === 404 && fallbackPaths.length > 0) {
+    for (const alt of fallbackPaths) {
+      try {
+        const altRes = await fetch(authUrl(alt), init);
+        if (altRes.status !== 404) {
+          return altRes;
+        }
+      } catch {
+        // prossegue para o próximo caminho alternativo
+      }
+    }
+  }
+  return res;
+}
+
+/**
  * Autentica o usuário.
  * Lança AuthError em caso de falha; retorna AuthResult em caso de sucesso.
+ * Suporta resposta com `{ token, user }` ou resposta padrão DRF `{ token }` / `{ key }`.
  */
 export async function login(
   username: string,
@@ -170,7 +195,7 @@ export async function login(
 ): Promise<AuthResult> {
   let res: Response;
   try {
-    res = await fetch(authUrl("/auth/login/"), {
+    res = await fetchWithFallback("/auth/login/", ["/login/", "/api-token-auth/"], {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -181,9 +206,32 @@ export async function login(
 
   if (!res.ok) throw await parseError(res);
 
-  const data = (await res.json()) as AuthResult;
-  persistSession(data);
-  return data;
+  const rawData = (await res.json()) as Record<string, unknown>;
+  const token =
+    (typeof rawData.token === "string" && rawData.token) ||
+    (typeof rawData.key === "string" && rawData.key) ||
+    (typeof rawData.access === "string" && rawData.access) ||
+    "";
+
+  if (!token) {
+    throw {
+      field: "general",
+      message: "O servidor respondeu com sucesso, mas não forneceu um token de acesso válido.",
+    };
+  }
+
+  const userObj = rawData.user && typeof rawData.user === "object" ? (rawData.user as Record<string, unknown>) : null;
+  const user: AuthUser = {
+    id: typeof userObj?.id === "number" ? userObj.id : (typeof rawData.id === "number" ? rawData.id : 0),
+    username: typeof userObj?.username === "string" ? userObj.username : username,
+    email: typeof userObj?.email === "string" ? userObj.email : (typeof rawData.email === "string" ? rawData.email : ""),
+    first_name: typeof userObj?.first_name === "string" ? userObj.first_name : (typeof rawData.first_name === "string" ? rawData.first_name : username),
+    last_name: typeof userObj?.last_name === "string" ? userObj.last_name : (typeof rawData.last_name === "string" ? rawData.last_name : ""),
+  };
+
+  const result: AuthResult = { token, user };
+  persistSession(result);
+  return result;
 }
 
 /**
@@ -199,7 +247,7 @@ export async function register(params: {
 }): Promise<AuthResult> {
   let res: Response;
   try {
-    res = await fetch(authUrl("/auth/register/"), {
+    res = await fetchWithFallback("/auth/register/", ["/register/"], {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -210,9 +258,32 @@ export async function register(params: {
 
   if (!res.ok) throw await parseError(res);
 
-  const data = (await res.json()) as AuthResult;
-  persistSession(data);
-  return data;
+  const rawData = (await res.json()) as Record<string, unknown>;
+  const token =
+    (typeof rawData.token === "string" && rawData.token) ||
+    (typeof rawData.key === "string" && rawData.key) ||
+    (typeof rawData.access === "string" && rawData.access) ||
+    "";
+
+  if (!token) {
+    throw {
+      field: "general",
+      message: "O servidor respondeu com sucesso, mas não forneceu um token de acesso válido.",
+    };
+  }
+
+  const userObj = rawData.user && typeof rawData.user === "object" ? (rawData.user as Record<string, unknown>) : null;
+  const user: AuthUser = {
+    id: typeof userObj?.id === "number" ? userObj.id : (typeof rawData.id === "number" ? rawData.id : 0),
+    username: typeof userObj?.username === "string" ? userObj.username : params.username,
+    email: typeof userObj?.email === "string" ? userObj.email : params.email,
+    first_name: typeof userObj?.first_name === "string" ? userObj.first_name : (params.first_name || params.username),
+    last_name: typeof userObj?.last_name === "string" ? userObj.last_name : (params.last_name || ""),
+  };
+
+  const result: AuthResult = { token, user };
+  persistSession(result);
+  return result;
 }
 
 /**
@@ -225,7 +296,7 @@ export async function logout(): Promise<void> {
   if (!token) return;
 
   try {
-    await fetch(authUrl("/auth/logout/"), {
+    await fetchWithFallback("/auth/logout/", ["/logout/"], {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -246,7 +317,7 @@ export async function verifyToken(): Promise<AuthUser | null> {
   if (!token) return null;
 
   try {
-    const res = await fetch(authUrl("/auth/me/"), {
+    const res = await fetchWithFallback("/auth/me/", ["/me/", "/user/"], {
       headers: { Authorization: `Token ${token}` },
     });
 

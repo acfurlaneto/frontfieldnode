@@ -94,7 +94,7 @@ export function UserProfile({ className = '' }: { className?: string }) {
         aria-label={`Perfil de ${name}`}
         className="profile-chip icon-control flex h-9 items-center gap-2 rounded-xl border pl-1 pr-2.5 text-[var(--text-2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ui-accent)] active:scale-[0.97]"
       >
-        <span className="profile-avatar" aria-hidden="true">{initials}</span>
+        <span className="avatar-tile" aria-hidden="true">{initials}</span>
         <span className="hidden max-w-[7.5rem] truncate text-xs font-semibold sm:block">
           {name}
         </span>
@@ -108,7 +108,7 @@ export function UserProfile({ className = '' }: { className?: string }) {
       {open ? (
         <div role="menu" aria-label="Perfil do usuário" className="profile-menu">
           <div className="flex items-center gap-3">
-            <span className="profile-avatar profile-avatar--lg" aria-hidden="true">{initials}</span>
+            <span className="avatar-tile avatar-tile--lg" aria-hidden="true">{initials}</span>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-[var(--text-1)]">{name}</p>
               <p className="truncate text-[11px] text-[var(--text-3)]">

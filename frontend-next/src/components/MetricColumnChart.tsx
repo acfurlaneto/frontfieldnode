@@ -17,6 +17,7 @@ import {
   STATUS_COLOR,
   STATUS_LABEL,
   buildPoints,
+  formatAxis,
   formatLimit,
   formatMetric,
   summarize,
@@ -45,10 +46,12 @@ function ColumnTooltip({
   active,
   payload,
   unit,
+  metric,
 }: {
   active?: boolean;
   payload?: Array<{ payload?: { full: string; valor: number; status: MetricStatus } }>;
   unit: string;
+  metric: MetricKey;
 }) {
   const point = payload?.[0]?.payload;
   if (!active || !point) return null;
@@ -59,7 +62,8 @@ function ColumnTooltip({
         {point.full}
       </p>
       <p className="mt-1 text-sm font-bold text-[var(--text-1)]">
-        {point.valor.toLocaleString('pt-BR')} {unit}
+        {/* Precisão da métrica — sem isso a vibração saía com três casas. */}
+        {formatMetric(point.valor, metric)} {unit}
       </p>
       <p
         className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em]"
@@ -151,7 +155,7 @@ export function MetricColumnChart({
                 axisLine={false}
                 tickLine={false}
                 width={56}
-                tickFormatter={(value: number) => formatLimit(value, field)}
+                tickFormatter={(value: number) => formatAxis(value, field)}
               />
 
               {alert !== null ? (
@@ -175,7 +179,7 @@ export function MetricColumnChart({
 
               <Tooltip
                 cursor={{ fill: 'var(--chart-surface)', radius: 4 }}
-                content={<ColumnTooltip unit={meta.unit} />}
+                content={<ColumnTooltip unit={meta.unit} metric={field} />}
               />
 
               <Bar dataKey="valor" radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive>

@@ -125,13 +125,13 @@ export function SparklineCard({
       aria-label={titulo}
       className={`metric-card metric-card--status-${status} ${metric ? `metric-card--metric-${metric}` : `metric-card--${status}`} transition-all duration-200`}
     >
-      <p className="text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
         {titulo}
       </p>
 
-      <div className="mt-3 flex flex-col items-center justify-center gap-1">
-<p
-          className={`stat-value stat-value--${status} text-center font-bold ${valueTone} ${
+      <div className="mt-3 flex flex-col gap-1">
+        <p
+          className={`stat-value stat-value--${status} font-bold ${valueTone} ${
             compact ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl'
           }`}
         >
@@ -142,8 +142,6 @@ export function SparklineCard({
             </span>
           ) : null}
         </p>
-        {/* O selo "demonstrativo" de cada card saiu: o grupo de KPIs tem um
-            selo só, no cabeçalho, que diz a mesma coisa sem repetir três vezes. */}
         {tendencia ? <p className="text-xs text-[var(--text-3)]">{tendencia}</p> : null}
       </div>
 
@@ -231,7 +229,7 @@ export function SparklineCard({
       </div>
 
       {alertRef !== null || criticalRef !== null ? (
-        <ul className="mt-2.5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+        <ul className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1">
           <li className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">
             <span className="threshold-band" aria-hidden="true" />
             Bom

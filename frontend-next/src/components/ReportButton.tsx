@@ -68,7 +68,22 @@ export function ReportButton({
     }
     const url = `${resolveApiUrl()}/relatorio/exportar/?maquina_id=${encodeURIComponent(exportMachineId)}`;
     try {
-      const res = await fetch(url, { headers: { Accept: '*/*' } });
+      const headers = new Headers({ Accept: '*/*' });
+      const apiKey = process.env.NEXT_PUBLIC_FIELDNODE_API_KEY;
+      if (apiKey) headers.set('X-API-Key', apiKey);
+      if (typeof window !== 'undefined') {
+        try {
+          const token = localStorage.getItem('fn-auth-token');
+          if (token) headers.set('Authorization', `Token ${token}`);
+        } catch {
+          // storage unavailable
+        }
+      }
+      const res = await fetch(url, { headers });
+      if (res.status === 404 || res.status === 501) {
+        alert('O serviço de exportação de relatório (/api/relatorio/exportar/) ainda não está habilitado no backend.');
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       const blob    = await res.blob();
       const blobUrl = window.URL.createObjectURL(blob);

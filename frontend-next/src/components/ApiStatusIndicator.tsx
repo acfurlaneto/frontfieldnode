@@ -13,13 +13,45 @@ export function ApiStatusIndicator() {
 
     async function check() {
       try {
+        const headers = new Headers({ Accept: 'application/json' });
+        if (typeof window !== 'undefined') {
+          try {
+            const token = localStorage.getItem('fn-auth-token');
+            if (token) headers.set('Authorization', `Token ${token}`);
+          } catch {
+            // storage unavailable
+          }
+        }
+
         const res = await fetch(`${API_URL}/health/`, {
           signal: AbortSignal.timeout(3000),
           cache: 'no-store',
+          headers,
         });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        if (active) setIsOnline(data.status === 'ok');
+
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (active) setIsOnline(data.status === 'ok' || res.status === 200);
+          return;
+        }
+
+        // Se o endpoint /health/ não existe (404), verifica a raiz de telemetria
+        if (res.status === 404) {
+          const fallbackRes = await fetch(`${API_URL}/colheitadeira/`, {
+            method: 'HEAD',
+            signal: AbortSignal.timeout(3000),
+            cache: 'no-store',
+            headers,
+          }).catch(() => null);
+
+          if (active) {
+            // Qualquer resposta HTTP < 500 comprova que o backend está ativo e respondendo
+            setIsOnline(fallbackRes !== null && fallbackRes.status < 500);
+          }
+          return;
+        }
+
+        if (active) setIsOnline(false);
       } catch {
         if (active) setIsOnline(false);
       }

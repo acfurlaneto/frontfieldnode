@@ -18,6 +18,7 @@ import {
   METRIC_ORDER,
   STATUS_LABEL,
   buildPoints,
+  formatAxis,
   formatLimit,
   formatMetric,
   summarize,
@@ -50,10 +51,12 @@ function TrendTooltip({
   active,
   payload,
   unit,
+  metric,
 }: {
   active?: boolean;
   payload?: Array<{ payload?: { label: string; full: string; valor: number; status: MetricStatus } }>;
   unit: string;
+  metric: MetricKey;
 }) {
   const point = payload?.[0]?.payload;
   if (!active || !point) return null;
@@ -64,7 +67,9 @@ function TrendTooltip({
         {point.full}
       </p>
       <p className="mt-1 text-sm font-bold text-[var(--text-1)]">
-        {point.valor.toLocaleString('pt-BR')} {unit}
+        {/* Precisão da métrica, e não o padrão do toLocaleString: vibração
+            aparecia como "0,512 g" (três casas) no tooltip e "0,51 g" no card. */}
+        {formatMetric(point.valor, metric)} {unit}
       </p>
       <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-3)]">
         {STATUS_LABEL[point.status]}
@@ -175,8 +180,14 @@ export function MetricTrendChart({
         </div>
       </div>
 
-      {/* ── Valor atual + resumo da janela ── */}
-      <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+      {/* ── Valor atual + resumo da janela ──
+          Centralizado: o número grande é o valor da LEITURA, e os quatro
+          números ao lado são estatística da JANELA. Antes, o bloco encostava à
+          esquerda e os secundários saíam desalinhados entre si (larguras
+          diferentes por causa do rótulo "Fora da faixa"). Cada estatística
+          ganhou largura mínima e alinhamento próprio, então a linha fica numa
+          grade legível mesmo quando os valores mudam de tamanho. */}
+      <div className="mt-5 flex flex-col items-center gap-4 text-center">
         <div className="min-w-0">
           <p
             className="stat-value text-4xl font-bold sm:text-5xl"
@@ -197,18 +208,18 @@ export function MetricTrendChart({
           </p>
         </div>
 
-        <dl className="flex flex-wrap gap-x-5 gap-y-2">
+        <dl className="flex w-full flex-wrap items-start justify-center gap-x-2 gap-y-2 sm:gap-x-6">
           {[
             { term: 'Mínima', value: formatMetric(summary.min, metric) },
             { term: 'Média', value: formatMetric(summary.avg, metric) },
             { term: 'Máxima', value: formatMetric(summary.max, metric) },
             { term: 'Fora da faixa', value: String(summary.foraDaFaixa) },
           ].map(({ term, value }) => (
-            <div key={term}>
-              <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)]">
+            <div key={term} className="flex flex-col items-center" style={{ minWidth: '4.5rem' }}>
+              <dt className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--text-3)] text-center whitespace-nowrap">
                 {term}
               </dt>
-              <dd className="mt-0.5 text-sm font-semibold tabular-nums text-[var(--text-2)]">
+              <dd className="mt-0.5 text-[15px] font-semibold tabular-nums text-[var(--text-2)] text-center">
                 {value}
               </dd>
             </div>
@@ -216,15 +227,19 @@ export function MetricTrendChart({
         </dl>
       </div>
 
-      {/* ── Gráfico ── */}
-      <div className="mt-4 h-56 w-full sm:h-72">
+      {/* ── Gráfico ──
+          A `key` na métrica REMONTA a área quando o usuário troca de série, e
+          com isso o Recharts repete a animação de traçado — é a animaçãozinha
+          que existia antes ao trocar de gráfico. Sem a key, o Recharts apenas
+          substitui os dados e a curva salta de um desenho para o outro. */}
+      <div key={`chart-${metric}`} className="chart-swap mt-4 h-56 w-full sm:h-72">
         {points.length === 0 ? (
           <p className="flex h-full items-center justify-center text-xs text-[var(--text-3)]">
             Sem leituras disponíveis para esta máquina.
           </p>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={points} margin={{ top: 8, right: 10, left: -18, bottom: 0 }}>
+            <AreaChart key={`area-${metric}`} data={points} margin={{ top: 8, right: 10, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={meta.color} stopOpacity={0.42} />
@@ -254,8 +269,12 @@ export function MetricTrendChart({
                 tick={{ fill: 'var(--text-3)', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={58}
-                tickFormatter={(value: number) => formatLimit(value, metric)}
+                /* RPM: "2.444" = 5 chars com separador de milhar → 64px.
+                   Temperatura: "110,0 °C" → 64px também.
+                   Vibração: "0,80 g" → 52px. Usamos 64 fixo para os três não
+                   ficarem com larguras diferentes ao trocar de métrica. */
+                width={64}
+                tickFormatter={(value: number) => formatAxis(value, metric)}
               />
 
               {/* Faixa operacional boa */}
@@ -291,7 +310,7 @@ export function MetricTrendChart({
 
               <Tooltip
                 cursor={{ stroke: meta.color, strokeDasharray: '3 3', opacity: 0.4 }}
-                content={<TrendTooltip unit={meta.unit} />}
+                content={<TrendTooltip unit={meta.unit} metric={metric} />}
               />
 
               <Area

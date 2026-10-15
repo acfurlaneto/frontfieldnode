@@ -3,22 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
-import { AuthLayout } from "@/components/AuthLayout";
-import { BRAND_TAGLINE, FieldNodeLogo } from "@/components/FieldNodeLogo";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { FieldNodeLogo } from "@/components/FieldNodeLogo";
 import { login, isAuthenticated, isAuthAvailable, type AuthError } from "@/services/authService";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Login — FieldNode
-   Integrado ao endpoint POST /api/auth/login/ via authService.
-
-   O formulário é habilitado conforme a autenticação estar alcançável. Por
-   padrão ela está: as rotas /api/* são reescritas pelo Next para o Django
-   (ver next.config.ts), então a chamada sai na mesma origem, sem CORS.
-
-   Não existe mais o aviso de "NEXT_PUBLIC_API_URL ausente": a ausência dessa
-   variável não é um defeito, é o caminho de mesma origem. Se o servidor não
-   responder, aí sim aparece o erro real, no envio.
+   Fundo: foto de campo verde (field-backdrop.jpg). Card: blur real, sem
+   gradiente, sem glassmorphism com borda brilhante. Logo menor, centralizado.
+   Sem título de produto — o formulário é o protagonista.
    ────────────────────────────────────────────────────────────────────────── */
 
 const HAS_BACKEND = isAuthAvailable();
@@ -35,12 +28,10 @@ export default function LoginPage() {
   const [formState, setFormState] = useState<FormState>("idle");
   const [error, setError] = useState<AuthError | null>(null);
 
-  /* redireciona se já autenticado */
   useEffect(() => {
     if (isAuthenticated()) router.replace("/dashboard");
   }, [router]);
 
-  /* foco automático */
   useEffect(() => {
     fieldRef.current?.focus();
   }, []);
@@ -48,7 +39,6 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (formState === "loading") return;
-
     setError(null);
 
     if (!username.trim()) {
@@ -61,7 +51,6 @@ export default function LoginPage() {
     }
 
     setFormState("loading");
-
     try {
       await login(username.trim(), password);
       setFormState("success");
@@ -75,126 +64,117 @@ export default function LoginPage() {
   const isLoading = formState === "loading" || formState === "success";
 
   return (
-    <AuthLayout>
-      <div className="auth-card">
-        {/* ── Cabeçalho do card ──
-            Sem o selo de conexão: o estado do servidor é assunto do envio do
-            formulário, não de um indicador que promete "Online" para o cliente
-            sem ter falado com ninguém. */}
-        <header className="flex flex-col items-center gap-4 text-center">
-          {/* Lockup horizontal COM a assinatura: aqui é a tela de entrada, o
-              único lugar em que a linha de contexto da marca cabe sem competir
-              com o cabeçalho do app. */}
-          <FieldNodeLogo variant="horizontal" tagline={BRAND_TAGLINE} className="mx-auto" />
+    <div className="login-stage">
+      {/* Fundo fotográfico — campo verde */}
+      <div className="login-bg" aria-hidden="true" />
+      {/* Véu levíssimo para o card destacar */}
+      <div className="login-veil" aria-hidden="true" />
 
-          <div>
-            <h1 className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text-1)]">
-              Entrar na operação
-            </h1>
-            <p className="mt-1 text-xs text-[var(--text-3)]">
-              Monitoramento de telemetria agrícola
-            </p>
+      <main className="login-center">
+        <div className="login-card">
+          {/* Logo compacto e centralizado */}
+          <div className="flex justify-center mb-6">
+            <FieldNodeLogo variant="stacked" />
           </div>
-        </header>
 
-        {/* ── Formulário ── */}
-        <form onSubmit={handleSubmit} noValidate aria-label="Formulário de login" className="mt-5 flex flex-col gap-4">
-          {error?.field === "general" && (
-            <div className="auth-error-block" role="alert">
-              {error.message}
-            </div>
-          )}
+          {/* Título curto */}
+          <h1 className="login-title">Bem-vindo de volta</h1>
+          <p className="login-sub">Acesse sua conta para continuar</p>
 
-          <div className="auth-field">
-            <label htmlFor="fn-username">Nome de usuário</label>
-            <input
-              ref={fieldRef}
-              id="fn-username"
-              type="text"
-              autoComplete="username"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                setError(null);
-              }}
-              disabled={isLoading || !HAS_BACKEND}
-              aria-describedby={error?.field === "username" ? "fn-username-err" : undefined}
-              aria-invalid={error?.field === "username"}
-              className="auth-input"
-              placeholder="seu_usuario"
-            />
-            {error?.field === "username" && (
-              <span id="fn-username-err" className="auth-field-error" role="alert">
+          {/* Formulário */}
+          <form onSubmit={handleSubmit} noValidate aria-label="Formulário de login" className="mt-7 flex flex-col gap-4">
+            {error?.field === "general" && (
+              <div className="auth-error-block" role="alert">
                 {error.message}
-              </span>
+              </div>
             )}
-          </div>
 
-          <div className="auth-field">
-            <label htmlFor="fn-password">Senha</label>
-            <div className="relative flex">
+            {/* Usuário */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="fn-username" className="login-label">
+                Usuário
+              </label>
               <input
-                id="fn-password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError(null);
-                }}
+                ref={fieldRef}
+                id="fn-username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => { setUsername(e.target.value); setError(null); }}
                 disabled={isLoading || !HAS_BACKEND}
-                aria-describedby={error?.field === "password" ? "fn-password-err" : undefined}
-                aria-invalid={error?.field === "password"}
-                className="auth-input pr-12"
-                placeholder="••••••••"
+                aria-invalid={error?.field === "username"}
+                aria-describedby={error?.field === "username" ? "fn-un-err" : undefined}
+                className="login-input"
+                placeholder="seu_usuario"
               />
-              <button
-                type="button"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                onClick={() => setShowPassword((v) => !v)}
-                disabled={isLoading}
-                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md p-1.5 text-[var(--text-3)] transition-colors duration-150 hover:text-[var(--text-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              >
-                {showPassword ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
-              </button>
+              {error?.field === "username" && (
+                <span id="fn-un-err" className="auth-field-error" role="alert">
+                  {error.message}
+                </span>
+              )}
             </div>
-            {error?.field === "password" && (
-              <span id="fn-password-err" className="auth-field-error" role="alert">
-                {error.message}
-              </span>
-            )}
-          </div>
 
-          <button
-            type="submit"
-            disabled={isLoading || !HAS_BACKEND}
-            aria-busy={formState === "loading"}
-            className="auth-submit mt-1"
-          >
-            {formState === "loading" ? (
-              <>
-                <Loader2 size={16} className="animate-spin" aria-hidden="true" /> Entrando…
-              </>
-            ) : formState === "success" ? (
-              <>
-                <Loader2 size={16} className="animate-spin" aria-hidden="true" /> Redirecionando…
-              </>
-            ) : (
-              <>
-                Entrar <ArrowRight size={16} aria-hidden="true" />
-              </>
-            )}
-          </button>
-        </form>
+            {/* Senha */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="fn-password" className="login-label">
+                Senha
+              </label>
+              <div className="relative">
+                <input
+                  id="fn-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setError(null); }}
+                  disabled={isLoading || !HAS_BACKEND}
+                  aria-invalid={error?.field === "password"}
+                  aria-describedby={error?.field === "password" ? "fn-pw-err" : undefined}
+                  className="login-input w-full pr-11"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowPassword((v) => !v)}
+                  disabled={isLoading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-lg text-[rgba(255,255,255,0.5)] hover:text-white transition-colors duration-150 focus-visible:outline focus-visible:outline-2"
+                >
+                  {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
+                </button>
+              </div>
+              {error?.field === "password" && (
+                <span id="fn-pw-err" className="auth-field-error" role="alert">
+                  {error.message}
+                </span>
+              )}
+            </div>
 
-        {/* ── Rodapé ── */}
-        <footer className="mt-5 text-center text-[13px] text-[var(--text-3)]">
-          Não tem conta?{" "}
-          <Link href="/register" className="auth-link">
-            Criar conta
-          </Link>
-        </footer>
-      </div>
-    </AuthLayout>
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading || !HAS_BACKEND}
+              aria-busy={formState === "loading"}
+              className="login-btn mt-2"
+            >
+              {formState === "loading" ? (
+                <><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Entrando…</>
+              ) : formState === "success" ? (
+                <><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Redirecionando…</>
+              ) : (
+                "Entrar"
+              )}
+            </button>
+          </form>
+
+          {/* Rodapé */}
+          <p className="mt-6 text-center text-[13px] text-[rgba(255,255,255,0.52)]">
+            Não tem conta?{" "}
+            <Link href="/register" className="auth-link font-semibold">
+              Criar conta
+            </Link>
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

@@ -1,8 +1,7 @@
 import { AppShell } from '@/components/AppShell';
 import { ErrorState, EmptyState } from '@/components/EmptyState';
 import { StatusBadge, riskTone } from '@/components/StatusBadge';
-import { AnalisePrescricaoSchema } from '@/schemas';
-import { resolveApiUrl } from '@/services/telemetryService';
+import { telemetryService } from '@/services/telemetryService';
 
 function sourceLabel(source: string) {
   if (source === 'ia_generativa') return 'Explicação gerada por IA';
@@ -32,15 +31,7 @@ export default async function PrescricaoPage({
   }
 
   try {
-    const response = await fetch(
-      `${resolveApiUrl()}/prescricoes/${encodeURIComponent(maquinaId)}/`,
-      { cache: 'no-store', headers: { Accept: 'application/json' } },
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const parsed = AnalisePrescricaoSchema.safeParse(await response.json());
-    if (!parsed.success) throw new Error('Resposta da análise em formato inesperado.');
-    const analise = parsed.data;
+    const analise = await telemetryService.getAnalisePrescricao(maquinaId);
     const texto   = analise.explicacao_operador || analise.recomendacao_tecnica || 'Nenhuma ação necessária.';
 
     return (

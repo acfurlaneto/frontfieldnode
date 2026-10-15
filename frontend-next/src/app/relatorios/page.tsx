@@ -36,7 +36,8 @@ export default function RelatoriosPage() {
   const [selectedMachine, setSelectedMachine] = useState('');
   const [period,          setPeriod]          = useState(7);
   const [estadoRelatorio, setEstadoRelatorio] = useState<EstadoRequisicao<Relatorio>>({ tipo: 'vazio' });
-  const [exportState,     setExportState]     = useState<ExportState>('idle');
+  const [exportState,        setExportState]        = useState<ExportState>('idle');
+  const [exportErrorMessage, setExportErrorMessage] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -74,13 +75,31 @@ export default function RelatoriosPage() {
   const handleExport = async () => {
     if (!selectedMachine || exportState === 'loading') return;
     setExportState('loading');
+    setExportErrorMessage('');
     try {
-      const url      = `${resolveApiUrl()}/relatorio/exportar/?maquina_id=${encodeURIComponent(selectedMachine)}`;
-      const response = await fetch(url, { headers: { Accept: '*/*' } });
+      const url = `${resolveApiUrl()}/relatorio/exportar/?maquina_id=${encodeURIComponent(selectedMachine)}`;
+      const headers = new Headers({ Accept: '*/*' });
+      const apiKey = process.env.NEXT_PUBLIC_FIELDNODE_API_KEY;
+      if (apiKey) headers.set('X-API-Key', apiKey);
+      if (typeof window !== 'undefined') {
+        try {
+          const token = localStorage.getItem('fn-auth-token');
+          if (token) headers.set('Authorization', `Token ${token}`);
+        } catch {
+          // storage unavailable
+        }
+      }
+      const response = await fetch(url, { headers });
+      if (response.status === 404 || response.status === 501) {
+        setExportErrorMessage('O endpoint de exportação de relatório (/api/relatorio/exportar/) ainda não está disponível no backend.');
+        setExportState('error');
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       downloadBlob(await response.blob(), selectedMachine);
       setExportState('idle');
     } catch {
+      setExportErrorMessage('Não foi possível preparar o arquivo. Verifique a conexão com a API e tente novamente.');
       setExportState('error');
     }
   };
@@ -224,7 +243,7 @@ export default function RelatoriosPage() {
             />
             {exportState === 'error' && (
               <p className="mt-3 text-center text-xs text-[color:var(--status-critico)]" role="alert">
-                Não foi possível preparar o arquivo. Verifique a conexão com a API e tente novamente.
+                {exportErrorMessage || 'Não foi possível preparar o arquivo. Verifique a conexão com a API e tente novamente.'}
               </p>
             )}
           </>
